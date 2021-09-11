@@ -1,0 +1,13 @@
+ModCFG
+{
+    title = YourModName
+    author = YourName
+    modVersion = 0.1.0
+    Plugin
+    {
+        name = YourModName
+        description = Your mod description
+        asmpath = Addons\Autopilot\Autopilot.dll
+        order = 1000
+    }
+}
