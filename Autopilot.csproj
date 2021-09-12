@@ -87,6 +87,7 @@
     <Compile Include="Loader.cs" />
     <Compile Include="NetworkHandler.cs" />
     <Compile Include="NetworkTestMain.cs" />
+    <Compile Include="Parameter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProtocolLogic.cs" />
   </ItemGroup>

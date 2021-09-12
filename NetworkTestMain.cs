@@ -27,14 +27,13 @@ namespace Autopilot
 
             handler = new NetworkHandler();
             handler.RegisterConnect(protocol.ConnectEvent);
-            //hander.RegisterReceive(MAVLink.MAVLINK_MSG_ID.SET_RATE, protocol.ReceiveSetRate);
-            handler.RegisterSend(MAVLink.MAVLINK_MSG_ID.HEARTBEAT, protocol.SendHeartbeat);
-            //handler.RegisterReceive(MAVLink.MAVLINK_MSG_ID.PARAM_REQUEST_LIST, protocol.ParamRequestList);
+            handler.RegisterReceive(MAVLink.MAVLINK_MSG_ID.PARAM_REQUEST_LIST, protocol.ParamRequestList);
             handler.RegisterReceive(MAVLink.MAVLINK_MSG_ID.REQUEST_DATA_STREAM, protocol.RequestDataStream);
-            handler.RegisterSend(MAVLink.MAVLINK_MSG_ID.ATTITUDE, protocol.SendAttitude);
-            handler.RegisterReceiveCommand(MAVLink.MAV_CMD.REQUEST_AUTOPILOT_CAPABILITIES, protocol.RequestAutopilot);
-            handler.RegisterSend(MAVLink.MAVLINK_MSG_ID.RAW_IMU, protocol.SendRawIMU);
+            handler.RegisterReceive(MAVLink.MAVLINK_MSG_ID.SYSTEM_TIME, protocol.SystemTime);
+            handler.RegisterSend(MAVLink.MAVLINK_MSG_ID.HEARTBEAT, protocol.SendHeartbeat);
             handler.RegisterSend(MAVLink.MAVLINK_MSG_ID.GLOBAL_POSITION_INT, protocol.SendPosition);
+            handler.RegisterSend(MAVLink.MAVLINK_MSG_ID.ATTITUDE, protocol.SendAttitude);
+            handler.RegisterSend(MAVLink.MAVLINK_MSG_ID.RAW_IMU, protocol.SendRawIMU);
             handler.RegisterSend(MAVLink.MAVLINK_MSG_ID.GPS_STATUS, protocol.SendGPSStatus);
             handler.RegisterDisconnect(protocol.DisconnectEvent);
             handler.StartServer(log.Log);
