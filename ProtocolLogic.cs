@@ -1,8 +1,6 @@
-﻿using System;
-using component_information;
+﻿using DarkLog;
+using System;
 using System.Collections.Generic;
-using DarkLog;
-using System.Security.Cryptography;
 
 namespace Autopilot
 {
@@ -62,7 +60,7 @@ namespace Autopilot
 
         public void ConnectEvent(ClientObject client)
         {
-            client.requestedRates[MAVLink.MAVLINK_MSG_ID.HEARTBEAT] = 2f;
+            client.requestedRates[MAVLink.MAVLINK_MSG_ID.HEARTBEAT] = 0.125f;
             log.Log("Client connected");
         }
 
@@ -193,13 +191,13 @@ namespace Autopilot
             client.SendMessage(message);
 
 
-            uint sensors = (uint)(MAVLink.MAV_SYS_STATUS_SENSOR._3D_GYRO | MAVLink.MAV_SYS_STATUS_SENSOR._3D_ACCEL | MAVLink.MAV_SYS_STATUS_SENSOR._3D_MAG | MAVLink.MAV_SYS_STATUS_SENSOR.ABSOLUTE_PRESSURE | MAVLink.MAV_SYS_STATUS_SENSOR.BATTERY | MAVLink.MAV_SYS_STATUS_SENSOR.GPS);
+            uint sensors = (uint)(MAVLink.MAV_SYS_STATUS_SENSOR._3D_GYRO | MAVLink.MAV_SYS_STATUS_SENSOR._3D_ACCEL /*| MAVLink.MAV_SYS_STATUS_SENSOR._3D_MAG*/ | MAVLink.MAV_SYS_STATUS_SENSOR.ABSOLUTE_PRESSURE | MAVLink.MAV_SYS_STATUS_SENSOR.BATTERY | MAVLink.MAV_SYS_STATUS_SENSOR.GPS);
             MAVLink.mavlink_sys_status_t sysStatus = new MAVLink.mavlink_sys_status_t();
             sysStatus.onboard_control_sensors_present = sensors;
             sysStatus.onboard_control_sensors_enabled = sensors;
             sysStatus.onboard_control_sensors_health = sensors;
             //1%
-            sysStatus.load = 100;
+            sysStatus.load = 50;
             sysStatus.voltage_battery = 11000;
             sysStatus.current_battery = 1000;
             client.SendMessage(sysStatus);
@@ -223,9 +221,9 @@ namespace Autopilot
             MAVLink.mavlink_global_position_int_t message = new MAVLink.mavlink_global_position_int_t();
             message.lat = data.latitude;
             message.lon = data.longitude;
-            message.alt = data.altitude;
-            message.relative_alt = data.altitude;
-            message.hdg = 0;
+            message.alt = (int)data.altitude;
+            message.relative_alt = 0;//(int)data.altitude;
+            message.hdg = (ushort)data.heading;
             message.vx = 0;
             message.vy = 0;
             message.vz = 0;

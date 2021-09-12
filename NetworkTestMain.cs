@@ -1,17 +1,11 @@
-﻿using System;
-using DarkLog;
-using UnityEngine;
+﻿using DarkLog;
 using FSControl;
-using IO;
-using component_information;
-using System.Collections.Generic;
-using Autopilot;
-using System.Runtime.InteropServices;
+using UnityEngine;
 
 namespace Autopilot
 {
     public class NetworkTestMain : MonoBehaviour
-{
+    {
 
         ModLog log;
         DataStore data;
@@ -19,7 +13,7 @@ namespace Autopilot
         NetworkHandler handler;
 
         public void Start()
-{
+        {
             log = new ModLog("NetworkTest");
             log.Log("Start!");
             data = new DataStore();
@@ -50,18 +44,22 @@ namespace Autopilot
                 data.latitude = 0;
                 data.longitude = 0;
                 data.altitude = 0;
+                data.heading = 0;
                 return;
             }
             Vehicle v = GameLogic.LocalPlayerVehicle;
             data.pitch = FSControlUtil.GetVehiclePitch(v) * Mathf.Rad2Deg;
             data.roll = FSControlUtil.GetVehicleRoll(v) * Mathf.Rad2Deg;
-            data.yaw = v.Physics.HeadingDegs;
+            data.yaw = FSControlUtil.GetVehicleYaw(v) * Mathf.Rad2Deg;
+            //Metres -> mm
+            data.altitude = v.Physics.Altitude * 1000f;
+
+            data.heading = v.Physics.HeadingDegs;
+
             //Balsa is YUp
             //Mavlink is degE7, 1° = 111 km 1E7/111000 = ~90
             data.latitude = (int)(FloatingOrigin.GetAbsoluteWPos(v.transform.position).x / 90d);
             data.longitude = (int)(FloatingOrigin.GetAbsoluteWPos(v.transform.position).z / 90d);
-            //Metres -> mm
-            data.altitude = (int)(FloatingOrigin.GetAbsoluteWPos(v.transform.position).y * 1000d);
         }
     }
 }
