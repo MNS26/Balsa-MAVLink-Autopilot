@@ -216,7 +216,7 @@ namespace Autopilot
             client.SendMessage(message);
         }
 
-        public void SendPosition(ClientObject client)
+        public void SendGPSPosition(ClientObject client)
         {
             MAVLink.mavlink_global_position_int_t message = new MAVLink.mavlink_global_position_int_t();
             message.lat = data.latitude;
