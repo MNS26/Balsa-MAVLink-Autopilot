@@ -1,11 +1,11 @@
 ﻿using DarkLog;
 using FSControl;
-using System;
+using Modules;
 using UnityEngine;
 
 namespace Autopilot
 {
-    public class NetworkTestMain : MonoBehaviour
+    public class Autopilot : MonoBehaviour
     {
 
         ModLog log;
@@ -16,7 +16,7 @@ namespace Autopilot
         public void Start()
         {
             log = new ModLog("NetworkTest");
-            log.Log("Start!");
+            Log("Start!");
             data = new DataStore();
             protocol = new ProtocolLogic(data, log);
 
@@ -25,6 +25,8 @@ namespace Autopilot
             handler.RegisterReceive(MAVLink.MAVLINK_MSG_ID.PARAM_REQUEST_LIST, protocol.ParamRequestList);
             handler.RegisterReceive(MAVLink.MAVLINK_MSG_ID.REQUEST_DATA_STREAM, protocol.RequestDataStream);
             handler.RegisterReceive(MAVLink.MAVLINK_MSG_ID.SYSTEM_TIME, protocol.SystemTime);
+            handler.RegisterReceiveCommand(MAVLink.MAV_CMD.REQUEST_AUTOPILOT_CAPABILITIES, protocol.RequestAutopilot);
+            handler.RegisterSend(MAVLink.MAVLINK_MSG_ID.RPM, protocol.SendRPM);
             handler.RegisterSend(MAVLink.MAVLINK_MSG_ID.HEARTBEAT, protocol.SendHeartbeat);
             handler.RegisterSend(MAVLink.MAVLINK_MSG_ID.GLOBAL_POSITION_INT, protocol.SendGPSPosition);
             handler.RegisterSend(MAVLink.MAVLINK_MSG_ID.GPS_RAW_INT, protocol.SendGPSRaw);
@@ -34,48 +36,82 @@ namespace Autopilot
             handler.RegisterSend(MAVLink.MAVLINK_MSG_ID.RADIO_STATUS, protocol.SendRadioStatus);
             handler.RegisterSend(MAVLink.MAVLINK_MSG_ID.RC_CHANNELS_SCALED, protocol.SendRadioChannelsScaled);
             handler.RegisterSend(MAVLink.MAVLINK_MSG_ID.RC_CHANNELS_RAW, protocol.SendRadioChannelsRaw);
-
             handler.RegisterDisconnect(protocol.DisconnectEvent);
             handler.StartServer(log.Log);
+
             DontDestroyOnLoad(this);
         }
 
-        public void FixedUpdate()
+        //running this as fast as possible
+        public void Update()
         {
             if (!GameLogic.inGame || !GameLogic.SceneryLoaded || GameLogic.LocalPlayerVehicle == null || !GameLogic.LocalPlayerVehicle.InitComplete)
             {
+                data.radpitch = 0;
+                data.radroll = 0;
+                data.radyaw = 0;
                 data.pitch = 0;
                 data.roll = 0;
                 data.yaw = 0;
+                data.avrrpm = 0;
                 data.latitude = 0;
                 data.longitude = 0;
                 data.altitude = 0;
                 data.heading = 0;
+                data.iaspeed = 0;
+                data.name = "";
                 return;
             }
             Vehicle v = GameLogic.LocalPlayerVehicle;
 
+            var props = v.GetModules<Propeller>();
+            if (props.Count != 0)
+            {
+                data.avrrpm = 0;
+                foreach (var p in props)
+                {
+                    data.avrrpm += p.GetRotSpeed();
+                }
+                data.avrrpm /= props.Count;
+                data.avrrpm *= 1.66667f;
+            }
+
             data.radpitch = FSControlUtil.GetVehiclePitch(v);
             data.pitch = data.radpitch * Mathf.Rad2Deg;
-            
             data.radroll = FSControlUtil.GetVehicleRoll(v);
             data.roll = data.radroll * Mathf.Rad2Deg;
-            
             data.radyaw = FSControlUtil.GetVehicleYaw(v);
             data.yaw = data.radyaw * Mathf.Rad2Deg;
 
             //Metres -> mm
             data.altitude = v.Physics.Altitude * 1000f;
-
-            //not gonna try and the actual issue why heading is reversed
-
+            data.iaspeed = v.Physics.Speed;
             data.heading = v.Physics.HeadingDegs;
-
+            data.name = v.name;
             //Balsa is YUp
             //Mavlink is degE7, 1° = 111 km 1E7/111000 = ~90
+            data.latitude = (int)(FloatingOrigin.GetAbsoluteWPos(v.transform.position).z * 90.09f);
+            data.longitude = (int)(FloatingOrigin.GetAbsoluteWPos(v.transform.position).x * 90.09f);
 
-            data.latitude = (int)(FloatingOrigin.GetAbsoluteWPos(v.transform.position).z * 90.09009009f);
-            data.longitude = (int)(FloatingOrigin.GetAbsoluteWPos(v.transform.position).x * 90.09009009f);
+            //controller stuff
+            data.rssi = map(v.SignalStrength.SignalDegradation, 0, 1, 0, 255);
+
+
+        }
+
+        public void FixedUpdate()
+        {
+        }
+
+        public float map(float value, float fromLow, float fromHigh, float toLow, float toHigh)
+        {
+            return (value - fromLow) * (toHigh - toLow) / (fromHigh - fromLow) + toLow;
+        }
+
+        //It's nice to identify in the log where things came from
+        public static void Log(string text)
+        {
+            Debug.Log($"{Time.realtimeSinceStartup} [Autopilot] {text}");
         }
     }
 }

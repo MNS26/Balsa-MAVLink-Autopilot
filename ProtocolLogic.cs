@@ -61,12 +61,12 @@ namespace Autopilot
         public void ConnectEvent(ClientObject client)
         {
             client.requestedRates[MAVLink.MAVLINK_MSG_ID.HEARTBEAT] = 0.25f;
-            log.Log("Client connected");
+            Autopilot.Log("Client connected");
         }
 
         public void DisconnectEvent(ClientObject client)
         {
-            log.Log("Client disconnected");
+            Autopilot.Log("Client disconnected");
         }
 
         public void ReceiveSetRate(ClientObject client, MAVLink.MAVLinkMessage rawMessage)
@@ -76,7 +76,7 @@ namespace Autopilot
 
         public void ParamRequestList(ClientObject client, MAVLink.MAVLinkMessage messageRaw)
         {
-            log.Log("PARAM_REQUEST_LIST");
+            Autopilot.Log("PARAM_REQUEST_LIST");
             MAVLink.mavlink_param_request_list_t message = (MAVLink.mavlink_param_request_list_t)messageRaw.data;
             for (int i = 0; i < parameters.Count; i++)
             {
@@ -95,7 +95,7 @@ namespace Autopilot
         {
             //TODO: Implement ALL of these.
             MAVLink.mavlink_request_data_stream_t message = (MAVLink.mavlink_request_data_stream_t)messageRaw.data;
-            log.Log($"REQUEST_DATA_STREAM {message.req_stream_id} = {message.req_message_rate}");
+            Autopilot.Log($"REQUEST_DATA_STREAM {message.req_stream_id} = {message.req_message_rate}");
             switch ((MAVLink.MAV_DATA_STREAM)message.req_stream_id)
             {
                 case MAVLink.MAV_DATA_STREAM.ALL:
@@ -109,6 +109,8 @@ namespace Autopilot
                     client.requestedRates[MAVLink.MAVLINK_MSG_ID.SERVO_OUTPUT_RAW] = 1f / message.req_message_rate;
                     client.requestedRates[MAVLink.MAVLINK_MSG_ID.GLOBAL_POSITION_INT] = 1f / message.req_message_rate;
                     client.requestedRates[MAVLink.MAVLINK_MSG_ID.LOCAL_POSITION_NED] = 1f / message.req_message_rate;
+                    client.requestedRates[MAVLink.MAVLINK_MSG_ID.RPM] = 1f / message.req_message_rate;
+                    client.requestedRates[MAVLink.MAVLINK_MSG_ID.AUTOPILOT_VERSION] = 1f / message.req_message_rate;
                     break;
                 case MAVLink.MAV_DATA_STREAM.RAW_SENSORS:
                     client.requestedRates[MAVLink.MAVLINK_MSG_ID.ATTITUDE] = 1f / message.req_message_rate;
@@ -117,6 +119,7 @@ namespace Autopilot
                     client.requestedRates[MAVLink.MAVLINK_MSG_ID.GPS_STATUS] = 1f / message.req_message_rate;
                     break;
                 case MAVLink.MAV_DATA_STREAM.EXTENDED_STATUS:
+                    client.requestedRates[MAVLink.MAVLINK_MSG_ID.LOCAL_POSITION_NED] = 1f / message.req_message_rate;
                     client.requestedRates[MAVLink.MAVLINK_MSG_ID.GPS_STATUS] = 1f / message.req_message_rate;
                     client.requestedRates[MAVLink.MAVLINK_MSG_ID.RADIO_STATUS] = 1f / message.req_message_rate;
                     //Can't find CONTROL_STATUS or AUX_STATUS
@@ -146,30 +149,30 @@ namespace Autopilot
         public void SystemTime(ClientObject client, MAVLink.MAVLinkMessage messageRaw)
         {
             MAVLink.mavlink_system_time_t message = (MAVLink.mavlink_system_time_t)messageRaw.data;
-            log.Log($"SYSTEM_TIME {message.time_unix_usec}");
+            Autopilot.Log($"SYSTEM_TIME {message.time_unix_usec}");
         }
 
         public void RequestProtocolVersion(ClientObject client, MAVLink.mavlink_command_long_t command)
         {
             AckCommand(client, command, MAVLink.MAV_CMD_ACK.ERR_FAIL);
-            log.Log($"REQUEST_PROTOCOL_VERSION, FAILED, NO MAVLINK2");
+            Autopilot.Log($"REQUEST_PROTOCOL_VERSION, FAILED, NO MAVLINK2");
         }
 
         public void MessageInterval(ClientObject client, MAVLink.mavlink_command_long_t command)
         {
             AckCommand(client, command, MAVLink.MAV_CMD_ACK.OK);
-            log.Log($"SET_MESSAGE_INTERVAL: {(MAVLink.MAVLINK_MSG_ID)command.param1} = {command.param2}");
+            Autopilot.Log($"SET_MESSAGE_INTERVAL: {(MAVLink.MAVLINK_MSG_ID)command.param1} = {command.param2}");
             client.requestedRates[(MAVLink.MAVLINK_MSG_ID)command.param1] = command.param1 * 1000000;
         }
 
         public void RequestAutopilot(ClientObject client, MAVLink.mavlink_command_long_t command)
         {
-            log.Log("REQUEST AUTOPILOT");
+            Autopilot.Log("REQUEST AUTOPILOT");
             AckCommand(client, command, MAVLink.MAV_CMD_ACK.OK);
             MAVLink.mavlink_autopilot_version_t autopilot = new MAVLink.mavlink_autopilot_version_t();
-            autopilot.capabilities = autopilot.capabilities | (ulong)MAVLink.MAV_PROTOCOL_CAPABILITY.MISSION_FLOAT;
-            autopilot.capabilities = autopilot.capabilities | (ulong)MAVLink.MAV_PROTOCOL_CAPABILITY.PARAM_FLOAT;
-            autopilot.capabilities = autopilot.capabilities | (ulong)MAVLink.MAV_PROTOCOL_CAPABILITY.COMMAND_INT;
+            autopilot.capabilities |= (ulong)MAVLink.MAV_PROTOCOL_CAPABILITY.MISSION_FLOAT;
+            autopilot.capabilities |= (ulong)MAVLink.MAV_PROTOCOL_CAPABILITY.PARAM_FLOAT;
+            autopilot.capabilities |= (ulong)MAVLink.MAV_PROTOCOL_CAPABILITY.COMMAND_INT;
             autopilot.board_version = 1;
             autopilot.flight_sw_version = 1;
             autopilot.os_sw_version = 1;
@@ -302,11 +305,20 @@ namespace Autopilot
             message.temperature = 6000;
             client.SendMessage(message);
         }
+
+        public void SendRPM(ClientObject client)
+        {
+            MAVLink.mavlink_rpm_t message = new MAVLink.mavlink_rpm_t();
+            message.rpm1 = data.avrrpm;
+            client.SendMessage(message);
+        }
+
+
         public void SendRadioStatus(ClientObject client)
         {
             MAVLink.mavlink_radio_status_t message = new MAVLink.mavlink_radio_status_t();
-            message.rssi = 200;
-            message.remrssi = 200;
+            message.rssi = (byte)data.rssi;
+            message.remrssi = (byte)data.rssi;
             message.txbuf = 99;
             message.rxerrors = 0;
             message.@fixed = 0;
@@ -316,7 +328,7 @@ namespace Autopilot
         public void SendRadioChannelsRaw(ClientObject client)
         {
             MAVLink.mavlink_rc_channels_t message = new MAVLink.mavlink_rc_channels_t();
-            message.rssi = 200;
+            message.rssi = (byte)data.rssi;
             message.chan1_raw = 1500;
             message.chan2_raw = 1500;
             message.chan3_raw = 1500;

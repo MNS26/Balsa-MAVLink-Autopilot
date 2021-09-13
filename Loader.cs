@@ -11,7 +11,7 @@ namespace Autopilot
         private static GameObject go;
         private static MonoBehaviour mod;
 
-        //Game start
+        //main menu
         [BalsaAddonInit(invokeTime = AddonInvokeTime.MainMenu)]
         public static void BalsaInit()
         {
@@ -19,7 +19,8 @@ namespace Autopilot
             {
                 loaded = true;
                 go = new GameObject();
-                mod = go.AddComponent<NetworkTestMain>();
+                mod = go.AddComponent<Autopilot>();
+;
             }
         }
 
@@ -27,6 +28,7 @@ namespace Autopilot
         [BalsaAddonFinalize]
         public static void BalsaFinalize()
         {
+            mod = go.AddComponent<Autopilot>();
         }
     }
 }
