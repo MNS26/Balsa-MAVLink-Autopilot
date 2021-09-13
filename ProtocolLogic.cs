@@ -60,7 +60,7 @@ namespace Autopilot
 
         public void ConnectEvent(ClientObject client)
         {
-            client.requestedRates[MAVLink.MAVLINK_MSG_ID.HEARTBEAT] = 0.125f;
+            client.requestedRates[MAVLink.MAVLINK_MSG_ID.HEARTBEAT] = 0.25f;
             log.Log("Client connected");
         }
 
@@ -99,9 +99,11 @@ namespace Autopilot
             switch ((MAVLink.MAV_DATA_STREAM)message.req_stream_id)
             {
                 case MAVLink.MAV_DATA_STREAM.ALL:
+                    client.requestedRates[MAVLink.MAVLINK_MSG_ID.ATTITUDE] = 1f / message.req_message_rate;
                     client.requestedRates[MAVLink.MAVLINK_MSG_ID.RAW_IMU] = 1f / message.req_message_rate;
                     client.requestedRates[MAVLink.MAVLINK_MSG_ID.GPS_RAW_INT] = 1f / message.req_message_rate;
                     client.requestedRates[MAVLink.MAVLINK_MSG_ID.GPS_STATUS] = 1f / message.req_message_rate;
+                    client.requestedRates[MAVLink.MAVLINK_MSG_ID.RADIO_STATUS] = 1f / message.req_message_rate;
                     client.requestedRates[MAVLink.MAVLINK_MSG_ID.RC_CHANNELS_SCALED] = 1f / message.req_message_rate;
                     client.requestedRates[MAVLink.MAVLINK_MSG_ID.RC_CHANNELS_RAW] = 1f / message.req_message_rate;
                     client.requestedRates[MAVLink.MAVLINK_MSG_ID.SERVO_OUTPUT_RAW] = 1f / message.req_message_rate;
@@ -109,12 +111,14 @@ namespace Autopilot
                     client.requestedRates[MAVLink.MAVLINK_MSG_ID.LOCAL_POSITION_NED] = 1f / message.req_message_rate;
                     break;
                 case MAVLink.MAV_DATA_STREAM.RAW_SENSORS:
+                    client.requestedRates[MAVLink.MAVLINK_MSG_ID.ATTITUDE] = 1f / message.req_message_rate;
                     client.requestedRates[MAVLink.MAVLINK_MSG_ID.RAW_IMU] = 1f / message.req_message_rate;
                     client.requestedRates[MAVLink.MAVLINK_MSG_ID.GPS_RAW_INT] = 1f / message.req_message_rate;
                     client.requestedRates[MAVLink.MAVLINK_MSG_ID.GPS_STATUS] = 1f / message.req_message_rate;
                     break;
                 case MAVLink.MAV_DATA_STREAM.EXTENDED_STATUS:
                     client.requestedRates[MAVLink.MAVLINK_MSG_ID.GPS_STATUS] = 1f / message.req_message_rate;
+                    client.requestedRates[MAVLink.MAVLINK_MSG_ID.RADIO_STATUS] = 1f / message.req_message_rate;
                     //Can't find CONTROL_STATUS or AUX_STATUS
                     break;
                 case MAVLink.MAV_DATA_STREAM.RC_CHANNELS:
@@ -206,9 +210,9 @@ namespace Autopilot
         public void SendAttitude(ClientObject client)
         {
             MAVLink.mavlink_attitude_t message = new MAVLink.mavlink_attitude_t();
-            message.pitch = data.pitch;
-            message.roll = data.roll;
-            message.yaw = data.yaw;
+            message.pitch = data.radpitch;
+            message.roll = data.radroll;
+            message.yaw = data.radyaw;
             message.pitchspeed = 0;
             message.rollspeed = 0;
             message.yawspeed = 0;
@@ -231,23 +235,23 @@ namespace Autopilot
             client.SendMessage(message);
         }
 
-        public void SendRawIMU(ClientObject client)
+        public void SendGPSRaw(ClientObject client)
         {
-            MAVLink.mavlink_raw_imu_t message = new MAVLink.mavlink_raw_imu_t();
-            DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-            TimeSpan diff = DateTime.UtcNow - epoch;
-            message.time_usec = (ulong)(diff.TotalMilliseconds * 1000);
-            message.xacc = 0;
-            message.yacc = 0;
-            message.zacc = 0;
-            message.xgyro = 0;
-            message.ygyro = 0;
-            message.zgyro = 0;
-            message.xmag = 0;
-            message.ymag = 0;
-            message.zmag = 0;
-            message.id = 0;
-            message.temperature = 6000;
+            MAVLink.mavlink_gps_raw_int_t message = new MAVLink.mavlink_gps_raw_int_t();
+            message.lat = data.latitude;
+            message.lon = data.longitude;
+            message.alt = (int)data.altitude;
+            message.eph = 300;
+            message.epv = 500;
+            message.vel = 1000;
+            message.cog = 25000;
+            message.satellites_visible = 10;
+            message.alt_ellipsoid = (int)data.altitude;
+            message.h_acc = 10;
+            message.v_acc = 10;
+            message.vel_acc = 10;
+            message.hdg_acc = 10;
+            message.yaw = (ushort)data.yaw;
             client.SendMessage(message);
         }
 
@@ -276,6 +280,66 @@ namespace Autopilot
             message.satellite_elevation = ele;
             message.satellite_azimuth = azi;
             message.satellite_snr = snr;
+            client.SendMessage(message);
+        }
+
+        public void SendRawIMU(ClientObject client)
+        {
+            MAVLink.mavlink_raw_imu_t message = new MAVLink.mavlink_raw_imu_t();
+            DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            TimeSpan diff = DateTime.UtcNow - epoch;
+            message.time_usec = (ulong)(diff.TotalMilliseconds * 1000);
+            message.xacc = 0;
+            message.yacc = 0;
+            message.zacc = 0;
+            message.xgyro = 0;
+            message.ygyro = 0;
+            message.zgyro = 0;
+            message.xmag = 0;
+            message.ymag = 0;
+            message.zmag = 0;
+            message.id = 0;
+            message.temperature = 6000;
+            client.SendMessage(message);
+        }
+        public void SendRadioStatus(ClientObject client)
+        {
+            MAVLink.mavlink_radio_status_t message = new MAVLink.mavlink_radio_status_t();
+            message.rssi = 200;
+            message.remrssi = 200;
+            message.txbuf = 99;
+            message.rxerrors = 0;
+            message.@fixed = 0;
+            client.SendMessage(message);
+        }
+
+        public void SendRadioChannelsRaw(ClientObject client)
+        {
+            MAVLink.mavlink_rc_channels_t message = new MAVLink.mavlink_rc_channels_t();
+            message.rssi = 200;
+            message.chan1_raw = 1500;
+            message.chan2_raw = 1500;
+            message.chan3_raw = 1500;
+            message.chan4_raw = 1500;
+            message.chan5_raw = 1500;
+            message.chan6_raw = 1500;
+            message.chan7_raw = 1500;
+            message.chan8_raw = 1500;
+            client.SendMessage(message);
+        }
+
+        public void SendRadioChannelsScaled(ClientObject client)
+        {
+            MAVLink.mavlink_rc_channels_scaled_t message = new MAVLink.mavlink_rc_channels_scaled_t();
+            message.rssi = 200;
+            message.chan1_scaled = 5000;
+            message.chan2_scaled = 5000;
+            message.chan3_scaled = 5000;
+            message.chan4_scaled = 5000;
+            message.chan5_scaled = 5000;
+            message.chan6_scaled = 5000;
+            message.chan7_scaled = 5000;
+            message.chan8_scaled = 5000;
             client.SendMessage(message);
         }
 
