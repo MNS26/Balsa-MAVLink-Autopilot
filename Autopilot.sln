@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31424.327
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Autopilot", "Autopilot.csproj", "{30A4A751-FE82-43CE-B02D-5DA662FB6714}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Autopilot-Common", "Autopilot-Common\Autopilot-Common.csproj", "{30A4A751-FE82-43CE-B02D-5DA662FB6714}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Autopilot", "Autopilot\Autopilot.csproj", "{D58CFE4F-B2C8-4A7D-97BD-A53FBA189C95}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Autopilot-Console", "Autopilot-Console\Autopilot-Console.csproj", "{FBF88A48-0D93-47D8-9A49-69FB4A7C96BB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,8 +17,16 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{30A4A751-FE82-43CE-B02D-5DA662FB6714}.Debug|x64.ActiveCfg = Debug|x64
 		{30A4A751-FE82-43CE-B02D-5DA662FB6714}.Debug|x64.Build.0 = Debug|x64
-		{30A4A751-FE82-43CE-B02D-5DA662FB6714}.Release|x64.ActiveCfg = Release|Any CPU
-		{30A4A751-FE82-43CE-B02D-5DA662FB6714}.Release|x64.Build.0 = Release|Any CPU
+		{30A4A751-FE82-43CE-B02D-5DA662FB6714}.Release|x64.ActiveCfg = Release|x64
+		{30A4A751-FE82-43CE-B02D-5DA662FB6714}.Release|x64.Build.0 = Release|x64
+		{D58CFE4F-B2C8-4A7D-97BD-A53FBA189C95}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D58CFE4F-B2C8-4A7D-97BD-A53FBA189C95}.Debug|x64.Build.0 = Debug|Any CPU
+		{D58CFE4F-B2C8-4A7D-97BD-A53FBA189C95}.Release|x64.ActiveCfg = Release|Any CPU
+		{D58CFE4F-B2C8-4A7D-97BD-A53FBA189C95}.Release|x64.Build.0 = Release|Any CPU
+		{FBF88A48-0D93-47D8-9A49-69FB4A7C96BB}.Debug|x64.ActiveCfg = Debug|x64
+		{FBF88A48-0D93-47D8-9A49-69FB4A7C96BB}.Debug|x64.Build.0 = Debug|x64
+		{FBF88A48-0D93-47D8-9A49-69FB4A7C96BB}.Release|x64.ActiveCfg = Release|x64
+		{FBF88A48-0D93-47D8-9A49-69FB4A7C96BB}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

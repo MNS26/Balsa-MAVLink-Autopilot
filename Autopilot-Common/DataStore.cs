@@ -1,4 +1,4 @@
-﻿namespace Autopilot
+﻿namespace AutopilotCommon
 {
     public class DataStore
     {

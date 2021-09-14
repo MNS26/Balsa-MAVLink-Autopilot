@@ -6,11 +6,12 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Reflection;
 
-namespace Autopilot
+namespace AutopilotCommon
 {
     public class NetworkHandler
     {
-        private Action<string> log;
+        private Action<string> Log;
+        private ProtocolLogic protocol;
 
         //Mavlink
         private MAVLink.MavlinkParse parser = new MAVLink.MavlinkParse();
@@ -38,9 +39,35 @@ namespace Autopilot
 
         private bool running = true;
 
-        public void StartServer(Action<string> log)
+
+
+
+        public NetworkHandler(ProtocolLogic protocol, Action<string> Log)
         {
-            this.log = log;
+            this.protocol = protocol;
+            this.Log = Log;
+            RegisterConnect(protocol.ConnectEvent);
+            RegisterReceive(MAVLink.MAVLINK_MSG_ID.PARAM_REQUEST_LIST, protocol.ParamRequestList);
+            RegisterReceive(MAVLink.MAVLINK_MSG_ID.REQUEST_DATA_STREAM, protocol.RequestDataStream);
+            RegisterReceive(MAVLink.MAVLINK_MSG_ID.SYSTEM_TIME, protocol.SystemTime);
+            RegisterReceiveCommand(MAVLink.MAV_CMD.REQUEST_AUTOPILOT_CAPABILITIES, protocol.RequestAutopilot);
+            //RegisterReceiveCommand(MAVLink.MAV_C)
+            RegisterSend(MAVLink.MAVLINK_MSG_ID.VFR_HUD, protocol.SendVFRHud);
+            RegisterSend(MAVLink.MAVLINK_MSG_ID.RPM, protocol.SendRPM);
+            RegisterSend(MAVLink.MAVLINK_MSG_ID.HEARTBEAT, protocol.SendHeartbeat);
+            RegisterSend(MAVLink.MAVLINK_MSG_ID.GLOBAL_POSITION_INT, protocol.SendGPSGlobalPosition);
+            RegisterSend(MAVLink.MAVLINK_MSG_ID.GPS_RAW_INT, protocol.SendGPSRaw);
+            RegisterSend(MAVLink.MAVLINK_MSG_ID.ATTITUDE, protocol.SendAttitude);
+            RegisterSend(MAVLink.MAVLINK_MSG_ID.RAW_IMU, protocol.SendRawIMU);
+            RegisterSend(MAVLink.MAVLINK_MSG_ID.GPS_STATUS, protocol.SendGPSStatus);
+            RegisterSend(MAVLink.MAVLINK_MSG_ID.RADIO_STATUS, protocol.SendRadioStatus);
+            RegisterSend(MAVLink.MAVLINK_MSG_ID.RC_CHANNELS_SCALED, protocol.SendRadioChannelsScaled);
+            RegisterSend(MAVLink.MAVLINK_MSG_ID.RC_CHANNELS_RAW, protocol.SendRadioChannelsRaw);
+            RegisterDisconnect(protocol.DisconnectEvent);
+        }
+
+        public void StartServer()
+        {
             listener = new TcpListener(new IPEndPoint(IPAddress.Any, 5760));
             listener.Start();
             listener.BeginAcceptSocket(HandleConnect, listener);
@@ -114,7 +141,7 @@ namespace Autopilot
         {
             try
             {
-                ClientObject client = new ClientObject(this, sendEvent, log, RequestMessage);
+                ClientObject client = new ClientObject(this, sendEvent, Log, RequestMessage);
                 client.client = listener.EndAcceptTcpClient(ar);
                 client.requestedRates[MAVLink.MAVLINK_MSG_ID.HEARTBEAT] = 1f;
                 clients.Add(client);
@@ -127,14 +154,14 @@ namespace Autopilot
             {
                 if (running)
                 {
-                    log($"Failed to accept client: {ode.Message}");
+                    Log($"Failed to accept client: {ode.Message}");
                 }
             }
             catch (SocketException se)
             {
                 if (running)
                 {
-                    log($"Failed to accept client: {se.Message}");
+                    Log($"Failed to accept client: {se.Message}");
                 }
             }
             if (running)

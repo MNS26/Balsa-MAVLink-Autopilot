@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.Net.Sockets;
 
-namespace Autopilot
+namespace AutopilotCommon
 {
     public class ClientObject
     {

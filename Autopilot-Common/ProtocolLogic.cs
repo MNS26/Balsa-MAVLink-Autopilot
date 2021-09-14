@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.ComponentModel.Design.Serialization;
 
-namespace Autopilot
+namespace AutopilotCommon
 {
     public class ProtocolLogic
     {
-
         private static List<Parameter> parameters = new List<Parameter>();
 
         private long startTime;
@@ -14,10 +13,12 @@ namespace Autopilot
         private const byte componentID = 1;
         private static MAVLink.MavlinkParse parser = new MAVLink.MavlinkParse();
         private DataStore data;
+        private Action<string> Log;
 
 
-        public ProtocolLogic(DataStore data)
+        public ProtocolLogic(DataStore data, Action<string> Log)
         {
+            this.Log = Log;
             startTime = DateTime.UtcNow.Ticks;
             this.data = data;
             parameters.Add(new Parameter("RCMAP_ROLL", 0f, MAVLink.MAV_PARAM_TYPE.UINT8));
@@ -60,12 +61,12 @@ namespace Autopilot
         public void ConnectEvent(ClientObject client)
         {
             client.requestedRates[MAVLink.MAVLINK_MSG_ID.HEARTBEAT] = 0.25f;
-            Autopilot.Log("Client connected");
+            Log("Client connected");
         }
 
         public void DisconnectEvent(ClientObject client)
         {
-            Autopilot.Log("Client disconnected");
+            Log("Client disconnected");
         }
 
         public void ReceiveSetRate(ClientObject client, MAVLink.MAVLinkMessage rawMessage)
@@ -75,7 +76,7 @@ namespace Autopilot
 
         public void ParamRequestList(ClientObject client, MAVLink.MAVLinkMessage messageRaw)
         {
-            Autopilot.Log("PARAM_REQUEST_LIST");
+            Log("PARAM_REQUEST_LIST");
             MAVLink.mavlink_param_request_list_t message = (MAVLink.mavlink_param_request_list_t)messageRaw.data;
             for (int i = 0; i < parameters.Count; i++)
             {
@@ -94,7 +95,7 @@ namespace Autopilot
         {
             //TODO: Implement ALL of these.
             MAVLink.mavlink_request_data_stream_t message = (MAVLink.mavlink_request_data_stream_t)messageRaw.data;
-            Autopilot.Log($"REQUEST_DATA_STREAM {message.req_stream_id} = {message.req_message_rate}");
+            Log($"REQUEST_DATA_STREAM {message.req_stream_id} = {message.req_message_rate}");
             switch ((MAVLink.MAV_DATA_STREAM)message.req_stream_id)
             {
                 case MAVLink.MAV_DATA_STREAM.ALL:
@@ -150,25 +151,25 @@ namespace Autopilot
         public void SystemTime(ClientObject client, MAVLink.MAVLinkMessage messageRaw)
         {
             MAVLink.mavlink_system_time_t message = (MAVLink.mavlink_system_time_t)messageRaw.data;
-            Autopilot.Log($"SYSTEM_TIME {message.time_unix_usec}");
+            Log($"SYSTEM_TIME {message.time_unix_usec}");
         }
 
         public void RequestProtocolVersion(ClientObject client, MAVLink.mavlink_command_long_t command)
         {
             AckCommand(client, command, MAVLink.MAV_CMD_ACK.ERR_FAIL);
-            Autopilot.Log($"REQUEST_PROTOCOL_VERSION, FAILED, NO MAVLINK2");
+            Log($"REQUEST_PROTOCOL_VERSION, FAILED, NO MAVLINK2");
         }
 
         public void MessageInterval(ClientObject client, MAVLink.mavlink_command_long_t command)
         {
             AckCommand(client, command, MAVLink.MAV_CMD_ACK.OK);
-            Autopilot.Log($"SET_MESSAGE_INTERVAL: {(MAVLink.MAVLINK_MSG_ID)command.param1} = {command.param2}");
+            Log($"SET_MESSAGE_INTERVAL: {(MAVLink.MAVLINK_MSG_ID)command.param1} = {command.param2}");
             client.requestedRates[(MAVLink.MAVLINK_MSG_ID)command.param1] = command.param1 * 1000000;
         }
 
         public void RequestAutopilot(ClientObject client, MAVLink.mavlink_command_long_t command)
         {
-            Autopilot.Log("REQUEST AUTOPILOT");
+            Log("REQUEST AUTOPILOT");
             AckCommand(client, command, MAVLink.MAV_CMD_ACK.OK);
             MAVLink.mavlink_autopilot_version_t autopilot = new MAVLink.mavlink_autopilot_version_t();
             autopilot.capabilities |= (ulong)MAVLink.MAV_PROTOCOL_CAPABILITY.MISSION_FLOAT;
