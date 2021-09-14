@@ -1,6 +1,6 @@
-﻿using DarkLog;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design.Serialization;
 
 namespace Autopilot
 {
@@ -14,13 +14,12 @@ namespace Autopilot
         private const byte componentID = 1;
         private static MAVLink.MavlinkParse parser = new MAVLink.MavlinkParse();
         private DataStore data;
-        private ModLog log;
 
-        public ProtocolLogic(DataStore data, ModLog log)
+
+        public ProtocolLogic(DataStore data)
         {
             startTime = DateTime.UtcNow.Ticks;
             this.data = data;
-            this.log = log;
             parameters.Add(new Parameter("RCMAP_ROLL", 0f, MAVLink.MAV_PARAM_TYPE.UINT8));
             parameters.Add(new Parameter("RCMAP_PITCH", 0f, MAVLink.MAV_PARAM_TYPE.UINT8));
             parameters.Add(new Parameter("RCMAP_YAW", 0f, MAVLink.MAV_PARAM_TYPE.UINT8));
@@ -111,6 +110,7 @@ namespace Autopilot
                     client.requestedRates[MAVLink.MAVLINK_MSG_ID.LOCAL_POSITION_NED] = 1f / message.req_message_rate;
                     client.requestedRates[MAVLink.MAVLINK_MSG_ID.RPM] = 1f / message.req_message_rate;
                     client.requestedRates[MAVLink.MAVLINK_MSG_ID.AUTOPILOT_VERSION] = 1f / message.req_message_rate;
+                    client.requestedRates[MAVLink.MAVLINK_MSG_ID.VFR_HUD] = 1f / message.req_message_rate;
                     break;
                 case MAVLink.MAV_DATA_STREAM.RAW_SENSORS:
                     client.requestedRates[MAVLink.MAVLINK_MSG_ID.ATTITUDE] = 1f / message.req_message_rate;
@@ -133,6 +133,7 @@ namespace Autopilot
                     //Can't find these messages
                     break;
                 case MAVLink.MAV_DATA_STREAM.POSITION:
+                    client.requestedRates[MAVLink.MAVLINK_MSG_ID.VFR_HUD] = 1f / message.req_message_rate;
                     client.requestedRates[MAVLink.MAVLINK_MSG_ID.GLOBAL_POSITION_INT] = 1f / message.req_message_rate;
                     client.requestedRates[MAVLink.MAVLINK_MSG_ID.LOCAL_POSITION_NED] = 1f / message.req_message_rate;
                     //Can't find GLOBAL_POSITION
@@ -223,7 +224,7 @@ namespace Autopilot
             client.SendMessage(message);
         }
 
-        public void SendGPSPosition(ClientObject client)
+        public void SendGPSGlobalPosition(ClientObject client)
         {
             MAVLink.mavlink_global_position_int_t message = new MAVLink.mavlink_global_position_int_t();
             message.lat = data.latitude;
@@ -236,6 +237,18 @@ namespace Autopilot
             message.vz = 0;
             message.time_boot_ms = GetUptime();
             client.SendMessage(message);
+        }
+
+        public void SendVFRHud(ClientObject client)
+        {
+            MAVLink.mavlink_vfr_hud_t message = new MAVLink.mavlink_vfr_hud_t();
+            message.airspeed = data.iaspeed;
+            message.climb = data.cr;
+            message.alt = data.altitude;
+            message.heading = (short)data.heading;
+            //TODO
+            message.groundspeed = 0;
+            message.throttle = 0;
         }
 
         public void SendGPSRaw(ClientObject client)
@@ -318,7 +331,7 @@ namespace Autopilot
         {
             MAVLink.mavlink_radio_status_t message = new MAVLink.mavlink_radio_status_t();
             message.rssi = (byte)data.rssi;
-            message.remrssi = (byte)data.rssi;
+            message.remrssi = 200;
             message.txbuf = 99;
             message.rxerrors = 0;
             message.@fixed = 0;
@@ -328,7 +341,7 @@ namespace Autopilot
         public void SendRadioChannelsRaw(ClientObject client)
         {
             MAVLink.mavlink_rc_channels_t message = new MAVLink.mavlink_rc_channels_t();
-            message.rssi = (byte)data.rssi;
+            message.rssi = 200;
             message.chan1_raw = 1500;
             message.chan2_raw = 1500;
             message.chan3_raw = 1500;

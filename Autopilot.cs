@@ -1,24 +1,21 @@
-﻿using DarkLog;
-using FSControl;
+﻿using FSControl;
 using Modules;
 using UnityEngine;
 
 namespace Autopilot
 {
-    public class Autopilot : MonoBehaviour
+    public class Autopilot //: MonoBehaviour
     {
 
-        ModLog log;
         DataStore data;
         ProtocolLogic protocol;
         NetworkHandler handler;
 
         public void Start()
         {
-            log = new ModLog("NetworkTest");
             Log("Start!");
             data = new DataStore();
-            protocol = new ProtocolLogic(data, log);
+            protocol = new ProtocolLogic(data);
 
             handler = new NetworkHandler();
             handler.RegisterConnect(protocol.ConnectEvent);
@@ -26,9 +23,11 @@ namespace Autopilot
             handler.RegisterReceive(MAVLink.MAVLINK_MSG_ID.REQUEST_DATA_STREAM, protocol.RequestDataStream);
             handler.RegisterReceive(MAVLink.MAVLINK_MSG_ID.SYSTEM_TIME, protocol.SystemTime);
             handler.RegisterReceiveCommand(MAVLink.MAV_CMD.REQUEST_AUTOPILOT_CAPABILITIES, protocol.RequestAutopilot);
+            //handler.RegisterReceiveCommand(MAVLink.MAV_C)
+            handler.RegisterSend(MAVLink.MAVLINK_MSG_ID.VFR_HUD, protocol.SendVFRHud);
             handler.RegisterSend(MAVLink.MAVLINK_MSG_ID.RPM, protocol.SendRPM);
             handler.RegisterSend(MAVLink.MAVLINK_MSG_ID.HEARTBEAT, protocol.SendHeartbeat);
-            handler.RegisterSend(MAVLink.MAVLINK_MSG_ID.GLOBAL_POSITION_INT, protocol.SendGPSPosition);
+            handler.RegisterSend(MAVLink.MAVLINK_MSG_ID.GLOBAL_POSITION_INT, protocol.SendGPSGlobalPosition);
             handler.RegisterSend(MAVLink.MAVLINK_MSG_ID.GPS_RAW_INT, protocol.SendGPSRaw);
             handler.RegisterSend(MAVLink.MAVLINK_MSG_ID.ATTITUDE, protocol.SendAttitude);
             handler.RegisterSend(MAVLink.MAVLINK_MSG_ID.RAW_IMU, protocol.SendRawIMU);
@@ -37,9 +36,9 @@ namespace Autopilot
             handler.RegisterSend(MAVLink.MAVLINK_MSG_ID.RC_CHANNELS_SCALED, protocol.SendRadioChannelsScaled);
             handler.RegisterSend(MAVLink.MAVLINK_MSG_ID.RC_CHANNELS_RAW, protocol.SendRadioChannelsRaw);
             handler.RegisterDisconnect(protocol.DisconnectEvent);
-            handler.StartServer(log.Log);
+            handler.StartServer(Autopilot.Log);
 
-            DontDestroyOnLoad(this);
+            //DontDestroyOnLoad(this);
         }
 
         //running this as fast as possible
@@ -53,6 +52,12 @@ namespace Autopilot
                 data.pitch = 0;
                 data.roll = 0;
                 data.yaw = 0;
+                data.cr = 0;
+                data.dth = 0;
+                data.accx = 0;
+                data.accy = 0;
+                data.accz = 0;
+                data.rssi = 0;
                 data.avrrpm = 0;
                 data.latitude = 0;
                 data.longitude = 0;
@@ -87,7 +92,13 @@ namespace Autopilot
             data.altitude = v.Physics.Altitude * 1000f;
             data.iaspeed = v.Physics.Speed;
             data.heading = v.Physics.HeadingDegs;
+            data.cr = v.Physics.VerticalSpeed;
+
+            data.accx = v.Physics.Acceleration.x;
+            data.accy = v.Physics.Acceleration.y;
+            data.accz = v.Physics.Acceleration.z;
             data.name = v.name;
+
             //Balsa is YUp
             //Mavlink is degE7, 1° = 111 km 1E7/111000 = ~90
             data.latitude = (int)(FloatingOrigin.GetAbsoluteWPos(v.transform.position).z * 90.09f);

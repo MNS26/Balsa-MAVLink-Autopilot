@@ -9,14 +9,19 @@
         public float radpitch;
         public float radroll;
         public float radyaw;
-        public float iaspeed;
 
+        public float accx;
+        public float accy;
+        public float accz;
+
+        public float cr;
+        public float iaspeed;
         public float rpm;
         public float avrrpm;
-        public float batter1;
-
+        public float battery1;
         public float heading;
         public float altitude;
+        public float dth;
 
         public int latitude;
         public int longitude;

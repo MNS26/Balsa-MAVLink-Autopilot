@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{30A4A751-FE82-43CE-B02D-5DA662FB6714}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Autopilot</RootNamespace>
     <AssemblyName>Autopilot</AssemblyName>
@@ -84,6 +84,7 @@
   <ItemGroup>
     <Compile Include="ClientObject.cs" />
     <Compile Include="DataStore.cs" />
+    <Compile Include="FPVCam.cs" />
     <Compile Include="Loader.cs" />
     <Compile Include="NetworkHandler.cs" />
     <Compile Include="Autopilot.cs" />
