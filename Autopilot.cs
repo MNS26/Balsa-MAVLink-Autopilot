@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Autopilot
 {
-    public class Autopilot //: MonoBehaviour
+    public class Autopilot : MonoBehaviour
     {
 
         DataStore data;
@@ -38,7 +38,7 @@ namespace Autopilot
             handler.RegisterDisconnect(protocol.DisconnectEvent);
             handler.StartServer(Autopilot.Log);
 
-            //DontDestroyOnLoad(this);
+            DontDestroyOnLoad(this);
         }
 
         //running this as fast as possible

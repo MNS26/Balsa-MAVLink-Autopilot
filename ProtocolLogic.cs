@@ -34,8 +34,8 @@ namespace Autopilot
             parameters.Add(new Parameter("INS_ACCOFFS_Y", 0f, MAVLink.MAV_PARAM_TYPE.UINT8));
             parameters.Add(new Parameter("INS_ACCOFFS_Z", 0f, MAVLink.MAV_PARAM_TYPE.UINT8));
             parameters.Add(new Parameter("FLTMODE6", 0f, MAVLink.MAV_PARAM_TYPE.UINT8));
-            parameters.Add(new Parameter("FLTMODE5", 0f, MAVLink.MAV_PARAM_TYPE.UINT8));
-            parameters.Add(new Parameter("FLTMODE4", 0f, MAVLink.MAV_PARAM_TYPE.UINT8));
+            parameters.Add(new Parameter("FLTMODE5", 1f, MAVLink.MAV_PARAM_TYPE.UINT8));
+            parameters.Add(new Parameter("FLTMODE4", 2f, MAVLink.MAV_PARAM_TYPE.UINT8));
             parameters.Add(new Parameter("FLTMODE3", 0f, MAVLink.MAV_PARAM_TYPE.UINT8));
             parameters.Add(new Parameter("FLTMODE2", 0f, MAVLink.MAV_PARAM_TYPE.UINT8));
             parameters.Add(new Parameter("FLTMODE1", 0f, MAVLink.MAV_PARAM_TYPE.UINT8));
