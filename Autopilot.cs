@@ -94,7 +94,7 @@ namespace Autopilot
             data.longitude = (int)(FloatingOrigin.GetAbsoluteWPos(v.transform.position).x * 90.09f);
 
             //controller stuff
-            data.rssi = map(v.SignalStrength.SignalDegradation, 0, 1, 0, 255);
+            data.rssi = map(v.SignalStrength.SignalDegradation, 0, 1, 255, 0);
 
 
         }
