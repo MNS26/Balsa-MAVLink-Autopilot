@@ -103,7 +103,7 @@ namespace Autopilot
         {
         }
 
-        public float map(float value, float fromLow, float fromHigh, float toLow, float toHigh)
+        private float map(float value, float fromLow, float fromHigh, float toLow, float toHigh)
         {
             return (value - fromLow) * (toHigh - toLow) / (fromHigh - fromLow) + toLow;
         }
