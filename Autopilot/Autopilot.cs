@@ -84,9 +84,9 @@ namespace Autopilot
                 data.avrrpm *= 1.66667f;
 }
 
-            var armed = InputSettings.EngineAutoStart.tDown;
+            var armed = InputSettings.EngineAutoStart.button;
 
-            if (armed > 0)
+            if (armed.GetButtonDown())
             {
                 data.armed = (int)MAVLink.MAV_MODE.MANUAL_ARMED;
             }
