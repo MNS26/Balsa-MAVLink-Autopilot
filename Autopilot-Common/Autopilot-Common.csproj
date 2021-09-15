@@ -110,8 +110,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MAVLink, Version=1.0.0.0, Culture=neutral, PublicKeyToken=38326cb7e06851fc, processorArchitecture=MSIL">
-      <HintPath>packages\MAVLink.1.0.7\lib\net461\MAVLink.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\packages\MAVLink.1.0.7\lib\net461\MAVLink.dll</HintPath>
     </Reference>
     <Reference Include="System" />
   </ItemGroup>

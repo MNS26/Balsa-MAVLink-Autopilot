@@ -44,7 +44,7 @@ namespace Autopilot
         [BalsaAddonFinalize]
         public static void BalsaFinalize()
         {
-            
+            go.DestroyGameObject();   
         }
     }
 }

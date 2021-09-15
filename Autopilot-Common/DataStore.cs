@@ -22,6 +22,7 @@
         public float heading;
         public float altitude;
         public float dth;
+        public int armed;
 
         public int latitude;
         public int longitude;

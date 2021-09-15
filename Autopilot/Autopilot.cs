@@ -1,13 +1,14 @@
 ﻿using FSControl;
+using Tutorials;
 using Modules;
 using UnityEngine;
 using AutopilotCommon;
+using GameEvents;
 
 namespace Autopilot
 {
     public class Autopilot : MonoBehaviour
     {
-
         DataStore data;
         ProtocolLogic protocol;
         NetworkHandler handler;
@@ -19,7 +20,26 @@ namespace Autopilot
             protocol = new ProtocolLogic(data, Log);
             handler = new NetworkHandler(protocol, Log);
             handler.StartServer();
+            //If you want to stick around
+            //GameEvents.Vehicles.OnVehicleSpawned.AddListener(VehicleSpawned);
             DontDestroyOnLoad(this);
+        }
+
+
+        private void VehicleSpawned(Vehicle vehicle)
+        {
+            Autopilot.Log("OVS Main");
+            if (!vehicle.gameObject.TryGetComponent(out AutopilotComponent ac))
+            {
+                Log("Adding autopilot controller to " + vehicle.name);
+                AutopilotComponent ac2 = vehicle.gameObject.AddComponent(typeof(AutopilotComponent)) as AutopilotComponent;
+                ac2.OnVehicleSpawn(vehicle);
+
+            }
+            else
+            {
+                Log("Autopilot controller already exists for " + vehicle.name);
+            }
         }
 
         //running this as fast as possible
@@ -27,6 +47,7 @@ namespace Autopilot
         {
             if (!GameLogic.inGame || !GameLogic.SceneryLoaded || GameLogic.LocalPlayerVehicle == null || !GameLogic.LocalPlayerVehicle.InitComplete)
             {
+                data.ch1 = data.ch2 = data.ch3 = data.ch4 = data.ch5 = data.ch6 = data.ch7 = data.ch8 = 1500;
                 data.radpitch = 0;
                 data.radroll = 0;
                 data.radyaw = 0;
@@ -39,6 +60,7 @@ namespace Autopilot
                 data.accy = 0;
                 data.accz = 0;
                 data.rssi = 0;
+                data.armed = (int)MAVLink.MAV_MODE.MANUAL_DISARMED;
                 data.avrrpm = 0;
                 data.latitude = 0;
                 data.longitude = 0;
@@ -60,7 +82,20 @@ namespace Autopilot
                 }
                 data.avrrpm /= props.Count;
                 data.avrrpm *= 1.66667f;
+}
+
+            var armed = InputSettings.EngineAutoStart.tDown;
+
+            if (armed > 0)
+            {
+                data.armed = (int)MAVLink.MAV_MODE.MANUAL_ARMED;
             }
+            else
+            {
+                data.armed = (int)MAVLink.MAV_MODE.MANUAL_DISARMED;
+
+            }
+
 
             data.radpitch = FSControlUtil.GetVehiclePitch(v);
             data.pitch = data.radpitch * Mathf.Rad2Deg;
@@ -88,7 +123,14 @@ namespace Autopilot
             //controller stuff
             data.rssi = map(v.SignalStrength.SignalDegradation, 0, 1, 255, 0);
 
-
+            data.ch1 = 1500 + InputSettings.Axis_Roll.GetAxis() * 500;
+            data.ch2 = 1500 + InputSettings.Axis_Pitch.GetAxis() * 500;
+            data.ch3 = 1500 + InputSettings.Axis_Throttle.GetAxis() * 500;
+            data.ch4 = 1500 + InputSettings.Axis_Yaw.GetAxis() *500;
+            data.ch5 = 1500 + InputSettings.Axis_A.GetAxis() * 500;
+            data.ch6 = 1500 + InputSettings.Axis_B.GetAxis() * 500;
+            data.ch7 = 1500 + InputSettings.Axis_C.GetAxis() * 500;
+            data.ch8 = 1500 + InputSettings.Axis_D.GetAxis() * 500;
         }
 
         public void FixedUpdate()
