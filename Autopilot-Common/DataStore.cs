@@ -9,11 +9,6 @@
         public float radpitch;
         public float radroll;
         public float radyaw;
-
-        public float accx;
-        public float accy;
-        public float accz;
-
         public float cr;
         public float iaspeed;
         public float rpm;
@@ -22,17 +17,41 @@
         public float heading;
         public float altitude;
         public float dth;
-        public int armed;
-
+        public short armed;
         public int latitude;
         public int longitude;
-
         public string name;
 
+
+        //IMU
+        public float gyrox;
+        public float gyroy;
+        public float gyroz;
+        public float accx;
+        public float accy;
+        public float accz;
+        public float magx;
+        public float magy;
+        public float magz;
+
+        //gyro velocity
+        public float currentGVelx;
+        public float lastGVelx;
+        public float currentGVely;
+        public float lastGVely;
+        public float currentGVelz;
+        public float lastGVelz;
+        //accel velocity
+        public float currentAVelx;
+        public float lastAVelx;
+        public float currentAVely;
+        public float lastAVely;
+        public float currentAVelz;
+        public float lastAVelz;
+
+
         //controller
-
         public float rssi;
-
         public float ch1;
         public float ch2;
         public float ch3;

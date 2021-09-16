@@ -4,7 +4,6 @@ using Modules;
 using UnityEngine;
 using AutopilotCommon;
 using GameEvents;
-
 namespace Autopilot
 {
     public class Autopilot : MonoBehaviour
@@ -68,9 +67,75 @@ namespace Autopilot
                 data.heading = 0;
                 data.iaspeed = 0;
                 data.name = "";
+
+                data.magx = Vector3.Dot(new Vector3(0, 0, 1), new Vector3(0, 0, 1)) * 500;
+                data.magy = Vector3.Dot(new Vector3(0, 0, 0), new Vector3(0, 0, 1)) * 500;
+                data.magz = Vector3.Dot(new Vector3(0, 0, 0), new Vector3(0, 0, 1)) * 500;
+                data.currentGVelx = 0;
+                data.currentGVely = 0;
+                data.currentGVelz = 0;
+                data.lastGVelx = 0;
+                data.lastGVely = 0;
+                data.lastGVelz = 0;
+                data.gyrox = 0;
+                data.gyroy = 0;
+                data.gyroz = 0;
+                data.currentAVelx = 0;
+                data.currentAVely = 0;
+                data.currentAVelz = 0;
+                data.lastAVelx = 0;
+                data.lastAVely = 0;
+                data.lastAVelz = 0;
+                data.accx = 0;
+                data.accy = 0;
+                data.accz = 0;
                 return;
             }
             Vehicle v = GameLogic.LocalPlayerVehicle;
+
+            data.radpitch = FSControlUtil.GetVehiclePitch(v); data.pitch = data.radpitch * Mathf.Rad2Deg;
+            data.radroll = FSControlUtil.GetVehicleRoll(v); data.roll = data.radroll * Mathf.Rad2Deg;
+            data.radyaw = FSControlUtil.GetVehicleYaw(v); data.yaw = data.radyaw * Mathf.Rad2Deg;
+
+
+            //Metres -> mm
+            data.altitude = v.Physics.Altitude * 1000f;
+            data.iaspeed = v.Physics.Speed;
+            data.heading = v.Physics.HeadingDegs;
+            data.cr = v.Physics.VerticalSpeed;
+            data.name = v.transform.name;
+
+            //IMU
+            data.magx = Vector3.Dot(v.transform.forward, new Vector3(-1, 0, 0)) * 500; //good
+            data.magy = Vector3.Dot(v.transform.forward, new Vector3(0, -1, 0)) * 500; //good
+            data.magz = Vector3.Dot(v.transform.forward, new Vector3(0, 0, 1)) * 500; //good
+
+            data.currentGVelx = v.Physics.AngularVelocity.x * 1000;
+            data.currentGVely = v.Physics.AngularVelocity.y * 1000;
+            data.currentGVelz = v.Physics.AngularVelocity.z * 1000;
+            data.gyrox = (data.currentGVelx - data.lastGVelx) / Time.deltaTime;
+            data.gyroy = (data.currentGVely - data.lastGVely) / Time.deltaTime;
+            data.gyroz = (data.currentGVelz - data.lastGVelz) / Time.deltaTime;
+            data.lastGVelx = data.currentGVelx;
+            data.lastGVely = data.currentGVely;
+            data.lastGVelz = data.currentGVelz;
+
+            data.currentAVelx = v.Physics.Velocity.x * 1000;
+            data.currentAVely = v.Physics.Velocity.y * 1000;
+            data.currentAVelz = v.Physics.Velocity.z * 1000;
+            data.accx = (data.currentAVelx - data.lastAVelx) / Time.deltaTime;
+            data.accy = (data.currentAVely - data.lastAVely) / Time.deltaTime;
+            data.accz = (data.currentAVelz - data.lastAVelz) / Time.deltaTime;
+            data.lastAVelx = data.currentAVelx;
+            data.lastAVely = data.currentAVely;
+            data.lastAVelz = data.currentAVelz;
+
+
+
+            //Balsa is YUp
+            //Mavlink is degE7, 1° = 111 km 1E7/111000 = ~90
+            data.latitude = (int)(FloatingOrigin.GetAbsoluteWPos(v.transform.position).z * 90.09f);
+            data.longitude = (int)(FloatingOrigin.GetAbsoluteWPos(v.transform.position).x * 90.09f);
 
             var props = v.GetModules<Propeller>();
             if (props.Count != 0)
@@ -82,43 +147,17 @@ namespace Autopilot
                 }
                 data.avrrpm /= props.Count;
                 data.avrrpm *= 1.66667f;
-}
+            }
 
-            var armed = InputSettings.EngineAutoStart.button;
-
-            if (armed.GetButtonDown())
+            if (InputSettings.EngineAutoStart.button.GetButtonDown())
             {
-                data.armed = (int)MAVLink.MAV_MODE.MANUAL_ARMED;
+                data.armed = (short)MAVLink.MAV_MODE.MANUAL_ARMED;
             }
             else
             {
-                data.armed = (int)MAVLink.MAV_MODE.MANUAL_DISARMED;
-
+                data.armed = (short)MAVLink.MAV_MODE.MANUAL_DISARMED;
             }
 
-
-            data.radpitch = FSControlUtil.GetVehiclePitch(v);
-            data.pitch = data.radpitch * Mathf.Rad2Deg;
-            data.radroll = FSControlUtil.GetVehicleRoll(v);
-            data.roll = data.radroll * Mathf.Rad2Deg;
-            data.radyaw = FSControlUtil.GetVehicleYaw(v);
-            data.yaw = data.radyaw * Mathf.Rad2Deg;
-
-            //Metres -> mm
-            data.altitude = v.Physics.Altitude * 1000f;
-            data.iaspeed = v.Physics.Speed;
-            data.heading = v.Physics.HeadingDegs;
-            data.cr = v.Physics.VerticalSpeed;
-
-            data.accx = v.Physics.Acceleration.x;
-            data.accy = v.Physics.Acceleration.y;
-            data.accz = v.Physics.Acceleration.z;
-            data.name = v.name;
-
-            //Balsa is YUp
-            //Mavlink is degE7, 1° = 111 km 1E7/111000 = ~90
-            data.latitude = (int)(FloatingOrigin.GetAbsoluteWPos(v.transform.position).z * 90.09f);
-            data.longitude = (int)(FloatingOrigin.GetAbsoluteWPos(v.transform.position).x * 90.09f);
 
             //controller stuff
             data.rssi = map(v.SignalStrength.SignalDegradation, 0, 1, 255, 0);
@@ -126,7 +165,7 @@ namespace Autopilot
             data.ch1 = 1500 + InputSettings.Axis_Roll.GetAxis() * 500;
             data.ch2 = 1500 + InputSettings.Axis_Pitch.GetAxis() * 500;
             data.ch3 = 1500 + InputSettings.Axis_Throttle.GetAxis() * 500;
-            data.ch4 = 1500 + InputSettings.Axis_Yaw.GetAxis() *500;
+            data.ch4 = 1500 + InputSettings.Axis_Yaw.GetAxis() * 500;
             data.ch5 = 1500 + InputSettings.Axis_A.GetAxis() * 500;
             data.ch6 = 1500 + InputSettings.Axis_B.GetAxis() * 500;
             data.ch7 = 1500 + InputSettings.Axis_C.GetAxis() * 500;

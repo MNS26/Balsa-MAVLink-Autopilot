@@ -13,33 +13,33 @@ namespace AutopilotCommon
         private static MAVLink.MavlinkParse parser = new MAVLink.MavlinkParse();
         private DataStore data;
         private Action<string> Log;
-        
-        /*
-        FLIGHTMODES
 
-        0 = MANUAL
-        1 = CIRCLE
-        2 = STABILIZE
-        3 = TRAINING
-        4 = ACRO
-        5 = FBWA
-        6 = FBWB
-        7 = CRUISE
-        8 = AUTOTUNE
-        9 = UNKNOW: 9
-        10 = AUTO
-        11 = RTL
-        12 = LOITER
-        13 = UNKNOWN: 13
-        14 = AVOID_ADSB
-        15 = GUIDED
-        16 = UNKNOWN: 16
-        17 = QSTABILIZE
-        18 = QHOVER
-        19 = QLOITER
-        20 = QLAND
-        21 = QRTL
-         */
+        /*
+       FLIGHTMODES
+
+       0 = MANUAL
+       1 = CIRCLE
+       2 = STABILIZE
+       3 = TRAINING
+       4 = ACRO
+       5 = FBWA
+       6 = FBWB
+       7 = CRUISE
+       8 = AUTOTUNE
+       10 = AUTO
+       11 = RTL
+       12 = LOITER
+       14 = AVOID_ADSB
+       15 = GUIDED
+       17 = QSTABILIZE
+       18 = QHOVER
+       19 = QLOITER
+       20 = QLAND
+       21 = QRTL
+       22 = QAUTOTUNE
+       23 = QACRO
+       24 = THERMAL
+        */
 
         public ProtocolLogic(DataStore data, Action<string> Log)
         {
@@ -70,6 +70,15 @@ namespace AutopilotCommon
             parameters.Add(new Parameter("RC4_MAX", 2000f, MAVLink.MAV_PARAM_TYPE.UINT8));
             parameters.Add(new Parameter("RC4_TRIM", 0f, MAVLink.MAV_PARAM_TYPE.UINT8));
             parameters.Add(new Parameter("RC4_REV", 0f, MAVLink.MAV_PARAM_TYPE.UINT8));
+
+            parameters.Add(new Parameter("FLTMODE_CH:", 0f, MAVLink.MAV_PARAM_TYPE.UINT8));
+            parameters.Add(new Parameter("FLTMODE1", 0f, MAVLink.MAV_PARAM_TYPE.UINT8));
+            parameters.Add(new Parameter("FLTMODE2", 5f, MAVLink.MAV_PARAM_TYPE.UINT8));
+            parameters.Add(new Parameter("FLTMODE3", 7f, MAVLink.MAV_PARAM_TYPE.UINT8));
+            parameters.Add(new Parameter("FLTMODE4", 15f, MAVLink.MAV_PARAM_TYPE.UINT8));
+            parameters.Add(new Parameter("FLTMODE5", 11f, MAVLink.MAV_PARAM_TYPE.UINT8));
+            parameters.Add(new Parameter("FLTMODE6", 21f, MAVLink.MAV_PARAM_TYPE.UINT8));
+
             parameters.Add(new Parameter("COMPASS_USE:", 0f, MAVLink.MAV_PARAM_TYPE.INT8));
             parameters.Add(new Parameter("COMPASS_USE:2", 0f, MAVLink.MAV_PARAM_TYPE.INT8));
             parameters.Add(new Parameter("COMPASS_USE:3", 0f, MAVLink.MAV_PARAM_TYPE.INT8));
@@ -87,21 +96,18 @@ namespace AutopilotCommon
             parameters.Add(new Parameter("COMPASS_OFS3_Y", 0f, MAVLink.MAV_PARAM_TYPE.UINT8));
             parameters.Add(new Parameter("COMPASS_OFS3_Z", 0f, MAVLink.MAV_PARAM_TYPE.UINT8));
             parameters.Add(new Parameter("COMPASS_DEC", 0f, MAVLink.MAV_PARAM_TYPE.UINT8));
+
+            parameters.Add(new Parameter("AHRS_ORIENTATION", 0f, MAVLink.MAV_PARAM_TYPE.UINT8));
+            //parameters.Add(new Parameter("AHRS_GPS_USE", 1f, MAVLink.MAV_PARAM_TYPE.UINT8));
             parameters.Add(new Parameter("INS_ACCOFFS_X", 0f, MAVLink.MAV_PARAM_TYPE.UINT8));
             parameters.Add(new Parameter("INS_ACCOFFS_Y", 0f, MAVLink.MAV_PARAM_TYPE.UINT8));
             parameters.Add(new Parameter("INS_ACCOFFS_Z", 0f, MAVLink.MAV_PARAM_TYPE.UINT8));
-            parameters.Add(new Parameter("FLTMODE1", 0f, MAVLink.MAV_PARAM_TYPE.UINT8));
-            parameters.Add(new Parameter("FLTMODE2", 5f, MAVLink.MAV_PARAM_TYPE.UINT8));
-            parameters.Add(new Parameter("FLTMODE3", 7f, MAVLink.MAV_PARAM_TYPE.UINT8));
-            parameters.Add(new Parameter("FLTMODE4", 15f, MAVLink.MAV_PARAM_TYPE.UINT8));
-            parameters.Add(new Parameter("FLTMODE5", 11f, MAVLink.MAV_PARAM_TYPE.UINT8));
-            parameters.Add(new Parameter("FLTMODE6", 21f, MAVLink.MAV_PARAM_TYPE.UINT8));
+
             parameters.Add(new Parameter("BATT_MONITOR", 1f, MAVLink.MAV_PARAM_TYPE.UINT8));
             parameters.Add(new Parameter("ARMING_CHECK", 0f, MAVLink.MAV_PARAM_TYPE.UINT8));
             parameters.Add(new Parameter("MNT_RC_IN_ROLL", 0f, MAVLink.MAV_PARAM_TYPE.UINT8));
             parameters.Add(new Parameter("MNT_RC_IN_PAN", 0f, MAVLink.MAV_PARAM_TYPE.UINT8));
             parameters.Add(new Parameter("MNT_RC_IN_TILT", 0f, MAVLink.MAV_PARAM_TYPE.UINT8));
-            parameters.Add(new Parameter("AHRS_ORIENTATION", 0f, MAVLink.MAV_PARAM_TYPE.UINT8));
         }
 
         public void ConnectEvent(ClientObject client)
@@ -145,7 +151,6 @@ namespace AutopilotCommon
             switch ((MAVLink.MAV_DATA_STREAM)message.req_stream_id)
             {
                 case MAVLink.MAV_DATA_STREAM.ALL:
-
                     client.requestedRates[MAVLink.MAVLINK_MSG_ID.ATTITUDE] = 1f / message.req_message_rate;
                     client.requestedRates[MAVLink.MAVLINK_MSG_ID.RAW_IMU] = 1f / message.req_message_rate;
                     client.requestedRates[MAVLink.MAVLINK_MSG_ID.GPS_RAW_INT] = 1f / message.req_message_rate;
@@ -203,7 +208,9 @@ namespace AutopilotCommon
 
         public void RequestProtocolVersion(ClientObject client, MAVLink.mavlink_command_long_t command)
         {
-            AckCommand(client, command, MAVLink.MAV_CMD_ACK.ERR_FAIL);
+            AckCommand(client, command, MAVLink.MAV_CMD_ACK.OK);
+            //MAVLink.mavlink_v2_extension_t message = new MAVLink.mavlink_v2_extension_t();
+            //message.target_system
             Log($"REQUEST_PROTOCOL_VERSION, FAILED, NO MAVLINK2");
         }
 
@@ -353,15 +360,15 @@ namespace AutopilotCommon
             DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
             TimeSpan diff = DateTime.UtcNow - epoch;
             message.time_usec = (ulong)(diff.TotalMilliseconds * 1000);
-            message.xacc = 0;
-            message.yacc = 0;
-            message.zacc = 0;
-            message.xgyro = 0;
-            message.ygyro = 0;
-            message.zgyro = 0;
-            message.xmag = 0;
-            message.ymag = 0;
-            message.zmag = 0;
+            message.xacc = (short)data.accx;
+            message.yacc = (short)data.accy;
+            message.zacc = (short)data.accz;
+            message.xgyro = (short)data.gyrox;
+            message.ygyro = (short)data.gyroy;
+            message.zgyro = (short)data.gyroz;
+            message.xmag = (short)data.magx;
+            message.ymag = (short)data.magy;
+            message.zmag = (short)data.magz;
             message.id = 0;
             message.temperature = 6000;
             client.SendMessage(message);
