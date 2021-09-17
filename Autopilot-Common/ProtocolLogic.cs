@@ -523,6 +523,9 @@ namespace AutopilotCommon
             parameters.Add(new Parameter("CAM_RC_BTN_DELAY", 0f, MAVLink.MAV_PARAM_TYPE.UINT8));
             parameters.Add(new Parameter("CAM_RC_MDE_DELAY", 0f, MAVLink.MAV_PARAM_TYPE.UINT8));
             parameters.Add(new Parameter("CAM_RC_CONTROL", 0f, MAVLink.MAV_PARAM_TYPE.UINT8));
+            parameters.Add(new Parameter("MNT_RC_IN_ROLL", 0f, MAVLink.MAV_PARAM_TYPE.UINT8));
+            parameters.Add(new Parameter("MNT_RC_IN_PAN", 0f, MAVLink.MAV_PARAM_TYPE.UINT8));
+            parameters.Add(new Parameter("MNT_RC_IN_TILT", 0f, MAVLink.MAV_PARAM_TYPE.UINT8));
             parameters.Add(new Parameter("CHUTE_ENABLED", 0f, MAVLink.MAV_PARAM_TYPE.UINT8));
             parameters.Add(new Parameter("CHUTE_TYPE", 0f, MAVLink.MAV_PARAM_TYPE.UINT8));
             parameters.Add(new Parameter("CHUTE_SERVO_ON", 0f, MAVLink.MAV_PARAM_TYPE.UINT8));
