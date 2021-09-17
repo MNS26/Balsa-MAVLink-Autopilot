@@ -53,7 +53,7 @@ namespace AutopilotCommon
             RegisterReceiveCommand(MAVLink.MAV_CMD.REQUEST_AUTOPILOT_CAPABILITIES, protocol.RequestAutopilot);
             //RegisterReceiveCommand(MAVLink.MAV_C)
             RegisterSend(MAVLink.MAVLINK_MSG_ID.VFR_HUD, protocol.SendVFRHud);
-            RegisterSend(MAVLink.MAVLINK_MSG_ID.RPM, protocol.SendRPM);
+            //RegisterSend(MAVLink.MAVLINK_MSG_ID.RAW_RPM, protocol.SendRPM);
             RegisterSend(MAVLink.MAVLINK_MSG_ID.HEARTBEAT, protocol.SendHeartbeat);
             RegisterSend(MAVLink.MAVLINK_MSG_ID.GLOBAL_POSITION_INT, protocol.SendGPSGlobalPosition);
             RegisterSend(MAVLink.MAVLINK_MSG_ID.GPS_RAW_INT, protocol.SendGPSRaw);
