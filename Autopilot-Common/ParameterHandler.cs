@@ -41,7 +41,7 @@ namespace AutopilotCommon
                             string valuePart = currentLine.Substring(indexOfEquals + 1);
                             float valueFloat = float.Parse(valuePart);
                             MAVLink.MAV_PARAM_TYPE paramType = (MAVLink.MAV_PARAM_TYPE)Enum.Parse(typeof(MAVLink.MAV_PARAM_TYPE), typePart);
-                            SetParameter(valuePart,valueFloat,paramType);
+                            SetParameter(idPart, valueFloat, paramType);
                         }
                     }
                 }
@@ -276,7 +276,6 @@ namespace AutopilotCommon
             SetParameter("AHRS_YAW_P", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
             SetParameter("AHRS_RP_P", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
             SetParameter("AHRS_WIND_MAX", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
-            SetParameter("AHRS_WIND_MAX", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
             SetParameter("AHRS_TRIM_Y", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
             SetParameter("AHRS_TRIM_Z", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
             SetParameter("AHRS_ORIENTATION", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
@@ -425,28 +424,6 @@ namespace AutopilotCommon
             SetParameter("BATT5_FS_LOW_ACT", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
             SetParameter("BATT5_FS_CRT_ACT", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
             SetParameter("BATT5_ARM_VOLT", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
-            SetParameter("BATT2_ARM_MAH", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
-            SetParameter("BATT5_OPTIONS", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
-            SetParameter("BATT5_VOLT_PIN", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
-            SetParameter("BATT5_CURR_PIN", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
-            SetParameter("BATT5_VOLT_MULT", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
-            SetParameter("BATT5_AMP_PERVLT", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
-            SetParameter("BATT5_AMP_OFFSET", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
-            SetParameter("BATT5_I2C_BUS", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
-            SetParameter("BATT5_I2C_ADDR", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
-            SetParameter("BATT5_MONITOR", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
-            SetParameter("BATT5_CAPACITY", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
-            SetParameter("BATT5_WATT_MAX", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
-            SetParameter("BATT5_SERIAL_NUM", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
-            SetParameter("BATT5_LOW_TIMER", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
-            SetParameter("BATT5_FS_VOLTSRC", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
-            SetParameter("BATT5_LOW_VOLT", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
-            SetParameter("BATT5_LOW_MAH", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
-            SetParameter("BATT5_CRT_VOLT", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
-            SetParameter("BATT5_CRT_MAH", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
-            SetParameter("BATT5_FS_LOW_ACT", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
-            SetParameter("BATT5_FS_CRT_ACT", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
-            SetParameter("BATT5_ARM_VOLT", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
             SetParameter("BATT5_ARM_MAH", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
             SetParameter("BATT5_OPTIONS", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
             SetParameter("BATT5_VOLT_PIN", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
@@ -493,8 +470,8 @@ namespace AutopilotCommon
             SetParameter("BATT7_ARM_VOLT", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
             SetParameter("BATT7_ARM_MAH", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
             SetParameter("BATT_OPTIONS", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
-            SetParameter("BATT2_VOLT_PIN", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
-            SetParameter("BATT72_CURR_PIN", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
+            SetParameter("BATT7_VOLT_PIN", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
+            SetParameter("BATT7_CURR_PIN", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
             SetParameter("BATT7_VOLT_MULT", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
             SetParameter("BATT7_AMP_PERVLT", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
             SetParameter("BATT7_AMP_OFFSET", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);

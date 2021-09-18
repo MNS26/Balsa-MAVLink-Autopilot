@@ -381,9 +381,11 @@ namespace AutopilotCommon
         public void SetParameter(ClientObject client, MAVLink.MAVLinkMessage messageRaw)
         {
             MAVLink.mavlink_param_set_t message = (MAVLink.mavlink_param_set_t)messageRaw.data;
-            string param_id = Encoding.UTF8.GetString(message.param_id);
+            string param_id = Encoding.UTF8.GetString(message.param_id).Replace("\0", String.Empty);
             parameters.SetParameter(param_id, message.param_value, (MAVLink.MAV_PARAM_TYPE)message.param_type);
             Parameter p = parameters.GetParameter(param_id);
+            Log($"SET PARAMETER: {p.id} = {p.value}");
+            //Reply to parameter verifying we received it
             MAVLink.mavlink_param_value_t sendMessage = new MAVLink.mavlink_param_value_t
             {
                 param_id = p.GetIDBytes(),
