@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using System.Reflection;
 
 namespace AutopilotCommon
 {
@@ -50,8 +49,8 @@ namespace AutopilotCommon
             RegisterReceive(MAVLink.MAVLINK_MSG_ID.PARAM_REQUEST_LIST, protocol.ParamRequestList);
             RegisterReceive(MAVLink.MAVLINK_MSG_ID.REQUEST_DATA_STREAM, protocol.RequestDataStream);
             RegisterReceive(MAVLink.MAVLINK_MSG_ID.SYSTEM_TIME, protocol.SystemTime);
+            RegisterReceive(MAVLink.MAVLINK_MSG_ID.PARAM_SET, protocol.SetParameter);
             RegisterReceiveCommand(MAVLink.MAV_CMD.REQUEST_AUTOPILOT_CAPABILITIES, protocol.RequestAutopilot);
-            //RegisterReceiveCommand(MAVLink.MAV_C)
             RegisterSend(MAVLink.MAVLINK_MSG_ID.VFR_HUD, protocol.SendVFRHud);
             //RegisterSend(MAVLink.MAVLINK_MSG_ID.RAW_RPM, protocol.SendRPM);
             RegisterSend(MAVLink.MAVLINK_MSG_ID.HEARTBEAT, protocol.SendHeartbeat);

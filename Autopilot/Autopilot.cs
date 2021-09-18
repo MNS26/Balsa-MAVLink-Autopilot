@@ -16,7 +16,9 @@ namespace Autopilot
         {
             Log("Start!");
             data = new DataStore();
-            protocol = new ProtocolLogic(data, Log);
+            ParameterHandler parameters;
+            parameters = new ParameterHandler(Application.dataPath + "Addons/Autopilot/Parameters.dat");
+            protocol = new ProtocolLogic(data, Log, parameters);
             handler = new NetworkHandler(protocol, Log);
             handler.StartServer();
             //If you want to stick around
