@@ -21,6 +21,8 @@ namespace AutopilotConsole
 
             protocol = new ProtocolLogic(data, ap,Console.WriteLine, parameters);
             handler = new NetworkHandler(protocol, Console.WriteLine);
+            handler.RegisterUnprocessedCommand(UnprocessedCommand);
+            handler.RegisterUnprocessedMessage(UnprocessedMessage);
             handler.StartServer();
             bool running = true;
             int count = 0;
@@ -36,5 +38,17 @@ namespace AutopilotConsole
                 data.magz = Vector3.Dot(new Vector3(0, 0, 1), new Vector3(0, 1, 0)) * 500;
             }
         }
+
+        static void UnprocessedMessage(ClientObject client, MAVLink.MAVLinkMessage message)
+        {
+            Console.WriteLine($"Unprocessed message: {message.msgid}");
+        }
+
+
+        static void UnprocessedCommand(ClientObject client, MAVLink.mavlink_command_long_t command)
+        {
+            Console.WriteLine($"Unprocessed command: {command.command}");
+        }
+
     }
 }

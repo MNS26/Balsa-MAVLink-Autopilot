@@ -17,7 +17,7 @@ namespace AutopilotCommon
 
         public byte[] GetIDBytes()
         {
-            byte[] retVal = new byte[17];
+            byte[] retVal = new byte[16];
             Encoding.UTF8.GetBytes(id).CopyTo(retVal, 0);
             return retVal;
         }

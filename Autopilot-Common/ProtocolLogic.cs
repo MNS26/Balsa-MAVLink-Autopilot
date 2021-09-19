@@ -145,6 +145,26 @@ namespace AutopilotCommon
             }
         }
 
+        public void Heartbeat(ClientObject client, MAVLink.MAVLinkMessage messageRaw)
+        {
+            MAVLink.mavlink_heartbeat_t message = (MAVLink.mavlink_heartbeat_t)messageRaw.data;
+            Log($"HEARTBEAT");
+        }
+
+        public void LinkNodeStatus(ClientObject client, MAVLink.MAVLinkMessage messageRaw)
+        {
+            //TODO: Figure out if we care, probably not
+            MAVLink.mavlink_link_node_status_t message = (MAVLink.mavlink_link_node_status_t)messageRaw.data;
+            Log($"LINK_NODE_STATUS");
+        }
+
+        public void StatusText(ClientObject client, MAVLink.MAVLinkMessage messageRaw)
+        {
+            MAVLink.mavlink_statustext_t message = (MAVLink.mavlink_statustext_t)messageRaw.data;
+            string statText = Encoding.UTF8.GetString(message.text);
+            Log($"STATUSTEXT: {statText}");
+        }
+
         public void SystemTime(ClientObject client, MAVLink.MAVLinkMessage messageRaw)
         {
             MAVLink.mavlink_system_time_t message = (MAVLink.mavlink_system_time_t)messageRaw.data;
@@ -177,6 +197,7 @@ namespace AutopilotCommon
             autopilot.capabilities |= (ulong)MAVLink.MAV_PROTOCOL_CAPABILITY.MISSION_FLOAT;
             autopilot.capabilities |= (ulong)MAVLink.MAV_PROTOCOL_CAPABILITY.PARAM_FLOAT;
             autopilot.capabilities |= (ulong)MAVLink.MAV_PROTOCOL_CAPABILITY.COMMAND_INT;
+            autopilot.capabilities |= (ulong)MAVLink.MAV_PROTOCOL_CAPABILITY.MAVLINK2;
             autopilot.board_version = 1;
             autopilot.flight_sw_version = 1;
             autopilot.os_sw_version = 1;

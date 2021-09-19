@@ -46,6 +46,9 @@ namespace AutopilotCommon
             this.protocol = protocol;
             this.Log = Log;
             RegisterConnect(protocol.ConnectEvent);
+            RegisterReceive(MAVLink.MAVLINK_MSG_ID.HEARTBEAT, protocol.Heartbeat);
+            RegisterReceive(MAVLink.MAVLINK_MSG_ID.LINK_NODE_STATUS, protocol.LinkNodeStatus);
+            RegisterReceive(MAVLink.MAVLINK_MSG_ID.STATUSTEXT, protocol.StatusText);
             RegisterReceive(MAVLink.MAVLINK_MSG_ID.PARAM_REQUEST_LIST, protocol.ParamRequestList);
             RegisterReceive(MAVLink.MAVLINK_MSG_ID.REQUEST_DATA_STREAM, protocol.RequestDataStream);
             RegisterReceive(MAVLink.MAVLINK_MSG_ID.SYSTEM_TIME, protocol.SystemTime);
@@ -227,6 +230,21 @@ namespace AutopilotCommon
                             {
                                 //Process 0 byte messages
                                 client.bytesLeft = client.buffer[1];
+                                if (client.buffer[0] != 0xFE && client.buffer[0] != 0xFD)
+                                {
+                                    throw new IndexOutOfRangeException("Mavlink messages start with 0xFE or 0xFD");
+                                }
+                                //This is a mavlink2 message, we need an extra 4 bytes for the header
+                                if (client.buffer[0] == 0xFD)
+                                {
+                                    client.bytesLeft += 4;
+                                    //Check for signature in mavlink 2
+                                    if ((client.buffer[2] & MAVLink.MAVLINK_IFLAG_SIGNED) == MAVLink.MAVLINK_IFLAG_SIGNED)
+                                    {
+                                        client.bytesLeft += 13;
+                                    }
+                                }
+
                                 if (client.bytesLeft == 0)
                                 {
                                     MAVLink.MAVLinkMessage message = new MAVLink.MAVLinkMessage(client.buffer);
@@ -258,6 +276,7 @@ namespace AutopilotCommon
         private void ProcessMessage(ClientObject client, MAVLink.MAVLinkMessage message)
         {
             bool processed = false;
+            Log($"RX: {message.data}");
             if (message.msgid == (uint)MAVLink.MAVLINK_MSG_ID.COMMAND_LONG)
             {
                 processed = true;

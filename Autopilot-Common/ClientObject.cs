@@ -11,7 +11,7 @@ namespace AutopilotCommon
         private NetworkHandler networkHandler;
         private AutoResetEvent sendEvent;
         private Action<ClientObject, MAVLink.MAVLINK_MSG_ID> requestMessage;
-        public Action<string> log;
+        public Action<string> Log;
 
         public TcpClient client;
         //Rates are stored in seconds
@@ -20,7 +20,7 @@ namespace AutopilotCommon
         public ConcurrentDictionary<MAVLink.MAVLINK_MSG_ID, long> nextSendTime = new ConcurrentDictionary<MAVLink.MAVLINK_MSG_ID, long>();
         public ConcurrentQueue<byte[]> outgoingMessages = new ConcurrentQueue<byte[]>();
 
-        public byte[] buffer = new byte[263];
+        public byte[] buffer = new byte[280];
         public bool readingHeader = true;
         public int readPos = 0;
         public int bytesLeft = 8;
@@ -30,11 +30,11 @@ namespace AutopilotCommon
         private MAVLink.MavlinkParse parser = new MAVLink.MavlinkParse();
         private int sendSequence = 0;
 
-        public ClientObject(NetworkHandler networkHandler, AutoResetEvent sendEvent, Action<string> log, Action<ClientObject, MAVLink.MAVLINK_MSG_ID> requestMessage)
+        public ClientObject(NetworkHandler networkHandler, AutoResetEvent sendEvent, Action<string> Log, Action<ClientObject, MAVLink.MAVLINK_MSG_ID> requestMessage)
         {
             this.networkHandler = networkHandler;
             this.sendEvent = sendEvent;
-            this.log = log;
+            this.Log = Log;
             this.requestMessage = requestMessage;
         }
 
@@ -66,7 +66,8 @@ namespace AutopilotCommon
 
         public void SendMessage(object message)
         {
-            SendMessageBytes(parser.GenerateMAVLinkPacket10(GetTypeMapping(message), message, 1, 1, sendSequence++));
+            //Log($"TX: {message}");
+            SendMessageBytes(parser.GenerateMAVLinkPacket20(GetTypeMapping(message), message, false, 1, 1, sendSequence++));
         }
 
         public void SendMessageBytes(byte[] message)
