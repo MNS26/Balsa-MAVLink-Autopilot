@@ -17,7 +17,7 @@ namespace AutopilotConsole
             Console.WriteLine("Start!");
             data = new DataStore();
             ap = new ApStore();
-            parameters = new ParameterHandler("../../../Autopilot/bin/Debug/", "Parameters.dat", "Defautls.dat");
+            parameters = new ParameterHandler("../../../Autopilot/bin/Debug/", "Parameters.dat", "Defaults.dat");
 
             protocol = new ProtocolLogic(data, ap,Console.WriteLine, parameters);
             handler = new NetworkHandler(protocol, Console.WriteLine);

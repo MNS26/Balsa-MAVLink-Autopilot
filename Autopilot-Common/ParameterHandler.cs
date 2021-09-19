@@ -99,6 +99,7 @@ namespace AutopilotCommon
                 else
                 {
                     p = new Parameter(id, value, type);
+                    Console.WriteLine($"{p.id},{p.value},{p.type}");
                     parameters.Add(p);
                 }
                 if (saveEnabled)
@@ -197,7 +198,7 @@ namespace AutopilotCommon
                     SetParameter("FS_LONG_ACTN", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
                     SetParameter("FS_LONG_TIMEOUT", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
                     SetParameter("FS_GCS_ENABL", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
-                    SetParameter("FLTMODE_CH:", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
+                    SetParameter("FLTMODE_CH", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
                     SetParameter("FLTMODE1", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
                     SetParameter("FLTMODE2", 5f, MAVLink.MAV_PARAM_TYPE.UINT8);
                     SetParameter("FLTMODE3", 7f, MAVLink.MAV_PARAM_TYPE.UINT8);
@@ -507,7 +508,7 @@ namespace AutopilotCommon
                     SetParameter("BATT7_FS_CRT_ACT", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
                     SetParameter("BATT7_ARM_VOLT", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
                     SetParameter("BATT7_ARM_MAH", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
-                    SetParameter("BATT_OPTIONS", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
+                    SetParameter("BATT7_OPTIONS", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
                     SetParameter("BATT7_VOLT_PIN", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
                     SetParameter("BATT7_CURR_PIN", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
                     SetParameter("BATT7_VOLT_MULT", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
@@ -537,7 +538,7 @@ namespace AutopilotCommon
                     SetParameter("BATT8_AMP_OFFSET", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
                     SetParameter("BATT8_I2C_BUS", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
                     SetParameter("BATT8_I2C_ADDR", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
-                    SetParameter("BATT2_MONITOR", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
+                    SetParameter("BATT9_MONITOR", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
                     SetParameter("BATT9_CAPACITY", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
                     SetParameter("BATT9_WATT_MAX", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
                     SetParameter("BATT9_SERIAL_NUM", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
@@ -1169,7 +1170,6 @@ namespace AutopilotCommon
                     SetParameter("TERRAIN_SPACING", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
                     SetParameter("TERRAIN_OPTIONS", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
                     SetParameter("TERRAIN_MARGIN", 0f, MAVLink.MAV_PARAM_TYPE.UINT8);
-                    SetDefault(saveFile,defaultFile);
                 }
             }
         }

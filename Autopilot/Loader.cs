@@ -1,7 +1,6 @@
 ﻿using System;
 using UnityEngine;
 using BalsaCore;
-using Dev;
 
 namespace Autopilot
 {
@@ -13,7 +12,7 @@ namespace Autopilot
         private static MonoBehaviour mod;
         private static MonoBehaviour cam;
 
-        [BalsaAddonFinalize(invokeTime = AddonInvokeTime.OnLoaded)]
+        [BalsaAddonFinalize]
         public static void BalsaInit()
         {
 
@@ -23,7 +22,7 @@ namespace Autopilot
                 go = new GameObject();
             }
             mod = go.AddComponent<Autopilot>();
-            GameObject.DontDestroyOnLoad(mod);
+
         }
 
         [BalsaAddonInit(invokeTime = AddonInvokeTime.Flight)]

@@ -1,0 +1,13 @@
+ModCFG
+{
+    title = Balsa Autopilot
+    author = YourName
+    modVersion = 0.1.0
+    Plugin
+    {
+        name = Autopilot
+        description = Autopilot for Balsa meant for external softare that uses MAVLink protocol
+        asmpath = Addons\Autopilot\Autopilot.dll
+        order = 1000
+    }
+}

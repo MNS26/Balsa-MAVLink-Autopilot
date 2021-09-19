@@ -78,9 +78,11 @@
     <Compile Include="Autopilot.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Defaults.dat" />
+    <None Include="Defaults.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
-    <None Include="Balsapilot.modcfg">
+    <None Include="Autopilot.modcfg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
