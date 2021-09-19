@@ -7,10 +7,6 @@ namespace Autopilot
     {
         Vehicle vehicle;
         FBWModule apModule;
-#pragma warning disable IDE0044 // Add readonly modifier
-        PID toggled;
-#pragma warning restore IDE0044 // Add readonly modifier
-                               //Vertical
         PID pitchPid;
         PID verticalSpeedPid;
         PID altitudePid;
@@ -107,16 +103,7 @@ namespace Autopilot
         {
             if (vehicle != null && vehicle.Autotrim != null && vehicle.Autotrim.enabled)
             {
-                toggle = !toggle;
                 vehicle.Autotrim.DisableAT();
-                if (toggle)
-                {
-                    toggled.Enable();
-                }
-                else
-                {
-                    toggled.Disable();
-                }
             }
             apModule.pitchEnabled = false;
             apModule.rollEnabled = false;

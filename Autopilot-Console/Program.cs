@@ -10,13 +10,16 @@ namespace AutopilotConsole
         public static void Main(string[] args)
         {
             DataStore data;
+            ApStore ap;
             ParameterHandler parameters;
             ProtocolLogic protocol;
             NetworkHandler handler;
             Console.WriteLine("Start!");
             data = new DataStore();
-            parameters = new ParameterHandler("../../../Autopilot/bin/Debug/Parameters.dat");
-            protocol = new ProtocolLogic(data, Console.WriteLine, parameters);
+            ap = new ApStore();
+            parameters = new ParameterHandler("../../../Autopilot/bin/Debug/", "Parameters.dat", "Defautls.dat");
+
+            protocol = new ProtocolLogic(data, ap,Console.WriteLine, parameters);
             handler = new NetworkHandler(protocol, Console.WriteLine);
             handler.StartServer();
             bool running = true;

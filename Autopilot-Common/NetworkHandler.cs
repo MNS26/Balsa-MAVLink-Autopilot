@@ -271,6 +271,7 @@ namespace AutopilotCommon
                     if (unprocessedCommandCallback != null)
                     {
                         unprocessedCommandCallback(client, command);
+
                     }
                 }
             }
