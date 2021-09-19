@@ -15,7 +15,7 @@ namespace Autopilot
 
         public void Start()
         {
-            
+            GameObject.DontDestroyOnLoad(this);
             Log("Start!");
             data = new DataStore();
             ap = new ApStore();

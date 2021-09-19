@@ -23,7 +23,7 @@ namespace Autopilot
                 go = new GameObject();
             }
             mod = go.AddComponent<Autopilot>();
-            GameObject.DontDestroyOnLoad(mod);
+
         }
 
         [BalsaAddonInit(invokeTime = AddonInvokeTime.Flight)]
