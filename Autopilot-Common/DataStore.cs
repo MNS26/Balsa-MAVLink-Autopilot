@@ -13,16 +13,13 @@
         public float iaspeed;
         public float rpm;
         public float avrrpm;
-        public float battery1;
+        public float battery;
         public float heading;
         public float altitude;
         public float dth;
-        public short armed;
         public int latitude;
         public int longitude;
         public string name;
-
-
         //IMU
         public float gyrox;
         public float gyroy;
@@ -33,7 +30,6 @@
         public float magx;
         public float magy;
         public float magz;
-
         //gyro velocity
         public float currentGVelx;
         public float lastGVelx;
@@ -48,8 +44,6 @@
         public float lastAVely;
         public float currentAVelz;
         public float lastAVelz;
-
-
         //controller
         public float rssi;
         public float ch1;
@@ -69,7 +63,10 @@
         public float ch15;
         public float ch16;
 
-
-
+    }
+public class ApStore
+    {
+        public short sysState;
+        public short armed;
     }
 }

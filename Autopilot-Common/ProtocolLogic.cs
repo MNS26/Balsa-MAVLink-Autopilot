@@ -13,6 +13,7 @@ namespace AutopilotCommon
         private const byte componentID = 1;
         private static MAVLink.MavlinkParse parser = new MAVLink.MavlinkParse();
         private DataStore data;
+        private ApStore ap;
         private ParameterHandler parameters;
         private Action<string> Log;
 
@@ -43,12 +44,14 @@ namespace AutopilotCommon
        24 = THERMAL
         */
 
-        public ProtocolLogic(DataStore data, Action<string> Log, ParameterHandler parameters)
+        public ProtocolLogic(DataStore data, ApStore ap,Action<string> Log, ParameterHandler parameters)
         {
             this.Log = Log;
             startTime = DateTime.UtcNow.Ticks;
             this.data = data;
+            this.ap = ap;
             this.parameters = parameters;
+            ap.armed = 92;
         }
 
         public void ConnectEvent(ClientObject client)
@@ -153,8 +156,8 @@ namespace AutopilotCommon
             AckCommand(client, command, MAVLink.MAV_CMD_ACK.OK);
             MAVLink.mavlink_protocol_version_t version = new MAVLink.mavlink_protocol_version_t();
             version.min_version = 1;
-            version.max_version = 3;
-            version.version = 2;
+            version.max_version = 2;
+            version.version = 1;
             client.SendMessage(version);
             Log($"REQUEST_PROTOCOL_VERSION, VERSION = {version.version}");
         }
@@ -193,7 +196,7 @@ namespace AutopilotCommon
             message.custom_mode = 0;
             message.type = (byte)MAVLink.MAV_TYPE.FIXED_WING;
             message.autopilot = (byte)MAVLink.MAV_AUTOPILOT.ARDUPILOTMEGA;
-            message.base_mode = (byte)MAVLink.MAV_MODE.MANUAL_DISARMED;
+            message.base_mode = (byte)ap.armed;
             message.system_status = (byte)MAVLink.MAV_STATE.ACTIVE;
             message.mavlink_version = (byte)MAVLink.MAVLINK_VERSION;
             client.SendMessage(message);

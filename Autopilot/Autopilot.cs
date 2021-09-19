@@ -9,21 +9,23 @@ namespace Autopilot
     public class Autopilot : MonoBehaviour
     {
         DataStore data;
+        ApStore ap;
         ProtocolLogic protocol;
         NetworkHandler handler;
 
         public void Start()
         {
+            
             Log("Start!");
             data = new DataStore();
+            ap = new ApStore();
             ParameterHandler parameters;
-            parameters = new ParameterHandler(Application.dataPath + "Addons/Autopilot/Parameters.dat");
-            protocol = new ProtocolLogic(data, Log, parameters);
+            parameters = new ParameterHandler(PathUtil.Resolve(".") + "/Addons/Autopilot/", "Parameters.dat","Defaults.dat");
+            protocol = new ProtocolLogic(data, ap, Log, parameters);
             handler = new NetworkHandler(protocol, Log);
             handler.StartServer();
             //If you want to stick around
             //GameEvents.Vehicles.OnVehicleSpawned.AddListener(VehicleSpawned);
-            DontDestroyOnLoad(this);
         }
 
 
@@ -61,7 +63,7 @@ namespace Autopilot
                 data.accy = 0;
                 data.accz = 0;
                 data.rssi = 0;
-                data.armed = (int)MAVLink.MAV_MODE.MANUAL_DISARMED;
+                ap.armed = (int)MAVLink.MAV_MODE.MANUAL_DISARMED;
                 data.avrrpm = 0;
                 data.latitude = 0;
                 data.longitude = 0;
@@ -150,14 +152,13 @@ namespace Autopilot
                 data.avrrpm /= props.Count;
                 data.avrrpm *= 1.66667f;
             }
-
-            if (InputSettings.EngineAutoStart.button.GetButtonDown())
+            if (InputSettings.EngineAutoStart.button.GetButtonDown() == true)
             {
-                data.armed = (short)MAVLink.MAV_MODE.MANUAL_ARMED;
+                ap.armed = (short)MAVLink.MAV_MODE.MANUAL_ARMED;
             }
             else
             {
-                data.armed = (short)MAVLink.MAV_MODE.MANUAL_DISARMED;
+                ap.armed = (short)MAVLink.MAV_MODE.MANUAL_DISARMED;
             }
 
 
