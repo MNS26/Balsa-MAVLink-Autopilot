@@ -12,7 +12,7 @@ namespace Autopilot
         private static MonoBehaviour mod;
         private static MonoBehaviour cam;
 
-        [BalsaAddonFinalize]
+        [BalsaAddonInit]
         public static void BalsaInit()
         {
 
