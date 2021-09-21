@@ -92,7 +92,7 @@ namespace AutopilotCommon
         {
             //TODO: Implement ALL of these.
             MAVLink.mavlink_request_data_stream_t message = (MAVLink.mavlink_request_data_stream_t)messageRaw.data;
-            Log($"REQUEST_DATA_STREAM  TYPE:{(MAVLink.MAV_DATA_STREAM)message.req_stream_id}  =  {message.req_message_rate}");
+            Log($"REQUEST_DATA_STREAM  TYPE:{(MAVLink.MAV_DATA_STREAM)message.req_stream_id}  =  {(MAVLink.MAV_DATA_STREAM)message.req_message_rate}");
             switch ((MAVLink.MAV_DATA_STREAM)message.req_stream_id)
             {
                 case MAVLink.MAV_DATA_STREAM.ALL:
@@ -111,7 +111,6 @@ namespace AutopilotCommon
                     client.requestedRates[MAVLink.MAVLINK_MSG_ID.VFR_HUD] = 1f / message.req_message_rate;
                     break;
                 case MAVLink.MAV_DATA_STREAM.RAW_SENSORS:
-                    client.requestedRates[MAVLink.MAVLINK_MSG_ID.ATTITUDE] = 1f / message.req_message_rate;
                     client.requestedRates[MAVLink.MAVLINK_MSG_ID.RAW_IMU] = 1f / message.req_message_rate;
                     client.requestedRates[MAVLink.MAVLINK_MSG_ID.GPS_RAW_INT] = 1f / message.req_message_rate;
                     client.requestedRates[MAVLink.MAVLINK_MSG_ID.GPS_STATUS] = 1f / message.req_message_rate;
@@ -131,7 +130,6 @@ namespace AutopilotCommon
                     //Can't find these messages
                     break;
                 case MAVLink.MAV_DATA_STREAM.POSITION:
-                    client.requestedRates[MAVLink.MAVLINK_MSG_ID.VFR_HUD] = 1f / message.req_message_rate;
                     client.requestedRates[MAVLink.MAVLINK_MSG_ID.GLOBAL_POSITION_INT] = 1f / message.req_message_rate;
                     client.requestedRates[MAVLink.MAVLINK_MSG_ID.LOCAL_POSITION_NED] = 1f / message.req_message_rate;
                     //Can't find GLOBAL_POSITION
@@ -145,6 +143,7 @@ namespace AutopilotCommon
             }
         }
 
+        //Messages
         public void Heartbeat(ClientObject client, MAVLink.MAVLinkMessage messageRaw)
         {
             MAVLink.mavlink_heartbeat_t message = (MAVLink.mavlink_heartbeat_t)messageRaw.data;
@@ -171,13 +170,14 @@ namespace AutopilotCommon
             Log($"SYSTEM_TIME {message.time_unix_usec}");
         }
 
+        //Commands
         public void RequestProtocolVersion(ClientObject client, MAVLink.mavlink_command_long_t command)
         {
             AckCommand(client, command, MAVLink.MAV_CMD_ACK.OK);
             MAVLink.mavlink_protocol_version_t version = new MAVLink.mavlink_protocol_version_t();
             version.min_version = 1;
             version.max_version = 2;
-            version.version = 1;
+            version.version = 2;
             client.SendMessage(version);
             Log($"REQUEST_PROTOCOL_VERSION, VERSION = {version.version}");
         }
@@ -209,6 +209,15 @@ namespace AutopilotCommon
             autopilot.vendor_id = 0;
             autopilot.uid = 1;
             client.SendMessage(autopilot);
+        }
+         //messages
+         public void SendMissionList(ClientObject client)
+        {
+            MAVLink.mavlink_mission_request_list_t list = new MAVLink.mavlink_mission_request_list_t();
+            list.target_system = systemID;
+            list.target_component = componentID;
+            list.mission_type = 255;
+            client.SendMessage(list);
         }
 
         public void SendHeartbeat(ClientObject client)

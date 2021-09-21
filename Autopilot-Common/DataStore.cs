@@ -46,22 +46,22 @@
         public float lastAVelz;
         //controller
         public float rssi;
-        public float ch1;
-        public float ch2;
-        public float ch3;
-        public float ch4;
-        public float ch5;
-        public float ch6;
-        public float ch7;
-        public float ch8;
-        public float ch9;
-        public float ch10;
-        public float ch11;
-        public float ch12;
-        public float ch13;
-        public float ch14;
-        public float ch15;
-        public float ch16;
+        public float ch1;  // roll
+        public float ch2;  // pitch
+        public float ch3;  // throttle
+        public float ch4;  // yaw
+        public float ch5;  // 
+        public float ch6;  // 
+        public float ch7;  // 
+        public float ch8;  // 
+        public float ch9;  // 
+        public float ch10; // 
+        public float ch11; // 
+        public float ch12; // 
+        public float ch13; // 
+        public float ch14; // 
+        public float ch15; // 
+        public float ch16; // 
 
     }
 public class ApStore

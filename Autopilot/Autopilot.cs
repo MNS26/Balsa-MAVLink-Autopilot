@@ -141,25 +141,6 @@ namespace Autopilot
             data.latitude = (int)(FloatingOrigin.GetAbsoluteWPos(v.transform.position).z * 90.09f);
             data.longitude = (int)(FloatingOrigin.GetAbsoluteWPos(v.transform.position).x * 90.09f);
 
-            var props = v.GetModules<Propeller>();
-            if (props.Count != 0)
-            {
-                data.avrrpm = 0;
-                foreach (var p in props)
-                {
-                    data.avrrpm += p.GetRotSpeed();
-                }
-                data.avrrpm /= props.Count;
-                data.avrrpm *= 1.66667f;
-            }
-            if (InputSettings.EngineAutoStart.button.GetButtonDown() == true)
-            {
-                ap.armed = (short)MAVLink.MAV_MODE.MANUAL_ARMED;
-            }
-            else
-            {
-                ap.armed = (short)MAVLink.MAV_MODE.MANUAL_DISARMED;
-            }
 
 
             //controller stuff
@@ -177,6 +158,28 @@ namespace Autopilot
 
         public void FixedUpdate()
         {
+            Vehicle v = GameLogic.LocalPlayerVehicle;
+
+            var props = v.GetModules<Propeller>();
+            if (props.Count != 0)
+            {
+                data.avrrpm = 0;
+                foreach (var p in props)
+                {
+                    data.avrrpm += p.GetRotSpeed();
+                }
+                data.avrrpm /= props.Count;
+                data.avrrpm *= 1.66667f;
+            }
+            var armed = InputSettings.EngineAutoStart.button;
+            if (armed.GetButtonDown())
+            {
+                ap.armed = (short)MAVLink.MAV_MODE.MANUAL_ARMED;
+            }
+            else
+            {
+                ap.armed = (short)MAVLink.MAV_MODE.MANUAL_DISARMED;
+            }
         }
 
         private float map(float value, float fromLow, float fromHigh, float toLow, float toHigh)

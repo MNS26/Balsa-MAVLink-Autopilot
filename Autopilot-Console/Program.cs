@@ -41,13 +41,13 @@ namespace AutopilotConsole
 
         static void UnprocessedMessage(ClientObject client, MAVLink.MAVLinkMessage message)
         {
-            Console.WriteLine($"Unprocessed message: {message.msgid}");
+            Console.WriteLine($"Unprocessed message: {message.msgid} , {message.data}");
         }
 
 
         static void UnprocessedCommand(ClientObject client, MAVLink.mavlink_command_long_t command)
         {
-            Console.WriteLine($"Unprocessed command: {command.command}");
+            Console.WriteLine($"Unprocessed command: {command.command} , {command.confirmation}");
         }
 
     }

@@ -8,19 +8,20 @@ namespace AutopilotCommon
     public class ParameterHandler : IEnumerable<Parameter>
     {
         private bool saveEnabled = false;
+        private string dir;
         private string saveFile;
         private string defaultFile;
         //List backing isn't ideal but we need indexes...
         private List<Parameter> parameters = new List<Parameter>();
         public ParameterHandler(string dir, string saveFile, string defaultFile)
         {
-
-            this.saveFile = dir + saveFile;
-            this.defaultFile = dir + defaultFile;
+            this.dir = dir;
+            this.saveFile = dir+saveFile;
+            this.defaultFile = dir+defaultFile;
             Console.WriteLine($"Paramters:\t{dir + saveFile}");
             Console.WriteLine($"defaults:\t{dir + defaultFile}");
-            SetDefault(saveFile, defaultFile);
-            Load(saveFile);
+            SetDefault(dir+saveFile, dir+defaultFile);
+            Load(dir+saveFile);
         }
 
         public void Load(string file)
@@ -28,7 +29,7 @@ namespace AutopilotCommon
             lock (parameters)
             {
                 int beforeTotal = parameters.Count;
-                int afterTotal = 0;
+                int afterTotal = 1018;
                 if (File.Exists(file))
                 {
                     using (StreamReader sr = new StreamReader(file))
@@ -45,14 +46,13 @@ namespace AutopilotCommon
                             string valuePart = currentLine.Substring(indexOfEquals + 1);
                             float valueFloat = float.Parse(valuePart);
                             MAVLink.MAV_PARAM_TYPE paramType = (MAVLink.MAV_PARAM_TYPE)Enum.Parse(typeof(MAVLink.MAV_PARAM_TYPE), typePart);
-                            Console.WriteLine($"{idPart} , {valueFloat} , {paramType}");
                             SetParameter(idPart, valueFloat, paramType);
                         }
                     }
                 }
                 //Save new/missing parameters.
                 saveEnabled = true;
-                if (beforeTotal != afterTotal)
+                if (beforeTotal > afterTotal)
                 {
                     Save(saveFile);
                 }
@@ -104,7 +104,7 @@ namespace AutopilotCommon
                 }
                 if (saveEnabled)
                 {
-                    Save(defaultFile);
+                    Save(saveFile);
                 }
                 return parameters.IndexOf(p);
             }
