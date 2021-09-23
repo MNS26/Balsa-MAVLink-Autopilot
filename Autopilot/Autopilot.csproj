@@ -78,14 +78,10 @@
     <Compile Include="Autopilot.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Defaults.dat">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Autopilot.modcfg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Parameters.dat" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Autopilot-Common\Autopilot-Common.csproj">

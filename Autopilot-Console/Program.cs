@@ -17,7 +17,8 @@ namespace AutopilotConsole
             Console.WriteLine("Start!");
             data = new DataStore();
             ap = new ApStore();
-            parameters = new ParameterHandler("../../../Autopilot/bin/Debug/", "Parameters.dat", "Defaults.dat");
+            ap.armed = 0;
+            parameters = new ParameterHandler("../../../Autopilot/bin/Debug/", "Parameters.dat", Console.WriteLine);
 
             protocol = new ProtocolLogic(data, ap,Console.WriteLine, parameters);
             handler = new NetworkHandler(protocol, Console.WriteLine);
@@ -33,10 +34,14 @@ namespace AutopilotConsole
                 data.heading = count % 360;
                 data.radyaw = (float)((count % 360 / 360d) * 2 * Math.PI);
                 data.magx = Vector3.Dot(new Vector3(0, 0, 1), new Vector3(0, 0, 1)) * 500;
-
                 data.magy = Vector3.Dot(new Vector3(0, 0, 1), new Vector3(1, 0, 0)) * 500;
                 data.magz = Vector3.Dot(new Vector3(0, 0, 1), new Vector3(0, 1, 0)) * 500;
-
+                data.accx = 0;
+                data.accy = 1000;
+                data.accz = 0;
+                data.gyrox = 1;
+                data.gyroy = 2;
+                data.gyroz = 3;
             }
         }
 

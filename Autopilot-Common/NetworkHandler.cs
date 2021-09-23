@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using System.Reflection;
 
 namespace AutopilotCommon
 {
@@ -45,31 +46,40 @@ namespace AutopilotCommon
         {
             this.protocol = protocol;
             this.Log = Log;
+
             RegisterConnect(protocol.ConnectEvent);
-            RegisterReceive(MAVLink.MAVLINK_MSG_ID.HEARTBEAT, protocol.Heartbeat);
-            RegisterReceive(MAVLink.MAVLINK_MSG_ID.PARAM_REQUEST_LIST, protocol.ParamRequestList);
-            RegisterReceive(MAVLink.MAVLINK_MSG_ID.REQUEST_DATA_STREAM, protocol.RequestDataStream);
-            RegisterReceive(MAVLink.MAVLINK_MSG_ID.SYSTEM_TIME, protocol.SystemTime);
-            RegisterReceive(MAVLink.MAVLINK_MSG_ID.PARAM_SET, protocol.SetParameter);
-
-            //RegisterSend(MAVLink.MAVLINK_MSG_ID.RAW_RPM, protocol.SendRPM);
-            //RegisterSend(MAVLink.MAVLINK_MSG_ID.MISSION_REQUEST_LIST, protocol.SendMissionList);
-            RegisterSend(MAVLink.MAVLINK_MSG_ID.HEARTBEAT, protocol.SendHeartbeat);
-            RegisterSend(MAVLink.MAVLINK_MSG_ID.GLOBAL_POSITION_INT, protocol.SendGPSGlobalPosition);
-            RegisterSend(MAVLink.MAVLINK_MSG_ID.GPS_RAW_INT, protocol.SendGPSRaw);
-            RegisterSend(MAVLink.MAVLINK_MSG_ID.ATTITUDE, protocol.SendAttitude);
-            RegisterSend(MAVLink.MAVLINK_MSG_ID.RAW_IMU, protocol.SendRawIMU);
-            RegisterSend(MAVLink.MAVLINK_MSG_ID.GPS_STATUS, protocol.SendGPSStatus);
-            RegisterSend(MAVLink.MAVLINK_MSG_ID.RADIO_STATUS, protocol.SendRadioStatus);
-            RegisterSend(MAVLink.MAVLINK_MSG_ID.RC_CHANNELS_SCALED, protocol.SendRadioChannelsScaled);
-            RegisterSend(MAVLink.MAVLINK_MSG_ID.RC_CHANNELS_RAW, protocol.SendRadioChannelsRaw);
-            RegisterSend(MAVLink.MAVLINK_MSG_ID.VFR_HUD, protocol.SendVFRHud);
-
-            RegisterReceiveCommand(MAVLink.MAV_CMD.SET_MESSAGE_INTERVAL, protocol.MessageInterval);
-            RegisterReceiveCommand(MAVLink.MAV_CMD.REQUEST_PROTOCOL_VERSION, protocol.RequestProtocolVersion);
-            RegisterReceiveCommand(MAVLink.MAV_CMD.REQUEST_AUTOPILOT_CAPABILITIES, protocol.RequestAutopilot);
-            RegisterReceiveCommand(MAVLink.MAV_CMD.REQUEST_MESSAGE, protocol.RequestMessgae);
             RegisterDisconnect(protocol.DisconnectEvent);
+            AutoRegister();
+        }
+
+        private void AutoRegister()
+        {
+            Type t = typeof(ProtocolLogic);
+            MethodInfo[] mis = t.GetMethods();
+            foreach (MethodInfo mi in mis)
+            {
+                foreach (Attribute att in mi.GetCustomAttributes())
+                {
+                    if (att is ReceiveMessage)
+                    {
+                        ReceiveMessage rm = (ReceiveMessage)att;
+                        Action<ClientObject, MAVLink.MAVLinkMessage> callMethod = (Action<ClientObject, MAVLink.MAVLinkMessage>)mi.CreateDelegate(typeof(Action<ClientObject, MAVLink.MAVLinkMessage>), protocol);
+                        RegisterReceive(rm.id, callMethod);
+                    }
+                    if (att is SendMessage)
+                    {
+                        SendMessage sm = (SendMessage)att;
+                        Action<ClientObject> callMethod = (Action<ClientObject>)mi.CreateDelegate(typeof(Action<ClientObject>), protocol);
+                        RegisterSend(sm.id, callMethod);
+                    }
+                    if (att is ReceiveCommand)
+                    {
+                        ReceiveCommand rc = (ReceiveCommand)att;
+                        Action<ClientObject, MAVLink.mavlink_command_long_t> callMethod = (Action<ClientObject, MAVLink.mavlink_command_long_t>)mi.CreateDelegate(typeof(Action<ClientObject, MAVLink.mavlink_command_long_t>), protocol);
+                        RegisterReceiveCommand(rc.id, callMethod);
+                    }
+                }
+            }
         }
 
         public void StartServer()
@@ -287,14 +297,13 @@ namespace AutopilotCommon
                 MAVLink.mavlink_command_long_t command = (MAVLink.mavlink_command_long_t)message.data;
                 if (receiveCommandCallbacks.ContainsKey((MAVLink.MAV_CMD)command.command))
                 {
-
+                    receiveCommandCallbacks[(MAVLink.MAV_CMD)command.command](client, command);
                 }
                 else
                 {
                     if (unprocessedCommandCallback != null)
                     {
                         unprocessedCommandCallback(client, command);
-
                     }
                 }
             }
