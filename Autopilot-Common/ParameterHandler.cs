@@ -9,7 +9,6 @@ namespace AutopilotCommon
     public class ParameterHandler : IEnumerable<Parameter>
     {
         private bool saveEnabled = false;
-        private string dir;
         private string saveFile;
         //List backing isn't ideal but we need indexes...
         private List<Parameter> parameters = new List<Parameter>();
@@ -18,7 +17,6 @@ namespace AutopilotCommon
         public ParameterHandler(string dir, string saveFile, Action<string> Log)
         {
             this.Log = Log;
-            this.dir = dir;
             this.saveFile = dir + saveFile;
             Load();
         }

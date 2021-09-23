@@ -404,6 +404,7 @@ namespace AutopilotCommon
             ack.target_component = command.target_component;
         }
 
+        [ReceiveMessage(MAVLink.MAVLINK_MSG_ID.PARAM_SET)]
         public void SetParameter(ClientObject client, MAVLink.MAVLinkMessage messageRaw)
         {
             MAVLink.mavlink_param_set_t message = (MAVLink.mavlink_param_set_t)messageRaw.data;
