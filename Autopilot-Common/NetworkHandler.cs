@@ -47,18 +47,13 @@ namespace AutopilotCommon
             this.Log = Log;
             RegisterConnect(protocol.ConnectEvent);
             RegisterReceive(MAVLink.MAVLINK_MSG_ID.HEARTBEAT, protocol.Heartbeat);
-            RegisterReceive(MAVLink.MAVLINK_MSG_ID.LINK_NODE_STATUS, protocol.LinkNodeStatus);
-            RegisterReceive(MAVLink.MAVLINK_MSG_ID.STATUSTEXT, protocol.StatusText);
             RegisterReceive(MAVLink.MAVLINK_MSG_ID.PARAM_REQUEST_LIST, protocol.ParamRequestList);
             RegisterReceive(MAVLink.MAVLINK_MSG_ID.REQUEST_DATA_STREAM, protocol.RequestDataStream);
             RegisterReceive(MAVLink.MAVLINK_MSG_ID.SYSTEM_TIME, protocol.SystemTime);
             RegisterReceive(MAVLink.MAVLINK_MSG_ID.PARAM_SET, protocol.SetParameter);
-            RegisterReceiveCommand(MAVLink.MAV_CMD.SET_MESSAGE_INTERVAL, protocol.MessageInterval);
-            RegisterReceiveCommand(MAVLink.MAV_CMD.REQUEST_PROTOCOL_VERSION, protocol.RequestProtocolVersion);
-            RegisterReceiveCommand(MAVLink.MAV_CMD.REQUEST_AUTOPILOT_CAPABILITIES, protocol.RequestAutopilot);
-            RegisterSend(MAVLink.MAVLINK_MSG_ID.VFR_HUD, protocol.SendVFRHud);
+
             //RegisterSend(MAVLink.MAVLINK_MSG_ID.RAW_RPM, protocol.SendRPM);
-            RegisterSend(MAVLink.MAVLINK_MSG_ID.MISSION_REQUEST_LIST, protocol.SendMissionList);
+            //RegisterSend(MAVLink.MAVLINK_MSG_ID.MISSION_REQUEST_LIST, protocol.SendMissionList);
             RegisterSend(MAVLink.MAVLINK_MSG_ID.HEARTBEAT, protocol.SendHeartbeat);
             RegisterSend(MAVLink.MAVLINK_MSG_ID.GLOBAL_POSITION_INT, protocol.SendGPSGlobalPosition);
             RegisterSend(MAVLink.MAVLINK_MSG_ID.GPS_RAW_INT, protocol.SendGPSRaw);
@@ -68,6 +63,12 @@ namespace AutopilotCommon
             RegisterSend(MAVLink.MAVLINK_MSG_ID.RADIO_STATUS, protocol.SendRadioStatus);
             RegisterSend(MAVLink.MAVLINK_MSG_ID.RC_CHANNELS_SCALED, protocol.SendRadioChannelsScaled);
             RegisterSend(MAVLink.MAVLINK_MSG_ID.RC_CHANNELS_RAW, protocol.SendRadioChannelsRaw);
+            RegisterSend(MAVLink.MAVLINK_MSG_ID.VFR_HUD, protocol.SendVFRHud);
+
+            RegisterReceiveCommand(MAVLink.MAV_CMD.SET_MESSAGE_INTERVAL, protocol.MessageInterval);
+            RegisterReceiveCommand(MAVLink.MAV_CMD.REQUEST_PROTOCOL_VERSION, protocol.RequestProtocolVersion);
+            RegisterReceiveCommand(MAVLink.MAV_CMD.REQUEST_AUTOPILOT_CAPABILITIES, protocol.RequestAutopilot);
+            RegisterReceiveCommand(MAVLink.MAV_CMD.REQUEST_MESSAGE, protocol.RequestMessgae);
             RegisterDisconnect(protocol.DisconnectEvent);
         }
 

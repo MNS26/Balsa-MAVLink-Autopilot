@@ -1,9 +1,7 @@
-﻿using FSControl;
-using Tutorials;
+﻿using AutopilotCommon;
+using FSControl;
 using Modules;
 using UnityEngine;
-using AutopilotCommon;
-using GameEvents;
 namespace Autopilot
 {
     public class Autopilot : MonoBehaviour
@@ -20,7 +18,7 @@ namespace Autopilot
             data = new DataStore();
             ap = new ApStore();
             ParameterHandler parameters;
-            parameters = new ParameterHandler(PathUtil.Resolve(".") + "/Addons/Autopilot/", "Parameters.dat","Defaults.dat");
+            parameters = new ParameterHandler(PathUtil.Resolve(".") + "/Addons/Autopilot/", "Parameters.dat", "Defaults.dat");
             protocol = new ProtocolLogic(data, ap, Log, parameters);
             handler = new NetworkHandler(protocol, Log);
             handler.StartServer();
@@ -32,16 +30,19 @@ namespace Autopilot
         private void VehicleSpawned(Vehicle vehicle)
         {
             Autopilot.Log("OVS Main");
-            if (!vehicle.gameObject.TryGetComponent(out AutopilotComponent ac))
+            if (vehicle == GameLogic.LocalPlayerVehicle)
             {
-                Log("Adding autopilot controller to " + vehicle.name);
-                AutopilotComponent ac2 = vehicle.gameObject.AddComponent(typeof(AutopilotComponent)) as AutopilotComponent;
-                ac2.OnVehicleSpawn(vehicle);
+                if (!vehicle.gameObject.TryGetComponent(out AutopilotComponent _))
+                {
+                    Log("Adding autopilot controller to " + vehicle.name);
+                    AutopilotComponent ac = vehicle.gameObject.AddComponent(typeof(AutopilotComponent)) as AutopilotComponent;
+                    ac.OnVehicleSpawn(vehicle);
 
-            }
-            else
-            {
-                Log("Autopilot controller already exists for " + vehicle.name);
+                }
+                else
+                {
+                    Log("Autopilot controller already exists for " + vehicle.name);
+                }
             }
         }
 
@@ -63,7 +64,7 @@ namespace Autopilot
                 data.accy = 0;
                 data.accz = 0;
                 data.rssi = 0;
-                ap.armed = (int)MAVLink.MAV_MODE.MANUAL_DISARMED;
+                ap.armed = MAVLink.MAV_MODE_FLAG.SAFETY_ARMED;
                 data.avrrpm = 0;
                 data.latitude = 0;
                 data.longitude = 0;
@@ -158,6 +159,10 @@ namespace Autopilot
 
         public void FixedUpdate()
         {
+            if (!GameLogic.inGame || !GameLogic.SceneryLoaded || GameLogic.LocalPlayerVehicle == null || !GameLogic.LocalPlayerVehicle.InitComplete)
+            {
+                return;
+            }
             Vehicle v = GameLogic.LocalPlayerVehicle;
 
             var props = v.GetModules<Propeller>();
@@ -171,15 +176,16 @@ namespace Autopilot
                 data.avrrpm /= props.Count;
                 data.avrrpm *= 1.66667f;
             }
-            var armed = InputSettings.EngineAutoStart.button;
-            if (armed.GetButtonDown())
+            var engine = v.GetModules<Engine>();
+            if (engine.Count != 0 && engine[0].running)
             {
-                ap.armed = (short)MAVLink.MAV_MODE.MANUAL_ARMED;
+                ap.armed = MAVLink.MAV_MODE_FLAG.SAFETY_ARMED;
             }
             else
             {
-                ap.armed = (short)MAVLink.MAV_MODE.MANUAL_DISARMED;
+                ap.armed = 0b00000000;
             }
+
         }
 
         private float map(float value, float fromLow, float fromHigh, float toLow, float toHigh)

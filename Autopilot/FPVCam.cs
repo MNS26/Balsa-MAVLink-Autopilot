@@ -10,15 +10,9 @@ namespace Autopilot
 {
     public class FPVCam : MonoBehaviour
     {
-        public GameObject CameraPrefab;
         private GameObject camera;
         public void Start()
-        {
-            DontDestroyOnLoad(this);
-            camera = (GameObject)GameObject.Instantiate(CameraPrefab);
-            camera.transform.SetParent(transform);
-
-            
+        {            
         }
 
         public void Update()

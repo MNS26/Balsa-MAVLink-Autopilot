@@ -14,7 +14,7 @@ namespace AutopilotCommon
         public Action<string> Log;
 
         public TcpClient client;
-        //Rates are stored in seconds
+        //Rates are stored in hertz
         public ConcurrentDictionary<MAVLink.MAVLINK_MSG_ID, float> requestedRates = new ConcurrentDictionary<MAVLink.MAVLINK_MSG_ID, float>();
         //Send time stored in ticks
         public ConcurrentDictionary<MAVLink.MAVLINK_MSG_ID, long> nextSendTime = new ConcurrentDictionary<MAVLink.MAVLINK_MSG_ID, long>();

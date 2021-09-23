@@ -66,7 +66,6 @@
     }
 public class ApStore
     {
-        public short sysState;
-        public short armed;
+        public MAVLink.MAV_MODE_FLAG armed;
     }
 }

@@ -51,12 +51,11 @@ namespace AutopilotCommon
             this.data = data;
             this.ap = ap;
             this.parameters = parameters;
-            ap.armed = 92;
         }
 
         public void ConnectEvent(ClientObject client)
         {
-            client.requestedRates[MAVLink.MAVLINK_MSG_ID.HEARTBEAT] = 0.25f;
+            client.requestedRates[MAVLink.MAVLINK_MSG_ID.HEARTBEAT] = 0.0125f;
             Log("Client connected");
         }
 
@@ -65,11 +64,7 @@ namespace AutopilotCommon
             Log("Client disconnected");
         }
 
-        public void ReceiveSetRate(ClientObject client, MAVLink.MAVLinkMessage rawMessage)
-        {
-            //client.requestedRates[message.messageType] = message.rate;
-        }
-
+        //Messages
         public void ParamRequestList(ClientObject client, MAVLink.MAVLinkMessage messageRaw)
         {
             Log("PARAM_REQUEST_LIST");
@@ -143,25 +138,10 @@ namespace AutopilotCommon
             }
         }
 
-        //Messages
         public void Heartbeat(ClientObject client, MAVLink.MAVLinkMessage messageRaw)
         {
             MAVLink.mavlink_heartbeat_t message = (MAVLink.mavlink_heartbeat_t)messageRaw.data;
             Log($"HEARTBEAT");
-        }
-
-        public void LinkNodeStatus(ClientObject client, MAVLink.MAVLinkMessage messageRaw)
-        {
-            //TODO: Figure out if we care, probably not
-            MAVLink.mavlink_link_node_status_t message = (MAVLink.mavlink_link_node_status_t)messageRaw.data;
-            Log($"LINK_NODE_STATUS");
-        }
-
-        public void StatusText(ClientObject client, MAVLink.MAVLinkMessage messageRaw)
-        {
-            MAVLink.mavlink_statustext_t message = (MAVLink.mavlink_statustext_t)messageRaw.data;
-            string statText = Encoding.UTF8.GetString(message.text);
-            Log($"STATUSTEXT: {statText}");
         }
 
         public void SystemTime(ClientObject client, MAVLink.MAVLinkMessage messageRaw)
@@ -169,6 +149,7 @@ namespace AutopilotCommon
             MAVLink.mavlink_system_time_t message = (MAVLink.mavlink_system_time_t)messageRaw.data;
             Log($"SYSTEM_TIME {message.time_unix_usec}");
         }
+
 
         //Commands
         public void RequestProtocolVersion(ClientObject client, MAVLink.mavlink_command_long_t command)
@@ -186,6 +167,14 @@ namespace AutopilotCommon
         {
             AckCommand(client, command, MAVLink.MAV_CMD_ACK.OK);
             Log($"SET_MESSAGE_INTERVAL: {(MAVLink.MAVLINK_MSG_ID)command.param1} = {command.param2}");
+            client.requestedRates[(MAVLink.MAVLINK_MSG_ID)command.param1] = command.param1 * 1000000;
+        }
+
+        //a "one shot" version of MessageInterwal
+        public void RequestMessgae(ClientObject client, MAVLink.mavlink_command_long_t command)
+        {
+            AckCommand(client, command, MAVLink.MAV_CMD_ACK.OK);
+            Log($"REQUEST_MESSAGE: {(MAVLink.MAVLINK_MSG_ID)command.param1} = {command.param2}");
             client.requestedRates[(MAVLink.MAVLINK_MSG_ID)command.param1] = command.param1 * 1000000;
         }
 
