@@ -65,45 +65,8 @@ namespace AutopilotCommon
             Log("Client disconnected");
         }
 
-        //Messages
-        [ReceiveMessage(MAVLink.MAVLINK_MSG_ID.PARAM_REQUEST_LIST)]
-        public void ParamRequestList(ClientObject client, MAVLink.MAVLinkMessage messageRaw)
-        {
-            Log("PARAM_REQUEST_LIST");
-            MAVLink.mavlink_param_request_list_t message = (MAVLink.mavlink_param_request_list_t)messageRaw.data;
-            int index = 0;
-            int count = parameters.GetCount();
-            foreach (Parameter p in parameters)
-            {
 
-                MAVLink.mavlink_param_value_t sendMessage = new MAVLink.mavlink_param_value_t();
-                sendMessage.param_id = p.GetIDBytes();
-                sendMessage.param_type = (byte)p.type;
-                sendMessage.param_value = p.value;
-                sendMessage.param_count = (ushort)count;
-                sendMessage.param_index = (ushort)index++;
-                client.SendMessage(sendMessage);
-            }
-        }
-
-        [ReceiveMessage(MAVLink.MAVLINK_MSG_ID.REQUEST_DATA_STREAM)]
-        public void RequestDataStream(ClientObject client, MAVLink.MAVLinkMessage messageRaw)
-        {
-            //TODO: Implement ALL of these.
-            MAVLink.mavlink_request_data_stream_t message = (MAVLink.mavlink_request_data_stream_t)messageRaw.data;
-            MAVLink.MAV_DATA_STREAM mdsType = (MAVLink.MAV_DATA_STREAM)message.req_stream_id;
-            Log($"REQUEST_DATA_STREAM  TYPE:{mdsType}  =  {message.req_message_rate}");
-            foreach (MethodInfo mi in typeof(ProtocolLogic).GetMethods())
-            {
-                SendMessage sm = mi.GetCustomAttribute<SendMessage>();
-                SendCategory category = mi.GetCustomAttribute<SendCategory>();
-                if (sm != null && category != null && (category.type == mdsType || mdsType == MAVLink.MAV_DATA_STREAM.ALL))
-                {
-                    client.requestedRates[sm.id] = 1f / message.req_message_rate;
-                }
-            }
-        }
-
+        //Commands
         [ReceiveCommand(MAVLink.MAV_CMD.PREFLIGHT_CALIBRATION)]
         public void PreflightCalibration(ClientObject client, MAVLink.mavlink_command_long_t command)
         {
@@ -111,22 +74,7 @@ namespace AutopilotCommon
             AckCommand(client, command, MAVLink.MAV_CMD_ACK.OK);
 
         }
-
-        [ReceiveMessage(MAVLink.MAVLINK_MSG_ID.HEARTBEAT)]
-        public void Heartbeat(ClientObject client, MAVLink.MAVLinkMessage messageRaw)
-        {
-            MAVLink.mavlink_heartbeat_t message = (MAVLink.mavlink_heartbeat_t)messageRaw.data;
-        }
-
-        [ReceiveMessage(MAVLink.MAVLINK_MSG_ID.SYSTEM_TIME)]
-        public void SystemTime(ClientObject client, MAVLink.MAVLinkMessage messageRaw)
-        {
-            MAVLink.mavlink_system_time_t message = (MAVLink.mavlink_system_time_t)messageRaw.data;
-            Log($"SYSTEM_TIME {message.time_unix_usec}");
-        }
-
-
-        //Commands
+        
         [ReceiveCommand(MAVLink.MAV_CMD.REQUEST_PROTOCOL_VERSION)]
         public void RequestProtocolVersion(ClientObject client, MAVLink.mavlink_command_long_t command)
         {
@@ -180,6 +128,24 @@ namespace AutopilotCommon
             client.SendMessage(autopilot);
         }
 
+        [ReceiveCommand(MAVLink.MAV_CMD.DO_SET_SERVO)]
+        public void RequestSetServo(ClientObject client, MAVLink.mavlink_command_long_t command)
+        {
+            Log("REQUEST SET SERVO");
+            AckCommand(client, command, MAVLink.MAV_CMD_ACK.OK);
+            MAVLink.mavlink_servo_output_raw_t servo = new MAVLink.mavlink_servo_output_raw_t();
+        }
+
+        //TODO
+        [ReceiveCommand(MAVLink.MAV_CMD.COMPONENT_ARM_DISARM)]
+        public void RequestArmDisarm(ClientObject client, MAVLink.mavlink_command_long_t command)
+        {
+            AckCommand(client, command, MAVLink.MAV_CMD_ACK.OK);
+            Log($"REQUEST ARM DISARM");
+        }
+
+
+
         /*
         TODO: Pretty sure this doesn't exist from our side       
         [SendMessage(MAVLink.MAVLINK_MSG_ID.MISSION_REQUEST_LIST)]
@@ -193,6 +159,58 @@ namespace AutopilotCommon
         }
         */
 
+        //Messages
+        [ReceiveMessage(MAVLink.MAVLINK_MSG_ID.HEARTBEAT)]
+        public void Heartbeat(ClientObject client, MAVLink.MAVLinkMessage messageRaw)
+        {
+            MAVLink.mavlink_heartbeat_t message = (MAVLink.mavlink_heartbeat_t)messageRaw.data;
+        }
+
+        [ReceiveMessage(MAVLink.MAVLINK_MSG_ID.SYSTEM_TIME)]
+        public void SystemTime(ClientObject client, MAVLink.MAVLinkMessage messageRaw)
+        {
+            MAVLink.mavlink_system_time_t message = (MAVLink.mavlink_system_time_t)messageRaw.data;
+            Log($"SYSTEM_TIME {message.time_unix_usec}");
+        }
+
+        [ReceiveMessage(MAVLink.MAVLINK_MSG_ID.PARAM_REQUEST_LIST)]
+        public void ParamRequestList(ClientObject client, MAVLink.MAVLinkMessage messageRaw)
+        {
+            Log("PARAM_REQUEST_LIST");
+            MAVLink.mavlink_param_request_list_t message = (MAVLink.mavlink_param_request_list_t)messageRaw.data;
+            int index = 0;
+            int count = parameters.GetCount();
+            foreach (Parameter p in parameters)
+            {
+
+                MAVLink.mavlink_param_value_t sendMessage = new MAVLink.mavlink_param_value_t();
+                sendMessage.param_id = p.GetIDBytes();
+                sendMessage.param_type = (byte)p.type;
+                sendMessage.param_value = p.value;
+                sendMessage.param_count = (ushort)count;
+                sendMessage.param_index = (ushort)index++;
+                client.SendMessage(sendMessage);
+            }
+        }
+
+        [ReceiveMessage(MAVLink.MAVLINK_MSG_ID.REQUEST_DATA_STREAM)]
+        public void RequestDataStream(ClientObject client, MAVLink.MAVLinkMessage messageRaw)
+        {
+            //TODO: Implement ALL of these.
+            MAVLink.mavlink_request_data_stream_t message = (MAVLink.mavlink_request_data_stream_t)messageRaw.data;
+            MAVLink.MAV_DATA_STREAM mdsType = (MAVLink.MAV_DATA_STREAM)message.req_stream_id;
+            Log($"REQUEST_DATA_STREAM  TYPE:{mdsType}  =  {message.req_message_rate}");
+            foreach (MethodInfo mi in typeof(ProtocolLogic).GetMethods())
+            {
+                SendMessage sm = mi.GetCustomAttribute<SendMessage>();
+                SendCategory category = mi.GetCustomAttribute<SendCategory>();
+                if (sm != null && category != null && (category.type == mdsType || mdsType == MAVLink.MAV_DATA_STREAM.ALL))
+                {
+                    client.requestedRates[sm.id] = 1f / message.req_message_rate;
+                }
+            }
+        }
+
         [SendMessage(MAVLink.MAVLINK_MSG_ID.HEARTBEAT)]
         public void SendHeartbeat(ClientObject client)
         {
@@ -200,7 +218,7 @@ namespace AutopilotCommon
             message.custom_mode = 0;
             message.type = (byte)MAVLink.MAV_TYPE.FIXED_WING;
             message.autopilot = (byte)MAVLink.MAV_AUTOPILOT.ARDUPILOTMEGA;
-            message.base_mode = (byte)ap.armed;
+            message.base_mode = (byte)MAVLink.MAV_MODE.MANUAL_ARMED;
             message.system_status = (byte)MAVLink.MAV_STATE.ACTIVE;
             message.mavlink_version = (byte)MAVLink.MAVLINK_VERSION;
             client.SendMessage(message);
@@ -272,11 +290,11 @@ namespace AutopilotCommon
             message.lat = data.latitude;
             message.lon = data.longitude;
             message.alt = (int)data.altitude;
-            message.eph = 300;
-            message.epv = 500;
+            message.eph = 30;
+            message.epv = 50;
             message.vel = 1000;
             message.cog = 25000;
-            message.satellites_visible = 10;
+            message.satellites_visible = 15;
             message.alt_ellipsoid = (int)data.altitude;
             message.h_acc = 10;
             message.v_acc = 10;
@@ -366,14 +384,14 @@ namespace AutopilotCommon
         {
             MAVLink.mavlink_rc_channels_t message = new MAVLink.mavlink_rc_channels_t();
             message.rssi = 200;
-            message.chan1_raw = (ushort)data.ch1;
-            message.chan2_raw = (ushort)data.ch2;
-            message.chan3_raw = (ushort)data.ch3;
-            message.chan4_raw = (ushort)data.ch4;
-            message.chan5_raw = (ushort)data.ch5;
-            message.chan6_raw = (ushort)data.ch6;
-            message.chan7_raw = (ushort)data.ch7;
-            message.chan8_raw = (ushort)data.ch8;
+            message.chan1_raw = (ushort)(1500 + data.ch1 * 500);
+            message.chan2_raw = (ushort)(1500 + data.ch2 * 500);
+            message.chan3_raw = (ushort)(1500 + data.ch3 * 500);
+            message.chan4_raw = (ushort)(1500 + data.ch4 * 500);
+            message.chan5_raw = (ushort)(1500 + data.ch5 * 500);
+            message.chan6_raw = (ushort)(1500 + data.ch6 * 500);
+            message.chan7_raw = (ushort)(1500 + data.ch7 * 500);
+            message.chan8_raw = (ushort)(1500 + data.ch8 * 500);
             client.SendMessage(message);
         }
 
@@ -392,16 +410,6 @@ namespace AutopilotCommon
             message.chan7_scaled = 5000;
             message.chan8_scaled = 5000;
             client.SendMessage(message);
-        }
-    
-
-        public void AckCommand(ClientObject client, MAVLink.mavlink_command_long_t command, MAVLink.MAV_CMD_ACK ackType)
-        {
-            MAVLink.mavlink_command_ack_t ack = new MAVLink.mavlink_command_ack_t();
-            ack.command = command.command;
-            ack.result = (byte)ackType;
-            ack.target_system = command.target_system;
-            ack.target_component = command.target_component;
         }
 
         [ReceiveMessage(MAVLink.MAVLINK_MSG_ID.PARAM_SET)]
@@ -422,6 +430,15 @@ namespace AutopilotCommon
                 param_count = (ushort)parameters.GetCount()
             };
             client.SendMessage(sendMessage);
+        }
+
+        public void AckCommand(ClientObject client, MAVLink.mavlink_command_long_t command, MAVLink.MAV_CMD_ACK ackType)
+        {
+            MAVLink.mavlink_command_ack_t ack = new MAVLink.mavlink_command_ack_t();
+            ack.command = command.command;
+            ack.result = (byte)ackType;
+            ack.target_system = command.target_system;
+            ack.target_component = command.target_component;
         }
 
         public uint GetUptime()

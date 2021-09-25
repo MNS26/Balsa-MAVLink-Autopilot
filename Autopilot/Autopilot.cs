@@ -24,7 +24,7 @@ namespace Autopilot
             handler = new NetworkHandler(protocol, Log);
             handler.StartServer();
             //If you want to stick around
-            //GameEvents.Vehicles.OnVehicleSpawned.AddListener(VehicleSpawned);
+            GameEvents.Vehicles.OnVehicleSpawned.AddListener(VehicleSpawned);
         }
 
 
@@ -65,7 +65,7 @@ namespace Autopilot
                 data.accy = 0;
                 data.accz = 0;
                 data.rssi = 0;
-                ap.armed = MAVLink.MAV_MODE_FLAG.SAFETY_ARMED;
+                ap.mode = MAVLink.MAV_MODE_FLAG.SAFETY_ARMED;
                 data.avrrpm = 0;
                 data.latitude = 0;
                 data.longitude = 0;
@@ -148,14 +148,14 @@ namespace Autopilot
             //controller stuff
             data.rssi = map(v.SignalStrength.SignalDegradation, 0, 1, 255, 0);
 
-            data.ch1 = 1500 + InputSettings.Axis_Roll.GetAxis() * 500;
-            data.ch2 = 1500 + InputSettings.Axis_Pitch.GetAxis() * 500;
-            data.ch3 = 1500 + InputSettings.Axis_Throttle.GetAxis() * 500;
-            data.ch4 = 1500 + InputSettings.Axis_Yaw.GetAxis() * 500;
-            data.ch5 = 1500 + InputSettings.Axis_A.GetAxis() * 500;
-            data.ch6 = 1500 + InputSettings.Axis_B.GetAxis() * 500;
-            data.ch7 = 1500 + InputSettings.Axis_C.GetAxis() * 500;
-            data.ch8 = 1500 + InputSettings.Axis_D.GetAxis() * 500;
+            data.ch1 = InputSettings.Axis_Roll.GetAxis();
+            data.ch2 = InputSettings.Axis_Pitch.GetAxis();
+            data.ch3 = InputSettings.Axis_Throttle.GetAxis();
+            data.ch4 = InputSettings.Axis_Yaw.GetAxis();
+            data.ch5 = InputSettings.Axis_A.GetAxis();
+            data.ch6 = InputSettings.Axis_B.GetAxis();
+            data.ch7 = InputSettings.Axis_C.GetAxis();
+            data.ch8 = InputSettings.Axis_D.GetAxis();
         }
 
         public void FixedUpdate()
@@ -180,16 +180,16 @@ namespace Autopilot
             var engine = v.GetModules<Engine>();
             if (engine.Count != 0 && engine[0].running)
             {
-                ap.armed = MAVLink.MAV_MODE_FLAG.SAFETY_ARMED;
+                ap.mode = MAVLink.MAV_MODE_FLAG.SAFETY_ARMED;
             }
             else
             {
-                ap.armed = 0b00000000;
+                ap.mode = MAVLink.MAV_MODE_FLAG.MANUAL_INPUT_ENABLED;
             }
 
         }
 
-        private float map(float value, float fromLow, float fromHigh, float toLow, float toHigh)
+        public static float map(float value, float fromLow, float fromHigh, float toLow, float toHigh)
         {
             return (value - fromLow) * (toHigh - toLow) / (fromHigh - fromLow) + toLow;
         }
