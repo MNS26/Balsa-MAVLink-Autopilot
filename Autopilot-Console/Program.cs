@@ -17,7 +17,7 @@ namespace AutopilotConsole
             Console.WriteLine("Start!");
             data = new DataStore();
             ap = new ApStore();
-            ap.armed = 0;
+            ap.mode = 0;
             parameters = new ParameterHandler("../../../Autopilot/bin/Debug/", "Parameters.dat", Console.WriteLine);
 
             protocol = new ProtocolLogic(data, ap,Console.WriteLine, parameters);
@@ -42,6 +42,7 @@ namespace AutopilotConsole
                 data.gyrox = 1;
                 data.gyroy = 2;
                 data.gyroz = 3;
+
             }
         }
 
