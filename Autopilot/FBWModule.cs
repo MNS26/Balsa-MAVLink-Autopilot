@@ -31,6 +31,7 @@ namespace Autopilot
             Autopilot.Log("OPCS Unregister");
         }
 
+        //controll plane 
         public void OnProcessCtrlState(ref FSInputState data, Vehicle vehicle)
         {
             UpdateEvent();
