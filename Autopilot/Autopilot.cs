@@ -2,6 +2,7 @@
 using FSControl;
 using Modules;
 using UnityEngine;
+using System.IO;
 namespace Autopilot
 {
     public class Autopilot : MonoBehaviour
@@ -196,7 +197,9 @@ namespace Autopilot
         //It's nice to identify in the log where things came from
         public static void Log(string text)
         {
-            Debug.Log($"{Time.realtimeSinceStartup} [Autopilot] {text}");
+            // Unity didn't like this
+            // Debug.Log($"{Time.realtimeSinceStartup} [Autopilot] {text}");
+            Debug.Log($"[Autopilot] {text}");
         }
     }
 }
