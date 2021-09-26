@@ -114,11 +114,26 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\BALSA Model Flight Simulator Playtest\balsa_Data\Managed\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Balsa.Core">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\BALSA Model Flight Simulator Playtest\balsa_Data\Managed\Balsa.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="FloatingUtil">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\BALSA Model Flight Simulator Playtest\balsa_Data\Managed\FloatingUtil.dll</HintPath>
+    </Reference>
     <Reference Include="MAVLink, Version=1.0.0.0, Culture=neutral, PublicKeyToken=38326cb7e06851fc, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\External\MAVLink1-2\MAVLink.dll</HintPath>
     </Reference>
+    <Reference Include="NetworkTest">
+      <HintPath>..\..\Balsa-NetworkTest\NetworkTest\bin\Debug\NetworkTest.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="UnityEngine">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\BALSA Model Flight Simulator Playtest\balsa_Data\Managed\UnityEngine.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Defaults.dat" />

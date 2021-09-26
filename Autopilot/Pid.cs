@@ -12,7 +12,7 @@ namespace Autopilot
         public Func<double> input;
         public Func<double> setpoint;
         public Func<double> clockSource;
-        public Action<double> output;
+        public Action<double> outputCallback;
         public bool enabled
         {
             get;
@@ -52,20 +52,6 @@ namespace Autopilot
         {
             get;
             private set;
-        }
-
-        public PID(double kP, double kI, double kD, double rangeMin, double rangeMax, Func<double> input, Func<double> setpoint, Func<double> clockSource, Action<double> output)
-        {
-            this.kP = kP;
-            this.kI = kI;
-            this.kD = kD;
-            this.rangeMin = rangeMin;
-            this.rangeMax = rangeMax;
-            this.input = input;
-            this.clockSource = clockSource;
-            this.setpoint = setpoint;
-            this.output = output;
-            this.enabled = true;
         }
 
         public void FixedUpdate()
@@ -110,10 +96,15 @@ namespace Autopilot
                 outputValue = rangeMax;
             }
             //Call output delegate if it exists
-            output?.Invoke(outputValue);
+            outputCallback?.Invoke(outputValue);
             //Save the state for derivative calculation
             lastTime = currentTime;
             lastInput = currentInput;
+        }
+
+        public double Output()
+        {
+            return outputValue;
         }
 
         public void Enable()

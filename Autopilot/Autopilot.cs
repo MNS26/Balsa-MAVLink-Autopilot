@@ -24,7 +24,7 @@ namespace Autopilot
             handler = new NetworkHandler(protocol, Log);
             handler.StartServer();
             //If you want to stick around
-            GameEvents.Vehicles.OnVehicleSpawned.AddListener(VehicleSpawned);
+            //GameEvents.Vehicles.OnVehicleSpawned.AddListener(VehicleSpawned);
         }
 
 
