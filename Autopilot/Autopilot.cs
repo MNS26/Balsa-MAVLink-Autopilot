@@ -2,29 +2,26 @@
 using FSControl;
 using Modules;
 using UnityEngine;
-using System.IO;
 namespace Autopilot
 {
     public class Autopilot : MonoBehaviour
     {
-        DataStore data;
-        ApStore ap;
+       public static  DataStore data = new DataStore();
+        public static ApStore ap = new ApStore();
         ProtocolLogic protocol;
         NetworkHandler handler;
-
         public void Start()
         {
-            GameObject.DontDestroyOnLoad(this);
+            DontDestroyOnLoad(this);
             Log("Start!");
-            data = new DataStore();
-            ap = new ApStore();
+           
             ParameterHandler parameters;
             parameters = new ParameterHandler(PathUtil.Resolve(".") + "/Addons/Autopilot/", "Parameters.dat", Log);
             protocol = new ProtocolLogic(data, ap, Log, parameters);
             handler = new NetworkHandler(protocol, Log);
             handler.StartServer();
             //If you want to stick around
-            //GameEvents.Vehicles.OnVehicleSpawned.AddListener(VehicleSpawned);
+            GameEvents.Vehicles.OnVehicleSpawned.AddListener(VehicleSpawned);
         }
 
 
@@ -33,6 +30,7 @@ namespace Autopilot
             Autopilot.Log("OVS Main");
             if (vehicle == GameLogic.LocalPlayerVehicle)
             {
+                Autopilot.Log("Local player");
                 if (!vehicle.gameObject.TryGetComponent(out AutopilotComponent _))
                 {
                     Log("Adding autopilot controller to " + vehicle.name);

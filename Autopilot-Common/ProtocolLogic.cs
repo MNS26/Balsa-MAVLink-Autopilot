@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Text;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
+using System.Text;
 
 namespace AutopilotCommon
 {
@@ -45,7 +43,7 @@ namespace AutopilotCommon
        24 = THERMAL
         */
 
-        public ProtocolLogic(DataStore data, ApStore ap,Action<string> Log, ParameterHandler parameters)
+        public ProtocolLogic(DataStore data, ApStore ap, Action<string> Log, ParameterHandler parameters)
         {
             this.Log = Log;
             startTime = DateTime.UtcNow.Ticks;
@@ -74,7 +72,7 @@ namespace AutopilotCommon
             AckCommand(client, command, MAVLink.MAV_CMD_ACK.OK);
 
         }
-        
+
         [ReceiveCommand(MAVLink.MAV_CMD.REQUEST_PROTOCOL_VERSION)]
         public void RequestProtocolVersion(ClientObject client, MAVLink.mavlink_command_long_t command)
         {

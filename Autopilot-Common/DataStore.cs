@@ -1,6 +1,4 @@
-﻿using System.Net.NetworkInformation;
-
-namespace AutopilotCommon
+﻿namespace AutopilotCommon
 {
     public class DataStore
     {
@@ -66,7 +64,7 @@ namespace AutopilotCommon
         public float ch16; // aux12
 
     }
-public class ApStore
+    public class ApStore
     {
         public MAVLink.MAV_MODE_FLAG mode;
         public MAVLink.MAV_STATE state;

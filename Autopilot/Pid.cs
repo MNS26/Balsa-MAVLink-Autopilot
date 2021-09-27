@@ -13,11 +13,7 @@ namespace Autopilot
         public Func<double> setpoint;
         public Func<double> clockSource;
         public Action<double> outputCallback;
-        public bool enabled
-        {
-            get;
-            private set;
-        }
+
         public double error
         {
             get;
@@ -56,10 +52,6 @@ namespace Autopilot
 
         public void FixedUpdate()
         {
-            if (!enabled)
-            {
-                return;
-            }
             //Gather inputs
             double currentTime = clockSource();
             double currentInput = input();
@@ -105,29 +97,6 @@ namespace Autopilot
         public double Output()
         {
             return outputValue;
-        }
-
-        public void Enable()
-        {
-            //Zero out D
-            lastInput = input();
-            enabled = true;
-        }
-
-        /// <summary>
-        /// If switching from manual to automatic control, this will set the PID steady state value
-        /// </summary>
-        /// <param name="integrator">Integrator.</param>
-        public void Enable(double integrator)
-        {
-            //Set the steady state
-            this.i = integrator;
-            Enable();
-        }
-
-        public void Disable()
-        {
-            enabled = false;
         }
     }
 }

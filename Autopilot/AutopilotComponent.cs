@@ -1,16 +1,14 @@
-﻿using System;
-using UnityEngine;
+﻿using AutopilotCommon;
 using FSControl;
-using AutopilotCommon;
+using UnityEngine;
 
 namespace Autopilot
 {
     public class AutopilotComponent : MonoBehaviour, IVehicleComponent
     {
         //
-        DataStore data;
-        ApStore ap;
-
+        DataStore data = Autopilot.data;
+        ApStore ap = Autopilot.ap;
         Vehicle vehicle;
         FBWModule fbwModule;
         //Vertical
@@ -30,31 +28,31 @@ namespace Autopilot
 
         //km/h
         float speed = 80;
-
-        private double GetPitch()
+        
+        private double GetVehiclePitch()
         {
             return FSControlUtil.GetVehiclePitch(vehicle) * Mathf.Rad2Deg;
         }
-        private double GetRoll()
+        private double GetVehicleRoll()
         {
             return FSControlUtil.GetVehicleRoll(vehicle) * Mathf.Rad2Deg;
         }
-
-        private double GetAcroRoll()
+        
+        private double GetRoll()
         {
-            return (data.ch1 * 10) + FSControlUtil.GetVehicleRoll(vehicle) * Mathf.Rad2Deg; ;
+            return /*(FSControlUtil.GetVehicleRoll(vehicle) * Mathf.Rad2Deg) +*/ Autopilot.map(data.ch1, -1, 1, -45, 45);
         }
-        private double GetAcroPitch()
+        private double GetPitch()
         {
-            return (data.ch2*10) + FSControlUtil.GetVehiclePitch(vehicle) * Mathf.Rad2Deg; ;
+            return /*(FSControlUtil.GetVehiclePitch(vehicle) * Mathf.Rad2Deg) +*/ Autopilot.map(data.ch2, -1, 1, -45, 45);
         }
-        private double GetAcroYaw()
+        private double GetYaw()
         {
-            return (data.ch4*10) + FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg; ;
+            return /*(FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + */Autopilot.map(data.ch4, -1, 1, -45, 45);
         }
         private double GetThrottle()
         {
-            return Autopilot.map(data.ch3,-1,1,0,100);
+            return Autopilot.map(data.ch3, -1, 1, 0, 100);
         }
 
 
@@ -79,15 +77,13 @@ namespace Autopilot
         public void OnVehicleSpawn(Vehicle vehicle)
         {
             Autopilot.Log("OVS Component");
-            data = new DataStore();
-            ap = new ApStore();
             this.vehicle = vehicle;
             fbwModule = new FBWModule(APUpdate);
             vehicle.Autotrim.host.RegisterFBWModule(fbwModule);
 
             //Vertical
             //Clamp VS to -10m/s to 10m/s. Kp = 5m/s per 10m. 0.5.
-            //altitudePid = new PID(0.5, 0, 0, -3, 3, }, () => { return altitude; }, () => { return Time.time; }, (double v) => { vs = (float)v; });
+            //altitudePid = new PID(0.5, 0, 0, -3, 3, () => { return altitude; }, () => { return Time.time; }, (double v) => { vs = (float)v; });
             altitudePid = new PID()
             {
                 kP = 0.5,
@@ -122,8 +118,8 @@ namespace Autopilot
                 kD = 0.005,
                 rangeMin = -1,
                 rangeMax = 1,
-                input = GetPitch,
-                setpoint = verticalSpeedPid.Output,
+                input = GetVehiclePitch,
+                setpoint = GetPitch,//verticalSpeedPid.Output,
                 clockSource = () => { return Time.time; },
                 outputCallback = (double output) => { fbwModule.pitch = (float)output; },
             };
@@ -142,17 +138,17 @@ namespace Autopilot
                 clockSource = () => { return Time.time; },
             };
 
-            double temp = GetRoll();
             //Clamp control from -1 to 1. Kp = 50 degrees error = full deflection, 0.02. Clamp yaw to 0.5 * roll.
             rollPid = new PID()
             {
+
                 kP = 0.02,
                 kI = 0.001,
                 kD = 0,
                 rangeMin = -1,
                 rangeMax = 1,
-                input = GetRoll,
-                setpoint = headingPid.Output,
+                input = GetVehicleRoll,
+                setpoint = GetRoll,//headingPid.Output,
                 clockSource = () => { return Time.time; },
                 outputCallback = (double output) => { fbwModule.roll = (float)output; fbwModule.yaw = (float)output / 2f; },
             };
@@ -166,7 +162,7 @@ namespace Autopilot
                 rangeMin = 0,
                 rangeMax = 1,
                 input = () => { return vehicle.Physics.Speed * 3.6f; },
-                setpoint = () => { return speed; },
+                setpoint = GetThrottle,//() => { return speed; },
                 clockSource = () => { return Time.time; },
                 outputCallback = (double output) => { fbwModule.throttle = (float)output; },
             };
@@ -179,31 +175,32 @@ namespace Autopilot
                 vehicle.Autotrim.DisableAT();
             }
             /*
-            apModule.pitchEnabled = false;
-            apModule.rollEnabled = false;
-            apModule.yawEnabled = false;
-            apModule.throttleEnabled = false;
+            fbwModule.pitchEnabled = false;
+            fbwModule.rollEnabled = false;
+            fbwModule.yawEnabled = false;
+            fbwModule.throttleEnabled = false;
             */
+            //Autopilot.Log($"{GetPitch()}");
             //Vertical
             altitudePid.FixedUpdate();
             //Autopilot.Log($"Alt error: {altitudePid.error}, output: {altitudePid.outputValue}");
             verticalSpeedPid.FixedUpdate();
             //Autopilot.Log($"VS error: {verticalSpeedPid.error}, output: {verticalSpeedPid.outputValue}");
             pitchPid.FixedUpdate();
-            Autopilot.Log($"Pitch error: {pitchPid.error}, output: {pitchPid.outputValue}");
+            //Autopilot.Log($"Pitch error: {pitchPid.error}, output: {pitchPid.outputValue}");
             fbwModule.pitchEnabled = true;
 
             headingPid.FixedUpdate();
-            Autopilot.Log($"Heading error: {headingPid.error}, output: {headingPid.outputValue}");
-            
+            //Autopilot.Log($"Heading error: {headingPid.error}, output: {headingPid.outputValue}");
+
             rollPid.FixedUpdate();
-            Autopilot.Log($"Roll error: {rollPid.error}, output: {rollPid.outputValue}");
+            //Autopilot.Log($"Roll error: {rollPid.error}, output: {rollPid.outputValue}");
             fbwModule.rollEnabled = true;
             fbwModule.yawEnabled = true;
 
             speedPid.FixedUpdate();
-            Autopilot.Log($"Speed error: {speedPid.error}, output: {speedPid.outputValue}");
-            fbwModule.throttleEnabled = true;
+            //Autopilot.Log($"Speed error: {speedPid.error}, output: {speedPid.outputValue}");
+            fbwModule.throttleEnabled = false;
         }
     }
 }

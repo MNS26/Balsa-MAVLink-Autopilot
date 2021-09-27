@@ -1,6 +1,6 @@
-﻿using System;
+﻿using AutopilotCommon;
+using System;
 using System.Threading;
-using AutopilotCommon;
 using UnityEngine;
 
 namespace AutopilotConsole
@@ -20,7 +20,7 @@ namespace AutopilotConsole
             ap.mode = 0;
             parameters = new ParameterHandler("../../../Autopilot/bin/Debug/", "Parameters.dat", Console.WriteLine);
 
-            protocol = new ProtocolLogic(data, ap,Console.WriteLine, parameters);
+            protocol = new ProtocolLogic(data, ap, Console.WriteLine, parameters);
             handler = new NetworkHandler(protocol, Console.WriteLine);
             handler.RegisterUnprocessedCommand(UnprocessedCommand);
             handler.RegisterUnprocessedMessage(UnprocessedMessage);

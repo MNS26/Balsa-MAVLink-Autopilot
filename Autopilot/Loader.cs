@@ -1,6 +1,5 @@
-﻿using System;
+﻿using BalsaCore;
 using UnityEngine;
-using BalsaCore;
 
 namespace Autopilot
 {
@@ -39,13 +38,13 @@ namespace Autopilot
         [BalsaAddonFinalize(invokeTime = AddonInvokeTime.Flight)]
         public static void BalsaFinalizeFlight()
         {
-            
+
         }
         //Game exit
         [BalsaAddonFinalize]
         public static void BalsaFinalize()
         {
-            go.DestroyGameObject();   
+            go.DestroyGameObject();
         }
     }
 }
