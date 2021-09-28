@@ -40,59 +40,60 @@ namespace Autopilot
 
         private double GetRoll()
         {
-            if (-1 <= data.ch8 && data.ch8 < -0.8) //mode 1
-            { return (FSControlUtil.GetVehicleRoll(vehicle) * Mathf.Rad2Deg)+Autopilot.map(data.ch1, -1, 1, -20, 20); }
-            if (-0.7 < data.ch8 && data.ch8 < -0.5) //mode 2
-            { return Autopilot.map(data.ch1, -1, 1, -45, 45); }
-            if (-0.4 < data.ch8 && data.ch8 < -0.2) //mode 3
-            { Autopilot.map(data.ch1, -1, 1, -20, 20); }
-            if (0.2 < data.ch8 && data.ch8 < 0.4) //mode 4
+            if (-1 >= data.ch8 && data.ch8 < -0.6) //mode 1
+            { return (FSControlUtil.GetVehicleRoll(vehicle) * Mathf.Rad2Deg)+Autopilot.map(data.ch1, -1, 1, -10, 10); }
+            if (-0.6 >= data.ch8 && data.ch8 < -0.3) //mode 2
+            { return Autopilot.map(data.ch1, -1, 1, -60, 60); }
+            if (-0.3 >= data.ch8 && data.ch8 <= 0.00) //mode 3
+            { return (FSControlUtil.GetVehicleRoll(vehicle) * Mathf.Rad2Deg) + Autopilot.map(data.ch1, -1, 1, -25, 25); }
+            if (0 < data.ch8 && data.ch8 <= 3) //mode 4
             { return (FSControlUtil.GetVehicleRoll(vehicle) * Mathf.Rad2Deg) + Autopilot.map(data.ch1, -1, 1, -90, 90); }
-            if (0.5 < data.ch8 && data.ch8 < 0.7) //mode 5
-            {return 0.00; }
-            if (0.8 < data.ch8 && data.ch8 <= 1) //mode 6
+            if (0.3 < data.ch8 && data.ch8 <= 6) //mode 5
+            { return 0.00; }
+            if (0.6 < data.ch8 && data.ch8 <= 1) //mode 6
             { return 0.00; }
             else
-                return (FSControlUtil.GetVehicleRoll(vehicle) * Mathf.Rad2Deg);
+                return 0.00;
         }
         private double GetPitch()
         {
-            if (-1 <= data.ch8 && data.ch8 < -0.8) //mode 1
-            { return (FSControlUtil.GetVehiclePitch(vehicle) * Mathf.Rad2Deg)+Autopilot.map(data.ch2, -1, 1, -20, 20); }
-            if (-0.7 < data.ch8 && data.ch8 < -0.5) //mode 2
-            { return Autopilot.map(data.ch2, -1, 1, -45, 45); }
-            if (-0.4 < data.ch8 && data.ch8 < -0.2) //mode 3
-            { return Autopilot.map(data.ch2, -1, 1, -20, 20) + (verticalSpeedPid.Output());}
-            if (0.2 < data.ch8 && data.ch8 < 0.4) //mode 4
+            if (-1 >= data.ch8 && data.ch8 < -0.6) //mode 1
+            { return (FSControlUtil.GetVehiclePitch(vehicle) * Mathf.Rad2Deg)+Autopilot.map(data.ch2, -1, 1, -10, 10); }
+            if (-0.6 >= data.ch8 && data.ch8 < -0.3) //mode 2
+            { return Autopilot.map(data.ch2, -1, 1, -60, 60); }
+            if (-0.3 >= data.ch8 && data.ch8 <= 0.00) //mode 3
+            { return Autopilot.map(data.ch2, -1, 1, -25, 25) + (verticalSpeedPid.Output());}
+            if (0 < data.ch8 && data.ch8 < 3) //mode 4
             { return (FSControlUtil.GetVehiclePitch(vehicle) * Mathf.Rad2Deg) + Autopilot.map(data.ch2, -1, 1, -90, 90); }
-            if (0.5 < data.ch8 && data.ch8 < 0.7) //mode 5
+            if (3 < data.ch8 && data.ch8 < 6) //mode 5
             { return 0.00; }
-            if (0.8 < data.ch8 && data.ch8 <= 1) //mode 6
+            if (6 < data.ch8 && data.ch8 >= 1) //mode 6
             { return 0.00; }
             else
-                return (FSControlUtil.GetVehiclePitch(vehicle) * Mathf.Rad2Deg);
+                return 0.00;
         }
         private double GetYaw() //not used
         {
-            if (-1 <= data.ch8 && data.ch8 < -0.8) //mode 1
-            { return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + Autopilot.map(data.ch4, -1, 1, -30, 30); }
-            if (-0.7 < data.ch8 && data.ch8 < -0.5) //mode 2
-            { return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + Autopilot.map(data.ch4, -1, 1, -45, 45); }
-            if (-0.4 < data.ch8 && data.ch8 < -0.2) //Hmode 3
-            { return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + Autopilot.map(data.ch4, -1, 1, -30, 30); }
-            if (0.2 < data.ch8 && data.ch8 < 0.4) //Hmode 4
-            { return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + Autopilot.map(data.ch4, -1, 1, -30, 30); }
-            if (0.5 < data.ch8 && data.ch8 < 0.7) //Hmode 5
-            { return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + Autopilot.map(data.ch4, -1, 1, -30, 30); }
-            if (0.8 < data.ch8 && data.ch8 <= 1) //Hmode 6
-            { return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + Autopilot.map(data.ch4, -1, 1, -30, 30); }
+            if (-1 >= data.ch8 && data.ch8 < -0.6) //mode 1
+            { return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg)+Autopilot.map(data.ch4, -1, 1, -10, 10); }
+            if (-0.6 >= data.ch8 && data.ch8 < -0.3) //mode 2
+            { return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + Autopilot.map(data.ch4, -1, 1, -60, 60); }
+            if (-0.3 >= data.ch8 && data.ch8 <= 0.00) //Hmode 3
+            { return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + Autopilot.map(data.ch4, -1, 1, -25, 25); }
             else
-              return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg);
+                return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + Autopilot.map(data.ch4, -1, 1, -30, 30);
+
+
         }
         private double GetThrottle()
         {
             return Autopilot.map(data.ch3, -1, 1, 0, 100);
         }
+
+
+
+
+
         private double GetHeadingError()
         {
             //Autopilot.Log(vehicle.Physics.HeadingDegs.ToString());
@@ -135,12 +136,12 @@ namespace Autopilot
             verticalSpeedPid = new PID()
             {
                 kP = 3,
-                kI = 0.1,
+                kI = 0.2,
                 kD = 0,
                 rangeMin = -30,
                 rangeMax = 30,
                 input = () => { return vehicle.Physics.VerticalSpeed; },
-                setpoint = () => 0.00,//altitude.Output ,
+                setpoint = () => 0.00,
                 clockSource = () => { return Time.time; },
             };
 
@@ -215,6 +216,7 @@ namespace Autopilot
             fbwModule.yawEnabled = false;
             fbwModule.throttleEnabled = false;
             */
+            //Autopilot.Log($"{GetPitch()}");
             //Vertical
             altitudePid.FixedUpdate();
             //Autopilot.Log($"Alt error: {altitudePid.error}, output: {altitudePid.outputValue}");
