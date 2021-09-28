@@ -68,6 +68,7 @@ namespace Autopilot
             p = error * kP;
             i += error * kI * deltaTime;
             d = (deltaInput * kD) / deltaTime;
+
             //Clamp I
             if (i < rangeMin)
             {
@@ -77,6 +78,7 @@ namespace Autopilot
             {
                 i = rangeMax;
             }
+            
             outputValue = p + i + d;
             //Clamp output
             if (outputValue < rangeMin)
@@ -87,6 +89,7 @@ namespace Autopilot
             {
                 outputValue = rangeMax;
             }
+
             //Call output delegate if it exists
             outputCallback?.Invoke(outputValue);
             //Save the state for derivative calculation
