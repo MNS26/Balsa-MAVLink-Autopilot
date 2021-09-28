@@ -17,37 +17,37 @@ namespace Autopilot
         public double error
         {
             get;
-            private set;
+            set;
         }
         public double p
         {
             get;
-            private set;
+            set;
         }
         public double i
         {
             get;
-            private set;
+            set;
         }
         public double d
         {
             get;
-            private set;
+            set;
         }
         public double outputValue
         {
             get;
-            private set;
+            set;
         }
         public double lastInput
         {
             get;
-            private set;
+            set;
         }
         public double lastTime
         {
             get;
-            private set;
+            set;
         }
 
         public void FixedUpdate()
@@ -78,7 +78,7 @@ namespace Autopilot
             {
                 i = rangeMax;
             }
-            
+
             outputValue = p + i + d;
             //Clamp output
             if (outputValue < rangeMin)
