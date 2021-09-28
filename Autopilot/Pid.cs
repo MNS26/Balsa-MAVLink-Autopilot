@@ -17,37 +17,37 @@ namespace Autopilot
         public double error
         {
             get;
-            set;
+            private set;
         }
         public double p
         {
             get;
-            set;
+            private set;
         }
         public double i
         {
             get;
-            set;
+            private set;
         }
         public double d
         {
             get;
-            set;
+            private set;
         }
         public double outputValue
         {
             get;
-            set;
+            private set;
         }
         public double lastInput
         {
             get;
-            set;
+            private set;
         }
         public double lastTime
         {
             get;
-            set;
+            private set;
         }
 
         public void FixedUpdate()
@@ -68,7 +68,6 @@ namespace Autopilot
             p = error * kP;
             i += error * kI * deltaTime;
             d = (deltaInput * kD) / deltaTime;
-
             //Clamp I
             if (i < rangeMin)
             {
@@ -78,7 +77,6 @@ namespace Autopilot
             {
                 i = rangeMax;
             }
-
             outputValue = p + i + d;
             //Clamp output
             if (outputValue < rangeMin)
@@ -89,7 +87,6 @@ namespace Autopilot
             {
                 outputValue = rangeMax;
             }
-
             //Call output delegate if it exists
             outputCallback?.Invoke(outputValue);
             //Save the state for derivative calculation
