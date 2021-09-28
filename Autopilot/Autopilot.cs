@@ -123,7 +123,6 @@ namespace Autopilot
             data.lastGVelx = data.currentGVelx;
             data.lastGVely = data.currentGVely;
             data.lastGVelz = data.currentGVelz;
-
             data.currentAVelx = v.Physics.Velocity.x * 1000;
             data.currentAVely = v.Physics.Velocity.y * 1000;
             data.currentAVelz = v.Physics.Velocity.z * 1000;
