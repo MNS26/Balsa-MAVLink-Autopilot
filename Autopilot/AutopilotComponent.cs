@@ -41,47 +41,47 @@ namespace Autopilot
         private double GetRoll()
         {
             if (-1 <= data.ch8 && data.ch8 < -0.6) //mode 1
-            { return (FSControlUtil.GetVehicleRoll(vehicle) * Mathf.Rad2Deg)+Autopilot.map(data.ch1, -1, 1, -20, 20); }
+            { return (FSControlUtil.GetVehicleRoll(vehicle) * Mathf.Rad2Deg)+(data.ch1 * 20); }
             if (-0.6 < data.ch8 && data.ch8 < -0.3) //mode 2
-            { return Autopilot.map(data.ch1, -1, 1, -60, 60); }
+            { return (data.ch1 * 60); }
             if (-0.3 < data.ch8 && data.ch8 <= 0.00) //mode 3
-            { return (FSControlUtil.GetVehicleRoll(vehicle) * Mathf.Rad2Deg) + Autopilot.map(data.ch1, -1, 1, -25, 25); }
+            { return (FSControlUtil.GetVehicleRoll(vehicle) * Mathf.Rad2Deg) + (data.ch1 * 25); }
             if (0 < data.ch8 && data.ch8 <= 0.3) //mode 4
-            { return (FSControlUtil.GetVehicleRoll(vehicle) * Mathf.Rad2Deg) + Autopilot.map(data.ch1, -1, 1, -90, 90); }
+            { return (FSControlUtil.GetVehicleRoll(vehicle) * Mathf.Rad2Deg) + (data.ch1 * 90); }
             if (0.3 < data.ch8 && data.ch8 <= 0.6) //mode 5
-            { return 0.00; }
+            { return (FSControlUtil.GetVehicleRoll(vehicle) * Mathf.Rad2Deg); }
             if (0.6 < data.ch8 && data.ch8 <= 1) //mode 6
-            { return 0.00; }
+            { return (FSControlUtil.GetVehicleRoll(vehicle) * Mathf.Rad2Deg); }
             else
-                return 0.00;
+                return (FSControlUtil.GetVehicleRoll(vehicle) * Mathf.Rad2Deg);
         }
         private double GetPitch()
         {
             if (-1 <= data.ch8 && data.ch8 < -0.6) //mode 1
-            { return (FSControlUtil.GetVehiclePitch(vehicle) * Mathf.Rad2Deg)+Autopilot.map(data.ch2, -1, 1, -20, 20); }
+            { return (FSControlUtil.GetVehiclePitch(vehicle) * Mathf.Rad2Deg) + (data.ch2*20); }
             if (-0.6 < data.ch8 && data.ch8 < -0.3) //mode 2
-            { return Autopilot.map(data.ch2, -1, 1, -60, 60); }
+            { return (data.ch2*60); }
             if (-0.3 < data.ch8 && data.ch8 <= 0.00) //mode 3
-            { return Autopilot.map(data.ch2, -1, 1, -25, 25) + (verticalSpeedPid.Output());}
+            { return (data.ch2 * 25) + (verticalSpeedPid.Output());}
             if (0 < data.ch8 && data.ch8 < 0.3) //mode 4
-            { return (FSControlUtil.GetVehiclePitch(vehicle) * Mathf.Rad2Deg) + Autopilot.map(data.ch2, -1, 1, -90, 90); }
+            { return (FSControlUtil.GetVehiclePitch(vehicle) * Mathf.Rad2Deg) +(data.ch2 * 90); }
             if (3 < data.ch8 && data.ch8 < 0.6) //mode 5
-            { return 0.00; }
+            { return (FSControlUtil.GetVehiclePitch(vehicle) * Mathf.Rad2Deg); }
             if (6 < data.ch8 && data.ch8 >= 1) //mode 6
-            { return 0.00; }
+            { return (FSControlUtil.GetVehiclePitch(vehicle) * Mathf.Rad2Deg); }
             else
-                return 0.00;
+                return (FSControlUtil.GetVehiclePitch(vehicle) * Mathf.Rad2Deg);
         }
         private double GetYaw() //not used
         {
             if (-1 >= data.ch8 && data.ch8 < -0.6) //mode 1
-            { return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg)+Autopilot.map(data.ch4, -1, 1, -20, 20); }
+            { return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + (data.ch4*25); }
             if (-0.6 >= data.ch8 && data.ch8 < -0.3) //mode 2
-            { return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + Autopilot.map(data.ch4, -1, 1, -60, 60); }
+            { return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + (data.ch4*60); }
             if (-0.3 >= data.ch8 && data.ch8 <= 0.00) //Hmode 3
-            { return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + Autopilot.map(data.ch4, -1, 1, -25, 25); }
+            { return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + (data.ch4*25); }
             else
-                return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + Autopilot.map(data.ch4, -1, 1, -30, 30);
+                return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg);
 
 
         }

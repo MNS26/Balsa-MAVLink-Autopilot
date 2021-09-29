@@ -28,7 +28,7 @@ namespace AutopilotCommon
                 Assembly ass = Assembly.GetExecutingAssembly();
                 int defaultTotal = 0;
                 int savedTotal = 0;
-                using (Stream s = ass.GetManifestResourceStream("AutopilotCommon.Defaults.dat"))
+                using (Stream s = ass.GetManifestResourceStream("AutopilotCommon.Defaults.txt"))
                 {
                     defaultTotal = LoadStream(s);
                 }

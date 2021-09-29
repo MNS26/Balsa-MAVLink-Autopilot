@@ -16,7 +16,7 @@ namespace Autopilot
             Log("Start!");
            
             ParameterHandler parameters;
-            parameters = new ParameterHandler(PathUtil.Resolve(".") + "/Addons/Autopilot/", "Parameters.dat", Log);
+            parameters = new ParameterHandler(PathUtil.Resolve(".") + "/Addons/Autopilot/", "Parameters.txt", Log);
             protocol = new ProtocolLogic(data, ap, Log, parameters);
             handler = new NetworkHandler(protocol, Log);
             handler.StartServer();
