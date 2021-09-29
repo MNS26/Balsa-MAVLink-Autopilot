@@ -365,3 +365,4 @@ FodyWeavers.xsd
 External/Managed/*.pdb
 External/Managed/*.mdb
 External/Managed/*.dll
+/External/Managed/files_go_here.txt

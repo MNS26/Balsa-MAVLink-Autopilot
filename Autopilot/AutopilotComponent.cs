@@ -40,15 +40,15 @@ namespace Autopilot
 
         private double GetRoll()
         {
-            if (-1 >= data.ch8 && data.ch8 < -0.6) //mode 1
-            { return (FSControlUtil.GetVehicleRoll(vehicle) * Mathf.Rad2Deg)+Autopilot.map(data.ch1, -1, 1, -10, 10); }
-            if (-0.6 >= data.ch8 && data.ch8 < -0.3) //mode 2
+            if (-1 <= data.ch8 && data.ch8 < -0.6) //mode 1
+            { return (FSControlUtil.GetVehicleRoll(vehicle) * Mathf.Rad2Deg)+Autopilot.map(data.ch1, -1, 1, -20, 20); }
+            if (-0.6 < data.ch8 && data.ch8 < -0.3) //mode 2
             { return Autopilot.map(data.ch1, -1, 1, -60, 60); }
-            if (-0.3 >= data.ch8 && data.ch8 <= 0.00) //mode 3
+            if (-0.3 < data.ch8 && data.ch8 <= 0.00) //mode 3
             { return (FSControlUtil.GetVehicleRoll(vehicle) * Mathf.Rad2Deg) + Autopilot.map(data.ch1, -1, 1, -25, 25); }
-            if (0 < data.ch8 && data.ch8 <= 3) //mode 4
+            if (0 < data.ch8 && data.ch8 <= 0.3) //mode 4
             { return (FSControlUtil.GetVehicleRoll(vehicle) * Mathf.Rad2Deg) + Autopilot.map(data.ch1, -1, 1, -90, 90); }
-            if (0.3 < data.ch8 && data.ch8 <= 6) //mode 5
+            if (0.3 < data.ch8 && data.ch8 <= 0.6) //mode 5
             { return 0.00; }
             if (0.6 < data.ch8 && data.ch8 <= 1) //mode 6
             { return 0.00; }
@@ -57,15 +57,15 @@ namespace Autopilot
         }
         private double GetPitch()
         {
-            if (-1 >= data.ch8 && data.ch8 < -0.6) //mode 1
-            { return (FSControlUtil.GetVehiclePitch(vehicle) * Mathf.Rad2Deg)+Autopilot.map(data.ch2, -1, 1, -10, 10); }
-            if (-0.6 >= data.ch8 && data.ch8 < -0.3) //mode 2
+            if (-1 <= data.ch8 && data.ch8 < -0.6) //mode 1
+            { return (FSControlUtil.GetVehiclePitch(vehicle) * Mathf.Rad2Deg)+Autopilot.map(data.ch2, -1, 1, -20, 20); }
+            if (-0.6 < data.ch8 && data.ch8 < -0.3) //mode 2
             { return Autopilot.map(data.ch2, -1, 1, -60, 60); }
-            if (-0.3 >= data.ch8 && data.ch8 <= 0.00) //mode 3
+            if (-0.3 < data.ch8 && data.ch8 <= 0.00) //mode 3
             { return Autopilot.map(data.ch2, -1, 1, -25, 25) + (verticalSpeedPid.Output());}
-            if (0 < data.ch8 && data.ch8 < 3) //mode 4
+            if (0 < data.ch8 && data.ch8 < 0.3) //mode 4
             { return (FSControlUtil.GetVehiclePitch(vehicle) * Mathf.Rad2Deg) + Autopilot.map(data.ch2, -1, 1, -90, 90); }
-            if (3 < data.ch8 && data.ch8 < 6) //mode 5
+            if (3 < data.ch8 && data.ch8 < 0.6) //mode 5
             { return 0.00; }
             if (6 < data.ch8 && data.ch8 >= 1) //mode 6
             { return 0.00; }
@@ -75,7 +75,7 @@ namespace Autopilot
         private double GetYaw() //not used
         {
             if (-1 >= data.ch8 && data.ch8 < -0.6) //mode 1
-            { return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg)+Autopilot.map(data.ch4, -1, 1, -10, 10); }
+            { return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg)+Autopilot.map(data.ch4, -1, 1, -20, 20); }
             if (-0.6 >= data.ch8 && data.ch8 < -0.3) //mode 2
             { return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + Autopilot.map(data.ch4, -1, 1, -60, 60); }
             if (-0.3 >= data.ch8 && data.ch8 <= 0.00) //Hmode 3
