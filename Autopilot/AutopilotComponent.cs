@@ -51,7 +51,7 @@ namespace Autopilot
             if (0.3 < data.ch8 && data.ch8 <= 0.6) //mode 5
             { return (FSControlUtil.GetVehicleRoll(vehicle) * Mathf.Rad2Deg); }
             if (0.6 < data.ch8 && data.ch8 <= 1) //mode 6
-            { return (FSControlUtil.GetVehicleRoll(vehicle) * Mathf.Rad2Deg); }
+            { return 0.00; }
             else
                 return (FSControlUtil.GetVehicleRoll(vehicle) * Mathf.Rad2Deg);
         }
@@ -68,17 +68,17 @@ namespace Autopilot
             if (3 < data.ch8 && data.ch8 < 0.6) //mode 5
             { return (FSControlUtil.GetVehiclePitch(vehicle) * Mathf.Rad2Deg); }
             if (6 < data.ch8 && data.ch8 >= 1) //mode 6
-            { return (FSControlUtil.GetVehiclePitch(vehicle) * Mathf.Rad2Deg); }
+            { return 0.00; }
             else
                 return (FSControlUtil.GetVehiclePitch(vehicle) * Mathf.Rad2Deg);
         }
         private double GetYaw() //not used
         {
-            if (-1 >= data.ch8 && data.ch8 < -0.6) //mode 1
+            if (-1 <= data.ch8 && data.ch8 < -0.6) //mode 1
             { return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + (data.ch4*25); }
-            if (-0.6 >= data.ch8 && data.ch8 < -0.3) //mode 2
+            if (-0.6 < data.ch8 && data.ch8 < -0.3) //mode 2
             { return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + (data.ch4*60); }
-            if (-0.3 >= data.ch8 && data.ch8 <= 0.00) //Hmode 3
+            if (-0.3 < data.ch8 && data.ch8 < 0.00) //Hmode 3
             { return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + (data.ch4*25); }
             else
                 return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg);
@@ -87,7 +87,21 @@ namespace Autopilot
         }
         private double GetThrottle()
         {
-            return Autopilot.map(data.ch3, -1, 1, 0, 100);
+            if (-1 <= data.ch8 && data.ch8 < -0.6) //mode 1
+            { return (data.ch3*100); }
+            if (-0.6 < data.ch8 && data.ch8 < -0.3) //mode 2
+            { return (data.ch3*100); }
+            if (-0.3 < data.ch8 && data.ch8 < 0) //mode 3
+            { return (data.ch3*100); }
+            if (0 < data.ch8 && data.ch8 < 0.3) //mode 4
+            { return (data.ch3*100); }
+            if (0.3 < data.ch8 && data.ch8 < 0.6) //mode 5
+            { return (data.ch3*100); }
+            if ( 0.6 < data.ch8 && data.ch8 <= 1) //mode 6
+            { return (data.ch3*100)+(verticalSpeedPid.Output()*2); }
+            else
+                return (data.ch3*100);
+
         }
 
 
