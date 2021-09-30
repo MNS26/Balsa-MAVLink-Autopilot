@@ -104,10 +104,6 @@ namespace Autopilot
 
         }
 
-
-
-
-
         private double GetHeadingError()
         {
             //Autopilot.Log(vehicle.Physics.HeadingDegs.ToString());
@@ -162,9 +158,9 @@ namespace Autopilot
             //Clamp control from -1 to 1. Kp = 50 degrees error = full deflection, 0.02.
             pitchPid = new PID()
             {
-                kP = 0.02,
-                kI = 0.005,
-                kD = 0.005,
+                kP = 0.2,
+                kI = 0.1,
+                kD = 0.02,
                 rangeMin = -1,
                 rangeMax = 1,
                 input = GetVehiclePitch,
@@ -191,9 +187,9 @@ namespace Autopilot
             rollPid = new PID()
             {
 
-                kP = 0.02,
-                kI = 0.001,
-                kD = 0,
+                kP = 0.2,
+                kI = 0.1,
+                kD = 0.02,
                 rangeMin = -1,
                 rangeMax = 1,
                 input = GetVehicleRoll,
