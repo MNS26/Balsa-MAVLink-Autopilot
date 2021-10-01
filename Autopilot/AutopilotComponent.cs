@@ -44,11 +44,11 @@ namespace Autopilot
             { return (FSControlUtil.GetVehicleRoll(vehicle) * Mathf.Rad2Deg)+(data.ch1 * 20); }
             if (-0.6 < data.ch8 && data.ch8 < -0.3) //mode 2
             { return (data.ch1 * 60); }
-            if (-0.3 < data.ch8 && data.ch8 <= 0.00) //mode 3
+            if (-0.3 < data.ch8 && data.ch8 < 0) //mode 3
             { return (FSControlUtil.GetVehicleRoll(vehicle) * Mathf.Rad2Deg) + (data.ch1 * 25); }
-            if (0 < data.ch8 && data.ch8 <= 0.3) //mode 4
+            if (0 < data.ch8 && data.ch8 < 0.3) //mode 4
             { return (FSControlUtil.GetVehicleRoll(vehicle) * Mathf.Rad2Deg) + (data.ch1 * 90); }
-            if (0.3 < data.ch8 && data.ch8 <= 0.6) //mode 5
+            if (0.3 < data.ch8 && data.ch8 < 0.6) //mode 5
             { return (FSControlUtil.GetVehicleRoll(vehicle) * Mathf.Rad2Deg); }
             if (0.6 < data.ch8 && data.ch8 <= 1) //mode 6
             { return 0.00; }
@@ -61,13 +61,13 @@ namespace Autopilot
             { return (FSControlUtil.GetVehiclePitch(vehicle) * Mathf.Rad2Deg) + (data.ch2*20); }
             if (-0.6 < data.ch8 && data.ch8 < -0.3) //mode 2
             { return (data.ch2*60); }
-            if (-0.3 < data.ch8 && data.ch8 <= 0.00) //mode 3
+            if (-0.3 < data.ch8 && data.ch8 < 0) //mode 3
             { return (data.ch2 * 25) + (verticalSpeedPid.Output());}
             if (0 < data.ch8 && data.ch8 < 0.3) //mode 4
             { return (FSControlUtil.GetVehiclePitch(vehicle) * Mathf.Rad2Deg) +(data.ch2 * 90); }
-            if (3 < data.ch8 && data.ch8 < 0.6) //mode 5
+            if (0.3 < data.ch8 && data.ch8 < 0.6) //mode 5
             { return (FSControlUtil.GetVehiclePitch(vehicle) * Mathf.Rad2Deg); }
-            if (6 < data.ch8 && data.ch8 >= 1) //mode 6
+            if (0.6 < data.ch8 && data.ch8 <= 1) //mode 6
             { return 0.00; }
             else
                 return (FSControlUtil.GetVehiclePitch(vehicle) * Mathf.Rad2Deg);
@@ -78,8 +78,14 @@ namespace Autopilot
             { return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + (data.ch4*25); }
             if (-0.6 < data.ch8 && data.ch8 < -0.3) //mode 2
             { return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + (data.ch4*60); }
-            if (-0.3 < data.ch8 && data.ch8 < 0.00) //Hmode 3
-            { return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + (data.ch4*25); }
+            if (-0.3 < data.ch8 && data.ch8 < 0) //Hmode 3
+            { return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + (data.ch4 * 25); }
+            if (0 < data.ch8 && data.ch8 < 0.03) //Hmode 4
+            { return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + (data.ch4 * 25); }
+            if (0.3 < data.ch8 && data.ch8 < 0.06) //Hmode 5
+            { return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + (data.ch4 * 25); }
+            if (0.6 < data.ch8 && data.ch8 <= 1) //Hmode 6
+            { return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + (data.ch4 * 25); }
             else
                 return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg);
 
@@ -98,7 +104,7 @@ namespace Autopilot
             if (0.3 < data.ch8 && data.ch8 < 0.6) //mode 5
             { return (data.ch3*100); }
             if ( 0.6 < data.ch8 && data.ch8 <= 1) //mode 6
-            { return (data.ch3*100)+(verticalSpeedPid.Output()*2); }
+            { return (data.ch3*100); }
             else
                 return (data.ch3*100);
 
