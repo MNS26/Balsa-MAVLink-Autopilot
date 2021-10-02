@@ -424,7 +424,7 @@ namespace AutopilotCommon
                 param_id = p.GetIDBytes(),
                 param_type = (byte)p.type,
                 param_value = p.value,
-                param_index = (ushort)parameters.IndexOf(p),
+                param_index = (ushort)p.index,
                 param_count = (ushort)parameters.GetCount()
             };
             client.SendMessage(sendMessage);

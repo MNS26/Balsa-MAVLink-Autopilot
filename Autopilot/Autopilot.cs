@@ -6,16 +6,16 @@ namespace Autopilot
 {
     public class Autopilot : MonoBehaviour
     {
-       public static  DataStore data = new DataStore();
+        public static DataStore data = new DataStore();
         public static ApStore ap = new ApStore();
+        public static ParameterHandler parameters;
         ProtocolLogic protocol;
         NetworkHandler handler;
         public void Start()
         {
             DontDestroyOnLoad(this);
             Log("Start!");
-           
-            ParameterHandler parameters;
+
             parameters = new ParameterHandler(PathUtil.Resolve(".") + "/Addons/Autopilot/", "Parameters.txt", Log);
             protocol = new ProtocolLogic(data, ap, Log, parameters);
             handler = new NetworkHandler(protocol, Log);
