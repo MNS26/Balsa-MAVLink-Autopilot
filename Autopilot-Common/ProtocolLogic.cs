@@ -16,33 +16,6 @@ namespace AutopilotCommon
         private ParameterHandler parameters;
         private Action<string> Log;
 
-        /*
-       FLIGHTMODES
-
-       0 = MANUAL
-       1 = CIRCLE
-       2 = STABILIZE
-       3 = TRAINING
-       4 = ACRO
-       5 = FBWA
-       6 = FBWB
-       7 = CRUISE
-       8 = AUTOTUNE
-       10 = AUTO
-       11 = RTL
-       12 = LOITER
-       14 = AVOID_ADSB
-       15 = GUIDED
-       17 = QSTABILIZE
-       18 = QHOVER
-       19 = QLOITER
-       20 = QLAND
-       21 = QRTL
-       22 = QAUTOTUNE
-       23 = QACRO
-       24 = THERMAL
-        */
-
         public ProtocolLogic(DataStore data, ApStore ap, Action<string> Log, ParameterHandler parameters)
         {
             this.Log = Log;
@@ -102,7 +75,33 @@ namespace AutopilotCommon
             Log($"REQUEST_MESSAGE: {(MAVLink.MAVLINK_MSG_ID)command.param1} = {command.param2}");
             //client.requestedRates[(MAVLink.MAVLINK_MSG_ID)command.param1] = command.param1 * 1000000;
         }
+ /*
+       FLIGHTMODES
 
+       0 = MANUAL
+       1 = CIRCLE
+       2 = STABILIZE
+       3 = TRAINING
+       4 = ACRO
+       5 = FBWA
+       6 = FBWB
+       7 = CRUISE
+       8 = AUTOTUNE
+       10 = AUTO
+       11 = RTL
+       12 = LOITER
+       14 = AVOID_ADSB
+       15 = GUIDED
+       17 = QSTABILIZE
+       18 = QHOVER
+       19 = QLOITER
+       20 = QLAND
+       21 = QRTL
+       22 = QAUTOTUNE
+       23 = QACRO
+       24 = THERMAL
+        */
+        
         [ReceiveCommand(MAVLink.MAV_CMD.REQUEST_AUTOPILOT_CAPABILITIES)]
         public void RequestAutopilot(ClientObject client, MAVLink.mavlink_command_long_t command)
         {

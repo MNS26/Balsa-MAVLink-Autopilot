@@ -4,9 +4,32 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "build",
+            "label": "build Common",
             "type": "shell",
             "command": "msbuild",
+            "args": [
+                // Ask msbuild to generate full paths for file names.
+                "/property:GenerateFullPaths=true",
+                "/t:build",
+                // Do not generate summary otherwise it leads to duplicate errors in Problems panel
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "options": {
+                "cwd": "$(workspaceFolder)/../Autopilot-Common",
+            },
+            "group": "build",
+            "presentation": {
+                // Reveal the output only if unrecognized errors occur.
+                "reveal": "silent"
+            },
+            // Use the standard MS compiler pattern to detect errors, warnings and infos
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "build Autopilot",
+            "type": "shell",
+            "command": "msbuild",
+            "dependsOn":["build Common"],
             "args": [
                 // Ask msbuild to generate full paths for file names.
                 "/property:GenerateFullPaths=true",
@@ -17,7 +40,31 @@
             "group": "build",
             "presentation": {
                 // Reveal the output only if unrecognized errors occur.
-                "reveal": "always"
+                "reveal": "silent"
+            },
+            // Use the standard MS compiler pattern to detect errors, warnings and infos
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "build Console",
+            "type": "shell",
+            "command": "msbuild",
+            "dependsOrder": "sequence",
+            "dependsOn":["build Autopilot", "build Common"],
+            "args": [
+                // Ask msbuild to generate full paths for file names.
+                "/property:GenerateFullPaths=true",
+                "/t:build",
+                // Do not generate summary otherwise it leads to duplicate errors in Problems panel
+                "/consoleloggerparameters:Summary"
+            ],
+            "options": {
+                "cwd": "$(workspaceFolder)/../Autopilot-Console",
+            },
+            "group": "build",
+            "presentation": {
+                // Reveal the output only if unrecognized errors occur.
+                "reveal": "silent"
             },
             // Use the standard MS compiler pattern to detect errors, warnings and infos
             "problemMatcher": "$msCompile"

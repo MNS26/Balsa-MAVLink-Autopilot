@@ -9,8 +9,6 @@ namespace Autopilot
         private static bool loaded = false;
         private static GameObject go;
         private static MonoBehaviour mod;
-        private static MonoBehaviour cam;
-
         [BalsaAddonInit]
         public static void BalsaInit()
         {
@@ -27,12 +25,6 @@ namespace Autopilot
         [BalsaAddonInit(invokeTime = AddonInvokeTime.Flight)]
         public static void BalsaInitFlight()
         {
-            //if(!loaded)
-            //{
-            //    loaded = true;
-            //    go = new GameObject();
-            //}
-            //cam = go.AddComponent<FPVCam>();
         }
 
         [BalsaAddonFinalize(invokeTime = AddonInvokeTime.Flight)]

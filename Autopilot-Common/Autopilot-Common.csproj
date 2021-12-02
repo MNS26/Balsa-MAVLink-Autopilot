@@ -97,6 +97,7 @@
     <Compile Include="Attributes\SendMessage.cs" />
     <Compile Include="Attributes\ReceiveCommand.cs" />
     <Compile Include="Attributes\SendCategory.cs" />
+    <Compile Include="SerialHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
