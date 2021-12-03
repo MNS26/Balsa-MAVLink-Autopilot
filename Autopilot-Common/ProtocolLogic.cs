@@ -130,7 +130,9 @@ namespace AutopilotCommon
         {
             Log("REQUEST SET SERVO");
             AckCommand(client, command, MAVLink.MAV_CMD_ACK.OK);
+#pragma warning disable CS0219 // Variable is assigned but its value is never used
             MAVLink.mavlink_servo_output_raw_t servo = new MAVLink.mavlink_servo_output_raw_t();
+#pragma warning restore CS0219 // Variable is assigned but its value is never used
         }
 
         //TODO

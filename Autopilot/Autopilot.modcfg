@@ -8,7 +8,21 @@ ModCFG
     {
         name = Autopilot
         description = Autopilot for Balsa meant for external softare that uses MAVLink protocol
-        asmpath = Addons\Autopilot\Autopilot.dll
+        asmpath = Addons\MAVLink Autopilot\Autopilot.dll
         order = 1000
+    }
+    Plugin
+    {
+        name = Autopilot-Common
+        description = Autopilot for Balsa meant for external softare that uses MAVLink protocol
+        asmpath = Addons\MAVLink Autopilot\Autopilot.dll
+        order = 999
+    }
+    Plugin
+    {
+        name = MAVLink
+        description = Autopilot for Balsa meant for external softare that uses MAVLink protocol
+        asmpath = Addons\MAVLink Autopilot\Autopilot.dll
+        order = 998
     }
 }

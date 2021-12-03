@@ -97,7 +97,6 @@
     <Compile Include="Attributes\SendMessage.cs" />
     <Compile Include="Attributes\ReceiveCommand.cs" />
     <Compile Include="Attributes\SendCategory.cs" />
-    <Compile Include="SerialHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -120,6 +119,9 @@
       <HintPath>..\External\MAVLink1-2\MAVLink.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>..\..\..\..\.local\share\Steam\steamapps\common\BALSA Model Flight Simulator\balsa_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Defaults.txt" />
@@ -132,4 +134,7 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="System.IO.Ports" Version="6.0.0" />
+  </ItemGroup>
 </Project>
