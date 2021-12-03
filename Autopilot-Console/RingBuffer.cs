@@ -5,7 +5,7 @@ namespace AutopilotConsole
 {
     public class RingBuffer
     {
-        public byte[] buffer = new byte[1024 * 1024];
+        public byte[] buffer = new byte[128];
         int readPos;
         int writePos;
 

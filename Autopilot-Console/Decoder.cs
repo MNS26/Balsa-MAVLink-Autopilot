@@ -11,7 +11,6 @@ namespace AutopilotConsole
         public static void Decode(byte[] bytes)
         {
             buffer.Write(bytes);
-
             u32[0] = 0x20;
             u32[1] = 0x40;
             while (buffer.Available > 1)
