@@ -1,4 +1,5 @@
-﻿using AutopilotCommon;
+﻿using System.IO.Ports;
+using AutopilotCommon;
 using FSControl;
 using Modules;
 using UnityEngine;
@@ -6,15 +7,28 @@ namespace Autopilot
 {
     public class Autopilot : MonoBehaviour
     {
+        SerialPort serialPort = new SerialPort();
+
         public static DataStore data = new DataStore();
         public static ApStore ap = new ApStore();
         public static ParameterHandler parameters;
         ProtocolLogic protocol;
         NetworkHandler handler;
+        byte[] inputbuffer = new byte[32];
+
         public void Start()
         {
             DontDestroyOnLoad(this);
             Log("Start!");
+
+
+            serialPort.PortName = "/dev/ttyUSB0"; //replace with COM* for windows
+            serialPort.BaudRate = 115200;
+            serialPort.Parity = Parity.None;
+            serialPort.StopBits = StopBits.One;
+            serialPort.DataBits = 8;
+            serialPort.Handshake = Handshake.None;
+            serialPort.Open();
 
             parameters = new ParameterHandler(PathUtil.Resolve(".") + "/Addons/Autopilot/", "Parameters.txt", Log);
             protocol = new ProtocolLogic(data, ap, Log, parameters);
@@ -48,7 +62,20 @@ namespace Autopilot
         //running this as fast as possible
         public void Update()
         {
-            if (!GameLogic.inGame || !GameLogic.SceneryLoaded || GameLogic.LocalPlayerVehicle == null || !GameLogic.LocalPlayerVehicle.InitComplete)
+
+            int totalBytes = serialPort.BytesToRead;
+            if (totalBytes > 0)
+            {
+                if (totalBytes > 32) { totalBytes = 32; }
+                int bytesread = serialPort.Read(inputbuffer, 0, totalBytes);
+                Decoder.Decode(inputbuffer, bytesread);
+                while (Decoder.messages.Count > 0)
+                {
+                    Message m = Decoder.messages.Dequeue();
+                }
+            }
+
+                if (!GameLogic.inGame || !GameLogic.SceneryLoaded || GameLogic.LocalPlayerVehicle == null || !GameLogic.LocalPlayerVehicle.InitComplete)
             {
                 data.ch1 = data.ch2 = data.ch3 = data.ch4 = data.ch5 = data.ch6 = data.ch7 = data.ch8 = 1500;
                 data.radpitch = 0;

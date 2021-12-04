@@ -20,7 +20,7 @@ namespace AutopilotConsole
             Console.WriteLine("Start!");
             data = new DataStore();
             ap = new ApStore();
-            byte[] inputbuffer = new byte[32]; //actual message is 32 but for safety its 64
+            byte[] inputbuffer = new byte[32];
 
             parameters = new ParameterHandler("", "Parameters.txt", Console.WriteLine);
 

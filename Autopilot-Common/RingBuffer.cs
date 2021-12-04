@@ -2,7 +2,7 @@
 using System.IO;
 using System.Collections.Generic;
 
-namespace AutopilotConsole
+namespace AutopilotCommon
 {
     public class RingBuffer
     {

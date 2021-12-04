@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 
-namespace AutopilotConsole
+namespace AutopilotCommon
 {
     public static class Decoder
     {

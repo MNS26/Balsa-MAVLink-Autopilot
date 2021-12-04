@@ -53,9 +53,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
-    <Compile Include="Decoder.cs" />
-    <Compile Include="Message.cs" />
-    <Compile Include="RingBuffer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Autopilot-Common\Autopilot-Common.csproj">

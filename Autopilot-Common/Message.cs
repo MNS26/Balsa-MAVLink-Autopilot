@@ -1,5 +1,5 @@
 ﻿using System;
-namespace AutopilotConsole
+namespace AutopilotCommon
 {
     public class Message
     {
