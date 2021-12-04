@@ -20,7 +20,7 @@ namespace AutopilotConsole
             Console.WriteLine("Start!");
             data = new DataStore();
             ap = new ApStore();
-            byte[] inputbuffer = new byte[64]; //actual message is 32 but for safety its 64
+            byte[] inputbuffer = new byte[32]; //actual message is 32 but for safety its 64
 
             parameters = new ParameterHandler("", "Parameters.txt", Console.WriteLine);
 
@@ -46,13 +46,15 @@ namespace AutopilotConsole
                 int totalBytes = serialPort.BytesToRead;
                 if (totalBytes > 0)
                 {
-                    serialPort.Read(inputbuffer, 0, totalBytes);
+                    if (totalBytes > 32) { totalBytes = 32;}
+                    int bytesread =  serialPort.Read(inputbuffer, 0, totalBytes);
                     Console.WriteLine(BitConverter.ToString(inputbuffer).Replace("-",""));
-                    Decoder.Decode(inputbuffer);
+                    Decoder.Decode(inputbuffer,bytesread);
                     while (Decoder.messages.Count > 0)
                     {
                         Message m = Decoder.messages.Dequeue();
                         Console.WriteLine($"message {m.channels[0]}");
+                        Console.WriteLine($"messageRaw {m.channelsRaw[0]}");
                     }
                 }
 

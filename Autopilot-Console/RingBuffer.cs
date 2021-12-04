@@ -1,11 +1,12 @@
 ﻿using System;
 using System.IO;
 using System.Collections.Generic;
+
 namespace AutopilotConsole
 {
     public class RingBuffer
     {
-        public byte[] buffer = new byte[128];
+        public byte[] buffer = new byte[256];
         int readPos;
         int writePos;
 
@@ -13,19 +14,31 @@ namespace AutopilotConsole
         {
             get
             {
-                return (writePos - readPos) % buffer.Length;
+                return (buffer.Length + writePos - readPos) % buffer.Length;
             }
         }
 
-        public void Write(byte[] bytes)
+        public int WriteAvailable
         {
-            int firstWrite = buffer.Length - writePos;
-            if (firstWrite > bytes.Length)
+            get
             {
-                firstWrite = bytes.Length;
+                return (buffer.Length + readPos - writePos - 1) % buffer.Length;
             }
-            int secondWrite = bytes.Length - firstWrite;
-            Array.Copy(bytes, 0, buffer, writePos, firstWrite);
+        }
+
+        public void Write(byte[] bytes, int offset, int length)
+        {
+            if (length > WriteAvailable)
+            {
+                throw new ArgumentOutOfRangeException("Buffer overflow");
+            }
+            int firstWrite = buffer.Length - writePos;
+            if (firstWrite > length)
+            {
+                firstWrite = length;
+            }
+            int secondWrite = length - firstWrite;
+            Array.Copy(bytes, offset, buffer, writePos, firstWrite);
             writePos += firstWrite;
             if (writePos == buffer.Length)
             {
@@ -33,13 +46,17 @@ namespace AutopilotConsole
             }
             if (secondWrite > 0)
             {
-                Array.Copy(bytes, 0, buffer, writePos, secondWrite);
+                Array.Copy(bytes, offset + firstWrite, buffer, writePos, secondWrite);
                 writePos = secondWrite;
             }
         }
 
         public void Read(byte[] dest, int offset, int length)
         {
+            if (length > Available)
+            {
+                throw new ArgumentOutOfRangeException("Buffer underrun");
+            }
             int firstRead = buffer.Length - readPos;
             if (firstRead > length)
             {

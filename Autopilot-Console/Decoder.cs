@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+
+
 namespace AutopilotConsole
 {
     public static class Decoder
@@ -8,9 +10,10 @@ namespace AutopilotConsole
         private static RingBuffer buffer = new RingBuffer();
         private static bool readingHeader = true;
         private static byte[] u32 = new byte[32];
-        public static void Decode(byte[] bytes)
+        public static void Decode(byte[] bytes, int length)
         {
-            buffer.Write(bytes);
+            buffer.Write(bytes, 0, length);
+
             u32[0] = 0x20;
             u32[1] = 0x40;
             while (buffer.Available > 1)
@@ -25,7 +28,7 @@ namespace AutopilotConsole
                 }
 
                 //Read message
-                if (!readingHeader && buffer.Available < 32)
+                if (readingHeader || buffer.Available < 30)
                 {
                     return;
                 }
@@ -45,7 +48,7 @@ namespace AutopilotConsole
                     for (int i = 0; i < 14; i++)
                     {
                         m.channelsRaw[i] = BitConverter.ToUInt16(u32, 2 + (i * 2));
-                        m.channels[i] = -1f + (m.channelsRaw[i] - 500) / 1000f;
+                        m.channels[i] = -1f + (m.channelsRaw[i] - 1000) / 500f;
                     }
                     messages.Enqueue(m);
                 }
