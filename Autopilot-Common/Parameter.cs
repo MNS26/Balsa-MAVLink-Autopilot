@@ -4,11 +4,12 @@ namespace AutopilotCommon
 {
     public class Parameter
     {
+        public readonly int index;
         public string id;
         public float value;
         public MAVLink.MAV_PARAM_TYPE type;
 
-        public Parameter(string id, float value, MAVLink.MAV_PARAM_TYPE type)
+        public Parameter(int index, string id, float value, MAVLink.MAV_PARAM_TYPE type)
         {
             this.id = id;
             this.value = value;

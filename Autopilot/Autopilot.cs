@@ -2,29 +2,26 @@
 using FSControl;
 using Modules;
 using UnityEngine;
-using System.IO;
 namespace Autopilot
 {
     public class Autopilot : MonoBehaviour
     {
-        DataStore data;
-        ApStore ap;
+        public static DataStore data = new DataStore();
+        public static ApStore ap = new ApStore();
+        public static ParameterHandler parameters;
         ProtocolLogic protocol;
         NetworkHandler handler;
 
         public void Start()
         {
-            GameObject.DontDestroyOnLoad(this);
+            DontDestroyOnLoad(this);
             Log("Start!");
-            data = new DataStore();
-            ap = new ApStore();
-            ParameterHandler parameters;
-            parameters = new ParameterHandler(PathUtil.Resolve(".") + "/Addons/Autopilot/", "Parameters.dat", Log);
+            parameters = new ParameterHandler(PathUtil.Resolve(".") + "/Addons/Autopilot/", "Parameters.txt", Log);
             protocol = new ProtocolLogic(data, ap, Log, parameters);
             handler = new NetworkHandler(protocol, Log);
             handler.StartServer();
             //If you want to stick around
-            //GameEvents.Vehicles.OnVehicleSpawned.AddListener(VehicleSpawned);
+            GameEvents.Vehicles.OnVehicleSpawned.AddListener(VehicleSpawned);
         }
 
 
@@ -33,6 +30,7 @@ namespace Autopilot
             Autopilot.Log("OVS Main");
             if (vehicle == GameLogic.LocalPlayerVehicle)
             {
+                Autopilot.Log("Local player");
                 if (!vehicle.gameObject.TryGetComponent(out AutopilotComponent _))
                 {
                     Log("Adding autopilot controller to " + vehicle.name);
@@ -52,7 +50,7 @@ namespace Autopilot
         {
             if (!GameLogic.inGame || !GameLogic.SceneryLoaded || GameLogic.LocalPlayerVehicle == null || !GameLogic.LocalPlayerVehicle.InitComplete)
             {
-                data.ch1 = data.ch2 = data.ch3 = data.ch4 = data.ch5 = data.ch6 = data.ch7 = data.ch8 = 1500;
+                data.channels[0] = data.channels[1] = data.channels[2] = data.channels[3] = data.channels[4] = data.channels[5] = data.channels[6] = data.channels[7] = 1500;
                 data.radpitch = 0;
                 data.radroll = 0;
                 data.radyaw = 0;
@@ -125,7 +123,6 @@ namespace Autopilot
             data.lastGVelx = data.currentGVelx;
             data.lastGVely = data.currentGVely;
             data.lastGVelz = data.currentGVelz;
-
             data.currentAVelx = v.Physics.Velocity.x * 1000;
             data.currentAVely = v.Physics.Velocity.y * 1000;
             data.currentAVelz = v.Physics.Velocity.z * 1000;
@@ -147,15 +144,16 @@ namespace Autopilot
 
             //controller stuff
             data.rssi = map(v.SignalStrength.SignalDegradation, 0, 1, 255, 0);
+            if (data.serial == true){return;}
 
-            data.ch1 = InputSettings.Axis_Roll.GetAxis();
-            data.ch2 = InputSettings.Axis_Pitch.GetAxis();
-            data.ch3 = InputSettings.Axis_Throttle.GetAxis();
-            data.ch4 = InputSettings.Axis_Yaw.GetAxis();
-            data.ch5 = InputSettings.Axis_A.GetAxis();
-            data.ch6 = InputSettings.Axis_B.GetAxis();
-            data.ch7 = InputSettings.Axis_C.GetAxis();
-            data.ch8 = InputSettings.Axis_D.GetAxis();
+            data.channels[0] = InputSettings.Axis_Roll.GetAxis();
+            data.channels[1] = InputSettings.Axis_Pitch.GetAxis();
+            data.channels[2] = InputSettings.Axis_Throttle.GetAxis();
+            data.channels[3] = InputSettings.Axis_Yaw.GetAxis();
+            data.channels[4] = InputSettings.Axis_A.GetAxis();
+            data.channels[5] = InputSettings.Axis_B.GetAxis();
+            data.channels[6] = InputSettings.Axis_C.GetAxis();
+            data.channels[7] = InputSettings.Axis_D.GetAxis();
         }
 
         public void FixedUpdate()

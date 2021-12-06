@@ -1,17 +1,19 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
 using System.IO;
+using System.Reflection;
 
 namespace AutopilotCommon
 {
     public class ParameterHandler : IEnumerable<Parameter>
     {
+        public event Action<Parameter> ParameterEvent;
         private bool saveEnabled = false;
         private string saveFile;
-        //List backing isn't ideal but we need indexes...
+        private int freeID = 0;
         private List<Parameter> parameters = new List<Parameter>();
+        private Dictionary<string, Parameter> index = new Dictionary<string, Parameter>();
         private Action<string> Log;
 
         public ParameterHandler(string dir, string saveFile, Action<string> Log)
@@ -28,12 +30,12 @@ namespace AutopilotCommon
                 Assembly ass = Assembly.GetExecutingAssembly();
                 int defaultTotal = 0;
                 int savedTotal = 0;
-                using (Stream s = ass.GetManifestResourceStream("AutopilotCommon.Defaults.dat"))
+                using (Stream s = ass.GetManifestResourceStream("AutopilotCommon.Defaults.txt"))
                 {
                     defaultTotal = LoadStream(s);
                 }
-                //TODO: UNCOMMENT THIS BEFORE RELEASING!
-                /*
+                //DON'T LOAD IN DEBUG MODE, EDIT DEFAULTS INSTEAD
+#if !DEBUG
                 if (File.Exists(saveFile))
                 {
                     using (FileStream fs = new FileStream(saveFile, FileMode.Open))
@@ -41,7 +43,7 @@ namespace AutopilotCommon
                         savedTotal = LoadStream(fs);
                     }
                 }
-                */
+#endif
                 saveEnabled = true;
                 //Save new/missing parameters.
                 if (defaultTotal != savedTotal)
@@ -90,13 +92,9 @@ namespace AutopilotCommon
 
         public Parameter GetParameter(string id)
         {
-            foreach (Parameter p in parameters)
+            if (index.ContainsKey(id))
             {
-                if (p.id == id)
-                {
-                    //Log($"{p} , {p.id}");
-                    return p;
-                }
+                return index[id];
             }
             return null;
         }
@@ -113,30 +111,23 @@ namespace AutopilotCommon
                 }
                 else
                 {
-                    p = new Parameter(id, value, type);
+                    p = new Parameter(freeID++, id, value, type);
                     //Log($"{p.id},{p.value},{p.type}");
                     parameters.Add(p);
                 }
+                index[id] = p;
                 if (saveEnabled)
                 {
                     Save(saveFile);
                 }
+                ParameterEvent?.Invoke(p);
                 return parameters.IndexOf(p);
             }
         }
 
         public int GetCount()
         {
-            return parameters.Count;
-        }
-
-        public int IndexOf(Parameter p)
-        {
-            if (parameters.Contains(p))
-            {
-                return parameters.IndexOf(p);
-            }
-            return -1;
+            return freeID;
         }
 
         public IEnumerator<Parameter> GetEnumerator()

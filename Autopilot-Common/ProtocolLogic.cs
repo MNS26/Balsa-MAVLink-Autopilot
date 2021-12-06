@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Text;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
+using System.Text;
 
 namespace AutopilotCommon
 {
@@ -18,34 +16,7 @@ namespace AutopilotCommon
         private ParameterHandler parameters;
         private Action<string> Log;
 
-        /*
-       FLIGHTMODES
-
-       0 = MANUAL
-       1 = CIRCLE
-       2 = STABILIZE
-       3 = TRAINING
-       4 = ACRO
-       5 = FBWA
-       6 = FBWB
-       7 = CRUISE
-       8 = AUTOTUNE
-       10 = AUTO
-       11 = RTL
-       12 = LOITER
-       14 = AVOID_ADSB
-       15 = GUIDED
-       17 = QSTABILIZE
-       18 = QHOVER
-       19 = QLOITER
-       20 = QLAND
-       21 = QRTL
-       22 = QAUTOTUNE
-       23 = QACRO
-       24 = THERMAL
-        */
-
-        public ProtocolLogic(DataStore data, ApStore ap,Action<string> Log, ParameterHandler parameters)
+        public ProtocolLogic(DataStore data, ApStore ap, Action<string> Log, ParameterHandler parameters)
         {
             this.Log = Log;
             startTime = DateTime.UtcNow.Ticks;
@@ -74,7 +45,7 @@ namespace AutopilotCommon
             AckCommand(client, command, MAVLink.MAV_CMD_ACK.OK);
 
         }
-        
+
         [ReceiveCommand(MAVLink.MAV_CMD.REQUEST_PROTOCOL_VERSION)]
         public void RequestProtocolVersion(ClientObject client, MAVLink.mavlink_command_long_t command)
         {
@@ -104,7 +75,33 @@ namespace AutopilotCommon
             Log($"REQUEST_MESSAGE: {(MAVLink.MAVLINK_MSG_ID)command.param1} = {command.param2}");
             //client.requestedRates[(MAVLink.MAVLINK_MSG_ID)command.param1] = command.param1 * 1000000;
         }
+ /*
+       FLIGHTMODES
 
+       0 = MANUAL
+       1 = CIRCLE
+       2 = STABILIZE
+       3 = TRAINING
+       4 = ACRO
+       5 = FBWA
+       6 = FBWB
+       7 = CRUISE
+       8 = AUTOTUNE
+       10 = AUTO
+       11 = RTL
+       12 = LOITER
+       14 = AVOID_ADSB
+       15 = GUIDED
+       17 = QSTABILIZE
+       18 = QHOVER
+       19 = QLOITER
+       20 = QLAND
+       21 = QRTL
+       22 = QAUTOTUNE
+       23 = QACRO
+       24 = THERMAL
+        */
+        
         [ReceiveCommand(MAVLink.MAV_CMD.REQUEST_AUTOPILOT_CAPABILITIES)]
         public void RequestAutopilot(ClientObject client, MAVLink.mavlink_command_long_t command)
         {
@@ -133,7 +130,9 @@ namespace AutopilotCommon
         {
             Log("REQUEST SET SERVO");
             AckCommand(client, command, MAVLink.MAV_CMD_ACK.OK);
+#pragma warning disable CS0219 // Variable is assigned but its value is never used
             MAVLink.mavlink_servo_output_raw_t servo = new MAVLink.mavlink_servo_output_raw_t();
+#pragma warning restore CS0219 // Variable is assigned but its value is never used
         }
 
         //TODO
@@ -384,14 +383,26 @@ namespace AutopilotCommon
         {
             MAVLink.mavlink_rc_channels_t message = new MAVLink.mavlink_rc_channels_t();
             message.rssi = 200;
-            message.chan1_raw = (ushort)(1500 + data.ch1 * 500);
-            message.chan2_raw = (ushort)(1500 + data.ch2 * 500);
-            message.chan3_raw = (ushort)(1500 + data.ch3 * 500);
-            message.chan4_raw = (ushort)(1500 + data.ch4 * 500);
-            message.chan5_raw = (ushort)(1500 + data.ch5 * 500);
-            message.chan6_raw = (ushort)(1500 + data.ch6 * 500);
-            message.chan7_raw = (ushort)(1500 + data.ch7 * 500);
-            message.chan8_raw = (ushort)(1500 + data.ch8 * 500);
+            message.chan1_raw = data.RCchannels[0];
+            message.chan2_raw = data.RCchannels[1];
+            message.chan3_raw = data.RCchannels[2];
+            message.chan4_raw = data.RCchannels[3];
+            message.chan5_raw = data.RCchannels[4];
+            message.chan6_raw = data.RCchannels[5];
+            message.chan7_raw = data.RCchannels[6];
+            message.chan8_raw = data.RCchannels[7];
+
+            if (data.serial == false)
+            {
+                message.chan1_raw = (ushort)(1500 + data.channels[0] * 500);
+                message.chan2_raw = (ushort)(1500 + data.channels[1] * 500);
+                message.chan3_raw = (ushort)(1500 + data.channels[2] * 500);
+                message.chan4_raw = (ushort)(1500 + data.channels[3] * 500);
+                message.chan5_raw = (ushort)(1500 + data.channels[4] * 500);
+                message.chan6_raw = (ushort)(1500 + data.channels[5] * 500);
+                message.chan7_raw = (ushort)(1500 + data.channels[6] * 500);
+                message.chan8_raw = (ushort)(1500 + data.channels[7] * 500);
+            }
             client.SendMessage(message);
         }
 
@@ -426,7 +437,7 @@ namespace AutopilotCommon
                 param_id = p.GetIDBytes(),
                 param_type = (byte)p.type,
                 param_value = p.value,
-                param_index = (ushort)parameters.IndexOf(p),
+                param_index = (ushort)p.index,
                 param_count = (ushort)parameters.GetCount()
             };
             client.SendMessage(sendMessage);

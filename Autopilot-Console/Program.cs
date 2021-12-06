@@ -1,6 +1,5 @@
-﻿using System;
-using System.Threading;
-using AutopilotCommon;
+﻿using AutopilotCommon;
+using System;
 using UnityEngine;
 
 namespace AutopilotConsole
@@ -17,10 +16,10 @@ namespace AutopilotConsole
             Console.WriteLine("Start!");
             data = new DataStore();
             ap = new ApStore();
-            ap.mode = 0;
-            parameters = new ParameterHandler("../../../Autopilot/bin/Debug/", "Parameters.dat", Console.WriteLine);
 
-            protocol = new ProtocolLogic(data, ap,Console.WriteLine, parameters);
+            parameters = new ParameterHandler("/../../../Autopilot/bin/debug/", "Parameters.txt", Console.WriteLine);
+
+            protocol = new ProtocolLogic(data, ap, Console.WriteLine, parameters);
             handler = new NetworkHandler(protocol, Console.WriteLine);
             handler.RegisterUnprocessedCommand(UnprocessedCommand);
             handler.RegisterUnprocessedMessage(UnprocessedMessage);
@@ -30,7 +29,6 @@ namespace AutopilotConsole
             while (running)
             {
                 count++;
-                Thread.Sleep(500);
                 data.heading = count % 360;
                 data.radyaw = (float)((count % 360 / 360d) * 2 * Math.PI);
                 data.magx = Vector3.Dot(new Vector3(0, 0, 1), new Vector3(0, 0, 1)) * 500;
@@ -42,7 +40,6 @@ namespace AutopilotConsole
                 data.gyrox = 1;
                 data.gyroy = 2;
                 data.gyroz = 3;
-
             }
         }
 

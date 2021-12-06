@@ -1,5 +1,5 @@
-﻿using System;
-using FSControl;
+﻿using FSControl;
+using System;
 
 namespace Autopilot
 {
@@ -20,7 +20,6 @@ namespace Autopilot
             this.UpdateEvent = UpdateEvent;
         }
 
-
         public void OnRegistered(FBWHostBase host)
         {
             Autopilot.Log("OPCS Register");
@@ -31,7 +30,6 @@ namespace Autopilot
             Autopilot.Log("OPCS Unregister");
         }
 
-        //controll plane 
         public void OnProcessCtrlState(ref FSInputState data, Vehicle vehicle)
         {
             UpdateEvent();

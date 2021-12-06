@@ -114,34 +114,27 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\BALSA Model Flight Simulator Playtest\balsa_Data\Managed\Assembly-CSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="Balsa.Core">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\BALSA Model Flight Simulator Playtest\balsa_Data\Managed\Balsa.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="FloatingUtil">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\BALSA Model Flight Simulator Playtest\balsa_Data\Managed\FloatingUtil.dll</HintPath>
-    </Reference>
     <Reference Include="MAVLink, Version=1.0.0.0, Culture=neutral, PublicKeyToken=38326cb7e06851fc, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\External\MAVLink1-2\MAVLink.dll</HintPath>
     </Reference>
-    <Reference Include="NetworkTest">
-      <HintPath>..\..\Balsa-NetworkTest\NetworkTest\bin\Debug\NetworkTest.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
-    <Reference Include="UnityEngine">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\BALSA Model Flight Simulator Playtest\balsa_Data\Managed\UnityEngine.dll</HintPath>
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>..\..\..\..\.local\share\Steam\steamapps\common\BALSA Model Flight Simulator\balsa_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Defaults.dat" />
+    <EmbeddedResource Include="Defaults.txt" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Rem Param.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="System.IO.Ports" Version="6.0.0" />
+  </ItemGroup>
 </Project>
