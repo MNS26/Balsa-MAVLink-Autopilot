@@ -49,13 +49,13 @@ namespace Autopilot
             switch (mode)
             {
                 case -6:
-                    return (FSControlUtil.GetVehicleRoll(vehicle) * Mathf.Rad2Deg) + (data.ch1 * 20);
+                    return (FSControlUtil.GetVehicleRoll(vehicle) * Mathf.Rad2Deg) + (data.channels[0] * 20);
                 case -3:
-                    return (data.ch1 * 60);
+                    return (data.channels[0] * 60);
                 case -1:
-                    return (FSControlUtil.GetVehicleRoll(vehicle) * Mathf.Rad2Deg) + (data.ch1 * 25);
+                    return (FSControlUtil.GetVehicleRoll(vehicle) * Mathf.Rad2Deg) + (data.channels[0] * 25);
                 case 1:
-                    return (FSControlUtil.GetVehicleRoll(vehicle) * Mathf.Rad2Deg) + (data.ch1 * 90);
+                    return (FSControlUtil.GetVehicleRoll(vehicle) * Mathf.Rad2Deg) + (data.channels[0] * 90);
                 case 3:
                     return (FSControlUtil.GetVehicleRoll(vehicle) * Mathf.Rad2Deg);
                 case 6:
@@ -70,13 +70,13 @@ namespace Autopilot
             switch (mode)
             {
                 case -6:
-                    return (FSControlUtil.GetVehiclePitch(vehicle) * Mathf.Rad2Deg) + (data.ch2 * 20);
+                    return (FSControlUtil.GetVehiclePitch(vehicle) * Mathf.Rad2Deg) + (data.channels[1] * 20);
                 case -3:
-                    return (data.ch2 * 60);
+                    return (data.channels[1] * 60);
                 case -1:
-                    return (data.ch2 * 25) + (verticalSpeedPid.Output());
+                    return (data.channels[1] * 25) + (verticalSpeedPid.Output());
                 case 1:
-                    return (FSControlUtil.GetVehiclePitch(vehicle) * Mathf.Rad2Deg) + (data.ch2 * 90);
+                    return (FSControlUtil.GetVehiclePitch(vehicle) * Mathf.Rad2Deg) + (data.channels[1] * 90);
                 case 3:
                     return (FSControlUtil.GetVehiclePitch(vehicle) * Mathf.Rad2Deg);
                 case 6:
@@ -90,17 +90,17 @@ namespace Autopilot
             switch (mode)
             {
                 case -6:
-                    return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + (data.ch4 * 25);
+                    return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + (data.channels[3] * 25);
                 case -3:
-                    return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + (data.ch4 * 60);
+                    return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + (data.channels[3] * 60);
                 case -1:
-                    return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + (data.ch4 * 25);
+                    return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + (data.channels[3] * 25);
                 case 1:
-                    return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + (data.ch4 * 25);
+                    return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + (data.channels[3] * 25);
                 case 3:
-                    return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + (data.ch4 * 25);
+                    return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + (data.channels[3] * 25);
                 case 6:
-                    return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + (data.ch4 * 25);
+                    return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + (data.channels[3] * 25);
                 default:
                     return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg);
             }
@@ -110,19 +110,19 @@ namespace Autopilot
             switch (mode)
             {
                 case -6:
-                    return (data.ch3 * 100);
+                    return (data.channels[2] * 100);
                 case -3:
-                    return (data.ch3 * 100);
+                    return (data.channels[2] * 100);
                 case -1:
-                    return (data.ch3 * 100);
+                    return (data.channels[2] * 100);
                 case 1:
-                    return (data.ch3 * 100);
+                    return (data.channels[2] * 100);
                 case 3:
-                    return (data.ch3 * 100);
+                    return (data.channels[2] * 100);
                 case 6:
-                    return (data.ch3 * 100);
+                    return (data.channels[2] * 100);
                 default:
-                    return (data.ch3 * 100);
+                    return (data.channels[2] * 100);
             }
         }
 
@@ -241,7 +241,7 @@ namespace Autopilot
             {
                 vehicle.Autotrim.DisableAT();
             }
-            mode = (int)(data.ch8 * 6.125);
+            mode = (int)(data.channels[9] * 6.125);
 
             Autopilot.Log($"{mode}");
             /*

@@ -1,5 +1,4 @@
-﻿using System.IO.Ports;
-using AutopilotCommon;
+﻿using AutopilotCommon;
 using FSControl;
 using Modules;
 using UnityEngine;
@@ -7,29 +6,16 @@ namespace Autopilot
 {
     public class Autopilot : MonoBehaviour
     {
-        SerialPort serialPort = new SerialPort();
-
         public static DataStore data = new DataStore();
         public static ApStore ap = new ApStore();
         public static ParameterHandler parameters;
         ProtocolLogic protocol;
         NetworkHandler handler;
-        byte[] inputbuffer = new byte[32];
 
         public void Start()
         {
             DontDestroyOnLoad(this);
             Log("Start!");
-
-
-            serialPort.PortName = "/dev/ttyUSB0"; //replace with COM* for windows
-            serialPort.BaudRate = 115200;
-            serialPort.Parity = Parity.None;
-            serialPort.StopBits = StopBits.One;
-            serialPort.DataBits = 8;
-            serialPort.Handshake = Handshake.None;
-            serialPort.Open();
-
             parameters = new ParameterHandler(PathUtil.Resolve(".") + "/Addons/Autopilot/", "Parameters.txt", Log);
             protocol = new ProtocolLogic(data, ap, Log, parameters);
             handler = new NetworkHandler(protocol, Log);
@@ -62,22 +48,9 @@ namespace Autopilot
         //running this as fast as possible
         public void Update()
         {
-
-            int totalBytes = serialPort.BytesToRead;
-            if (totalBytes > 0)
+            if (!GameLogic.inGame || !GameLogic.SceneryLoaded || GameLogic.LocalPlayerVehicle == null || !GameLogic.LocalPlayerVehicle.InitComplete)
             {
-                if (totalBytes > 32) { totalBytes = 32; }
-                int bytesread = serialPort.Read(inputbuffer, 0, totalBytes);
-                Decoder.Decode(inputbuffer, bytesread);
-                while (Decoder.messages.Count > 0)
-                {
-                    Message m = Decoder.messages.Dequeue();
-                }
-            }
-
-                if (!GameLogic.inGame || !GameLogic.SceneryLoaded || GameLogic.LocalPlayerVehicle == null || !GameLogic.LocalPlayerVehicle.InitComplete)
-            {
-                data.ch1 = data.ch2 = data.ch3 = data.ch4 = data.ch5 = data.ch6 = data.ch7 = data.ch8 = 1500;
+                data.channels[0] = data.channels[1] = data.channels[2] = data.channels[3] = data.channels[4] = data.channels[5] = data.channels[6] = data.channels[7] = 1500;
                 data.radpitch = 0;
                 data.radroll = 0;
                 data.radyaw = 0;
@@ -171,15 +144,16 @@ namespace Autopilot
 
             //controller stuff
             data.rssi = map(v.SignalStrength.SignalDegradation, 0, 1, 255, 0);
+            if (data.serial == true){return;}
 
-            data.ch1 = InputSettings.Axis_Roll.GetAxis();
-            data.ch2 = InputSettings.Axis_Pitch.GetAxis();
-            data.ch3 = InputSettings.Axis_Throttle.GetAxis();
-            data.ch4 = InputSettings.Axis_Yaw.GetAxis();
-            data.ch5 = InputSettings.Axis_A.GetAxis();
-            data.ch6 = InputSettings.Axis_B.GetAxis();
-            data.ch7 = InputSettings.Axis_C.GetAxis();
-            data.ch8 = InputSettings.Axis_D.GetAxis();
+            data.channels[0] = InputSettings.Axis_Roll.GetAxis();
+            data.channels[1] = InputSettings.Axis_Pitch.GetAxis();
+            data.channels[2] = InputSettings.Axis_Throttle.GetAxis();
+            data.channels[3] = InputSettings.Axis_Yaw.GetAxis();
+            data.channels[4] = InputSettings.Axis_A.GetAxis();
+            data.channels[5] = InputSettings.Axis_B.GetAxis();
+            data.channels[6] = InputSettings.Axis_C.GetAxis();
+            data.channels[7] = InputSettings.Axis_D.GetAxis();
         }
 
         public void FixedUpdate()

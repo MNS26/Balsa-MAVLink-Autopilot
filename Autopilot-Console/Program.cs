@@ -1,10 +1,6 @@
 ﻿using AutopilotCommon;
 using System;
-using System.Threading;
 using UnityEngine;
-using System.Collections.Generic;
-using System.IO;
-using System.IO.Ports;
 
 namespace AutopilotConsole
 {
@@ -20,9 +16,8 @@ namespace AutopilotConsole
             Console.WriteLine("Start!");
             data = new DataStore();
             ap = new ApStore();
-            byte[] inputbuffer = new byte[32];
 
-            parameters = new ParameterHandler("", "Parameters.txt", Console.WriteLine);
+            parameters = new ParameterHandler("/../../../Autopilot/bin/debug/", "Parameters.txt", Console.WriteLine);
 
             protocol = new ProtocolLogic(data, ap, Console.WriteLine, parameters);
             handler = new NetworkHandler(protocol, Console.WriteLine);
@@ -31,34 +26,8 @@ namespace AutopilotConsole
             handler.StartServer();
             bool running = true;
             int count = 0;
-
-            SerialPort serialPort = new SerialPort();
-            serialPort.PortName = "/dev/ttyUSB0"; //replace with COM* for windows
-            serialPort.BaudRate = 115200;
-            serialPort.Parity = Parity.None;
-            serialPort.StopBits = StopBits.One;
-            serialPort.DataBits = 8;
-            serialPort.Handshake = Handshake.None;
-            serialPort.Open();
             while (running)
             {
-
-                int totalBytes = serialPort.BytesToRead;
-                if (totalBytes > 0)
-                {
-                    if (totalBytes > 32) { totalBytes = 32;}
-                    int bytesread =  serialPort.Read(inputbuffer, 0, totalBytes);
-                    Console.WriteLine(BitConverter.ToString(inputbuffer).Replace("-",""));
-                    Decoder.Decode(inputbuffer,bytesread);
-                    while (Decoder.messages.Count > 0)
-                    {
-                        Message m = Decoder.messages.Dequeue();
-                        Console.WriteLine($"message {m.channels[0]}");
-                        Console.WriteLine($"messageRaw {m.channelsRaw[0]}");
-                    }
-                }
-
-
                 count++;
                 data.heading = count % 360;
                 data.radyaw = (float)((count % 360 / 360d) * 2 * Math.PI);
@@ -71,7 +40,6 @@ namespace AutopilotConsole
                 data.gyrox = 1;
                 data.gyroy = 2;
                 data.gyroz = 3;
-
             }
         }
 
