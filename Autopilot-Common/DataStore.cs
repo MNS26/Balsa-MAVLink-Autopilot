@@ -49,11 +49,8 @@
         public ushort[] RCchannels = new ushort[16]; //all RC channels
         public float rssi;
 
-        //serial receiver
+        //serial stuff
         public bool serial = false;
-
-
-
     }
     public class ApStore
     {

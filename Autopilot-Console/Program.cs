@@ -17,7 +17,7 @@ namespace AutopilotConsole
             data = new DataStore();
             ap = new ApStore();
 
-            parameters = new ParameterHandler("..\\..\\..\\..\\Autopilot\\bin\\debug\\", "Parameters.txt", Console.WriteLine);
+            parameters = new ParameterHandler("", "Parameters.txt", Console.WriteLine);
 
             protocol = new ProtocolLogic(data, ap, Console.WriteLine, parameters);
             handler = new NetworkHandler(protocol, Console.WriteLine);
@@ -28,7 +28,13 @@ namespace AutopilotConsole
             int count = 0;
             while (running)
             {
+                try{
                 count++;
+                }
+                catch
+                {
+                    count = 0;
+                }
                 data.heading = count % 360;
                 data.radyaw = (float)((count % 360 / 360d) * 2 * Math.PI);
                 data.magx = Vector3.Dot(new Vector3(0, 0, 1), new Vector3(0, 0, 1)) * 500;

@@ -121,6 +121,7 @@
     <Reference Include="System" />
     <Reference Include="Assembly-CSharp-firstpass">
       <HintPath>..\..\..\..\.local\share\Steam\steamapps\common\BALSA Model Flight Simulator\balsa_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>

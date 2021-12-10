@@ -29,7 +29,7 @@
             "label": "build Autopilot",
             "type": "shell",
             "command": "msbuild",
-            "dependsOn":["build Common"],
+            //"dependsOn":["build Common"],
             "args": [
                 // Ask msbuild to generate full paths for file names.
                 "/property:GenerateFullPaths=true",
@@ -50,7 +50,7 @@
             "type": "shell",
             "command": "msbuild",
             "dependsOrder": "sequence",
-            "dependsOn":["build Autopilot", "build Common"],
+            //"dependsOn":["build Autopilot", "build Common"],
             "args": [
                 // Ask msbuild to generate full paths for file names.
                 "/property:GenerateFullPaths=true",
