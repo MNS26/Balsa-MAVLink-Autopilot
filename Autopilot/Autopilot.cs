@@ -16,7 +16,7 @@ namespace Autopilot
         {
             DontDestroyOnLoad(this);
             Log("Start!");
-            parameters = new ParameterHandler(PathUtil.Resolve(".") + "/Addons/Autopilot/", "Parameters.txt", Log);
+            parameters = new ParameterHandler(PathUtil.Resolve(".") + "/Addons/MAVLink Autopilot/", "Parameters.txt", Log);
             protocol = new ProtocolLogic(data, ap, Log, parameters);
             handler = new NetworkHandler(protocol, Log);
             handler.StartServer();
