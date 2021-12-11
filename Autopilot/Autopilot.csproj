@@ -78,9 +78,12 @@
     <Compile Include="Autopilot.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-    <None Include="Autopilot.modcfg" />
-    <None Include="modexport.cfg"/>
+    <None Include="Autopilot.modcfg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="modexport.cfg" >
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="..\Parameters.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
