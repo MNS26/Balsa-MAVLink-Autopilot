@@ -25,4 +25,18 @@ ModCFG
         asmpath = Addons\MAVLink Autopilot\Autopilot.dll
         order = 998
     }
+    Plugin
+    {
+        name = Newtonsoft.Json
+        description = Newtonsoft.Json
+        asmpath = Addons\MAVLink Autopilot\Newtonsoft.Json.dll
+        order = 997
+    }
+    Plugin
+    {
+        name = System.Runtime.CompilerServices.Unsafe
+        description = System.Runtime.CompilerServices.Unsafe
+        asmpath = Addons\MAVLink Autopilot\System.Runtime.CompilerServices.Unsafe.dll
+        order = 996
+    }
 }

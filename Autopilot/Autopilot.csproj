@@ -1,98 +1,50 @@
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D58CFE4F-B2C8-4A7D-97BD-A53FBA189C95}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <RootNamespace>Autopilot</RootNamespace>
-    <AssemblyName>Autopilot</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>portable</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>TRACE;DEBUG;</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release</OutputPath>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
+    <TargetFramework>net472</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MAVLink, Version=1.0.0.0, Culture=neutral, PublicKeyToken=38326cb7e06851fc, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\External\MAVLink1-2\MAVLink.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\External\Managed\Assembly-CSharp.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>../External/Managed/Assembly-CSharp.dll</HintPath>
+      <Private>false</Private>
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass">
-      <HintPath>..\External\Managed\Assembly-CSharp-firstpass.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>../External/Managed/Assembly-CSharp-firstpass.dll</HintPath>
+      <Private>false</Private>
     </Reference>
     <Reference Include="Balsa.Core">
-      <HintPath>..\External\Managed\Balsa.Core.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>../External/Managed/Balsa.Core.dll</HintPath>
+      <Private>false</Private>
     </Reference>
     <Reference Include="com.unity.multiplayer-hlapi.Runtime">
-      <HintPath>..\External\Managed\com.unity.multiplayer-hlapi.Runtime.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>../External/Managed/com.unity.multiplayer-hlapi.Runtime.dll</HintPath>
+      <Private>false</Private>
     </Reference>
     <Reference Include="FloatingUtil">
-      <HintPath>..\External\Managed\FloatingUtil.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>../External/Managed/FloatingUtil.dll</HintPath>
+      <Private>false</Private>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>..\External\Managed\UnityEngine.CoreModule.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>../External/Managed/UnityEngine.CoreModule.dll</HintPath>
+      <Private>false</Private>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\External\Managed\UnityEngine.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>../External/Managed/UnityEngine.dll</HintPath>
+      <Private>false</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="MAVLink">
+      <HintPath>../External/MAVLink1-2/MAVLink.dll</HintPath>
     </Reference>
-    <Reference Include="System.Runtime.CompilerServices.Unsafe">
-      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.7.0\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
-      <Private>False</Private>
-  </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AutopilotComponent.cs" />
-    <Compile Include="FBWModule.cs" />
-    <Compile Include="Pid.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Loader.cs" />
-    <Compile Include="Autopilot.cs" />
+    <None Update="modexport.cfg" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Autopilot.modcfg" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Autopilot.modcfg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="modexport.cfg" >
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="..\Parameters.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <ProjectReference Include="..\Autopilot-Common\Autopilot-Common.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Autopilot-Common\Autopilot-Common.csproj">
-      <Project>{30A4A751-FE82-43CE-B02D-5DA662FB6714}</Project>
-      <Name>Autopilot-Common</Name>
-    </ProjectReference>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />
   </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
