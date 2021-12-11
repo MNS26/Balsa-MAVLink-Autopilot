@@ -2,16 +2,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Autopilot-Common\Autopilot-Common.csproj" />
-    <Reference Include="MAVLink">
-      <HintPath>../External/MAVLink1-2/MAVLink.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>../External/Managed/UnityEngine.CoreModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
       <HintPath>../External/Managed/UnityEngine.dll</HintPath>
     </Reference>
-    <None Update="../Autopilot-Common/Defaults.txt" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <PropertyGroup>

@@ -6,9 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="MAVLink">
-      <HintPath>../External/MAVLink1-2/MAVLink.dll</HintPath>
-    </Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>../External/Managed/Assembly-CSharp.dll</HintPath>
       <Private>false</Private>
@@ -39,4 +36,13 @@
     </Reference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\External\Mavlink\MAVLink.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Include="Defaults.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

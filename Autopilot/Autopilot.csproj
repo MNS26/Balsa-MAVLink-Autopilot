@@ -32,9 +32,6 @@
       <HintPath>../External/Managed/UnityEngine.dll</HintPath>
       <Private>false</Private>
     </Reference>
-    <Reference Include="MAVLink">
-      <HintPath>../External/MAVLink1-2/MAVLink.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Update="modexport.cfg" CopyToOutputDirectory="PreserveNewest" />
@@ -42,9 +39,5 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Autopilot-Common\Autopilot-Common.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />
   </ItemGroup>
 </Project>

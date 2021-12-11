@@ -1,0 +1,45 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30114.105
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Autopilot", "Autopilot\Autopilot.csproj", "{7DF8EA5A-17B8-418A-A9E6-EB9D52921FCF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Autopilot-Common", "Autopilot-Common\Autopilot-Common.csproj", "{7FE6C1B8-856A-4CB3-9456-E0B53EBBBB61}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Autopilot-Console", "Autopilot-Console\Autopilot-Console.csproj", "{CC29CB0B-AF67-401B-9C7B-84B165761A9B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "External", "External", "{DF6C506B-C56F-4F59-BCDA-FC7CA1969619}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MAVLink", "External\Mavlink\MAVLink.csproj", "{FAB67A15-6D5A-4ED7-A012-94EEA8519636}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7DF8EA5A-17B8-418A-A9E6-EB9D52921FCF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7DF8EA5A-17B8-418A-A9E6-EB9D52921FCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7DF8EA5A-17B8-418A-A9E6-EB9D52921FCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7DF8EA5A-17B8-418A-A9E6-EB9D52921FCF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7FE6C1B8-856A-4CB3-9456-E0B53EBBBB61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7FE6C1B8-856A-4CB3-9456-E0B53EBBBB61}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7FE6C1B8-856A-4CB3-9456-E0B53EBBBB61}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7FE6C1B8-856A-4CB3-9456-E0B53EBBBB61}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC29CB0B-AF67-401B-9C7B-84B165761A9B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC29CB0B-AF67-401B-9C7B-84B165761A9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC29CB0B-AF67-401B-9C7B-84B165761A9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC29CB0B-AF67-401B-9C7B-84B165761A9B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FAB67A15-6D5A-4ED7-A012-94EEA8519636}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FAB67A15-6D5A-4ED7-A012-94EEA8519636}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FAB67A15-6D5A-4ED7-A012-94EEA8519636}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FAB67A15-6D5A-4ED7-A012-94EEA8519636}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{FAB67A15-6D5A-4ED7-A012-94EEA8519636} = {DF6C506B-C56F-4F59-BCDA-FC7CA1969619}
+	EndGlobalSection
+EndGlobal
