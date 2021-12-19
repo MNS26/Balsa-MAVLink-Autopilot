@@ -3,40 +3,40 @@ ModCFG
     title = Balsa Autopilot
     author = MS26
     modVersion = 0.1.0
-	requiresGameVersion = 0.101.0
+	requiresGameVersion = 0.101.2
     Plugin
     {
         name = Autopilot
         description = Autopilot for Balsa meant for external softare that uses MAVLink protocol
-        asmpath = Addons\MAVLink Autopilot\Autopilot.dll
+        asmpath = Addons\Autopilot\Autopilot.dll
         order = 1000
     }
     Plugin
     {
         name = Autopilot-Common
         description = Autopilot for Balsa meant for external softare that uses MAVLink protocol
-        asmpath = Addons\MAVLink Autopilot\Autopilot-Common.dll
+        asmpath = Addons\Autopilot\Autopilot-Common.dll
         order = 999
     }
     Plugin
     {
         name = MAVLink
         description = Autopilot for Balsa meant for external softare that uses MAVLink protocol
-        asmpath = Addons\MAVLink Autopilot\MAVLink.dll
+        asmpath = Addons\Autopilot\MAVLink.dll
         order = 998
     }
     Plugin
     {
         name = Newtonsoft.Json
         description = Newtonsoft.Json
-        asmpath = Addons\MAVLink Autopilot\Newtonsoft.Json.dll
+        asmpath = Addons\Autopilot\Newtonsoft.Json.dll
         order = 997
     }
     Plugin
     {
         name = System.Runtime.CompilerServices.Unsafe
         description = System.Runtime.CompilerServices.Unsafe
-        asmpath = Addons\MAVLink Autopilot\System.Runtime.CompilerServices.Unsafe.dll
+        asmpath = Addons\Autopilot\System.Runtime.CompilerServices.Unsafe.dll
         order = 996
     }
 }
