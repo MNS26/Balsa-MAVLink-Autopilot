@@ -9,17 +9,15 @@ namespace Autopilot
         private static bool loaded = false;
         private static GameObject go;
         private static MonoBehaviour mod;
-        [BalsaAddonInit]
+        [BalsaAddonInit(invokeTime = AddonInvokeTime.OnLoaded)]
         public static void BalsaInit()
         {
-
             if (!loaded)
             {
                 loaded = true;
                 go = new GameObject();
             }
             mod = go.AddComponent<Autopilot>();
-
         }
 
         [BalsaAddonInit(invokeTime = AddonInvokeTime.Flight)]

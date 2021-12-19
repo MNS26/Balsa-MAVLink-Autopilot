@@ -1,42 +1,44 @@
 ModCFG
 {
-    title = Balsa Autopilot
+    title = Autopilot
     author = MS26
-    modVersion = 0.1.0
+    modVersion = 0.1.1
+    imgPath = preveiw.jpg
 	requiresGameVersion = 0.101.2
     Plugin
     {
-        name = Autopilot
-        description = Autopilot for Balsa meant for external softare that uses MAVLink protocol
-        asmpath = Addons\Autopilot\Autopilot.dll
-        order = 1000
-    }
-    Plugin
-    {
-        name = Autopilot-Common
-        description = Autopilot for Balsa meant for external softare that uses MAVLink protocol
-        asmpath = Addons\Autopilot\Autopilot-Common.dll
-        order = 999
-    }
-    Plugin
-    {
-        name = MAVLink
-        description = Autopilot for Balsa meant for external softare that uses MAVLink protocol
-        asmpath = Addons\Autopilot\MAVLink.dll
-        order = 998
+        name = System.Runtime.CompilerServices.Unsafe
+        description = System.Runtime.CompilerServices.Unsafe
+        asmpath = Addons\Autopilot\System.Runtime.CompilerServices.Unsafe.dll
+        order = 1
     }
     Plugin
     {
         name = Newtonsoft.Json
         description = Newtonsoft.Json
         asmpath = Addons\Autopilot\Newtonsoft.Json.dll
-        order = 997
+        order = 2
     }
     Plugin
     {
-        name = System.Runtime.CompilerServices.Unsafe
-        description = System.Runtime.CompilerServices.Unsafe
-        asmpath = Addons\Autopilot\System.Runtime.CompilerServices.Unsafe.dll
-        order = 996
+        name = MAVLink
+        description = Autopilot for Balsa meant for external softare that uses MAVLink protocol
+        asmpath = Addons\Autopilot\MAVLink.dll
+        order = 3
+    }
+    Plugin
+    {
+        name = Autopilot-Common
+        description = Autopilot for Balsa meant for external softare that uses MAVLink protocol
+        asmpath = Addons\Autopilot\Autopilot-Common.dll
+        order = 4
+    }
+    Plugin
+    {
+        name = Autopilot
+        description = Autopilot for Balsa meant for external softare that uses MAVLink protocol
+        asmpath = Addons\Autopilot\Autopilot.dll
+        order = 5
     }
 }
+    

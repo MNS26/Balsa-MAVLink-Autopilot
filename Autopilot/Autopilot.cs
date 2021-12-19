@@ -16,7 +16,7 @@ namespace Autopilot
         {
             DontDestroyOnLoad(this);
             Log("Start!");
-            parameters = new ParameterHandler(PathUtil.Resolve(".") + "/Addons/MAVLink Autopilot/", "Parameters.txt", Log);
+            parameters = new ParameterHandler(PathUtil.Resolve(".") + "/Addons/Autopilot/", "Parameters.txt", Log);
             protocol = new ProtocolLogic(data, ap, Log, parameters);
             handler = new NetworkHandler(protocol, Log);
             handler.StartServer();
@@ -144,16 +144,15 @@ namespace Autopilot
 
             //controller stuff
             data.rssi = map(v.SignalStrength.SignalDegradation, 0, 1, 255, 0);
-            if (data.serial == true){return;}
 
-            data.channels[0] = InputSettings.Axis_Roll.GetAxis();
-            data.channels[1] = InputSettings.Axis_Pitch.GetAxis();
-            data.channels[2] = InputSettings.Axis_Throttle.GetAxis();
-            data.channels[3] = InputSettings.Axis_Yaw.GetAxis();
-            data.channels[4] = InputSettings.Axis_A.GetAxis();
-            data.channels[5] = InputSettings.Axis_B.GetAxis();
-            data.channels[6] = InputSettings.Axis_C.GetAxis();
-            data.channels[7] = InputSettings.Axis_D.GetAxis();
+            data.channels[0] = InputSettings.Axis_Roll.axis;
+            data.channels[1] = InputSettings.Axis_Pitch.axis;
+            data.channels[2] = InputSettings.Axis_Throttle.axis;
+            data.channels[3] = InputSettings.Axis_Yaw.axis;
+            data.channels[4] = InputSettings.Axis_A.axis;
+            data.channels[5] = InputSettings.Axis_B.axis;
+            data.channels[6] = InputSettings.Axis_C.axis;
+            data.channels[7] = InputSettings.Axis_D.axis;
         }
 
         public void FixedUpdate()

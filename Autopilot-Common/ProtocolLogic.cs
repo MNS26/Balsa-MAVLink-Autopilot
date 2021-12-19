@@ -209,6 +209,15 @@ namespace AutopilotCommon
                 }
             }
         }
+        //TODO: add AP control
+        public void ManulaControl(ClientLogic client)
+        {
+            MAVLink.mavlink_manual_control_t control = new MAVLink.mavlink_manual_control_t();
+            data.APchannels[0] = (ushort)(control.x / 1000);
+            data.APchannels[1] = (ushort)(control.y / 1000);
+            data.APchannels[2] = (ushort)(control.z / 1000);
+            data.APchannels[3] = (ushort)(control.r / 1000);
+        }
 
         [SendMessage(MAVLink.MAVLINK_MSG_ID.HEARTBEAT)]
         public void SendHeartbeat(ClientObject client)
@@ -382,27 +391,14 @@ namespace AutopilotCommon
         public void SendRadioChannelsRaw(ClientObject client)
         {
             MAVLink.mavlink_rc_channels_t message = new MAVLink.mavlink_rc_channels_t();
-            message.rssi = 200;
-            message.chan1_raw = data.RCchannels[0];
-            message.chan2_raw = data.RCchannels[1];
-            message.chan3_raw = data.RCchannels[2];
-            message.chan4_raw = data.RCchannels[3];
-            message.chan5_raw = data.RCchannels[4];
-            message.chan6_raw = data.RCchannels[5];
-            message.chan7_raw = data.RCchannels[6];
-            message.chan8_raw = data.RCchannels[7];
-
-            if (data.serial == false)
-            {
-                message.chan1_raw = (ushort)(1500 + data.channels[0] * 500);
-                message.chan2_raw = (ushort)(1500 + data.channels[1] * 500);
-                message.chan3_raw = (ushort)(1500 + data.channels[2] * 500);
-                message.chan4_raw = (ushort)(1500 + data.channels[3] * 500);
-                message.chan5_raw = (ushort)(1500 + data.channels[4] * 500);
-                message.chan6_raw = (ushort)(1500 + data.channels[5] * 500);
-                message.chan7_raw = (ushort)(1500 + data.channels[6] * 500);
-                message.chan8_raw = (ushort)(1500 + data.channels[7] * 500);
-            }
+            message.chan1_raw = (ushort)(1500 + data.channels[0] * 500);
+            message.chan2_raw = (ushort)(1500 + data.channels[1] * 500);
+            message.chan3_raw = (ushort)(1500 + data.channels[2] * 500);
+            message.chan4_raw = (ushort)(1500 + data.channels[3] * 500);
+            message.chan5_raw = (ushort)(1500 + data.channels[4] * 500);
+            message.chan6_raw = (ushort)(1500 + data.channels[5] * 500);
+            message.chan7_raw = (ushort)(1500 + data.channels[6] * 500);
+            message.chan8_raw = (ushort)(1500 + data.channels[7] * 500);
             client.SendMessage(message);
         }
 

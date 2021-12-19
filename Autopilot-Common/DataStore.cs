@@ -3,12 +3,8 @@
     public class DataStore
     {
         //plane
-        public float pitch;
-        public float roll;
-        public float yaw;
-        public float radpitch;
-        public float radroll;
-        public float radyaw;
+        public float pitch,roll, yaw;
+        public float radpitch, radroll, radyaw;
         public float cr;
         public float iaspeed;
         public float rpm;
@@ -21,36 +17,22 @@
         public int longitude;
         public string name;
         //IMU
-        public float gyrox;
-        public float gyroy;
-        public float gyroz;
-        public float accx;
-        public float accy;
-        public float accz;
-        public float magx;
-        public float magy;
-        public float magz;
+        public float gyrox, gyroy, gyroz;
+        public float accx, accy, accz;
+        public float magx, magy, magz;
         //gyro velocity
-        public float currentGVelx;
-        public float lastGVelx;
-        public float currentGVely;
-        public float lastGVely;
-        public float currentGVelz;
-        public float lastGVelz;
+        public float currentGVelx, lastGVelx;
+        public float currentGVely, lastGVely;
+        public float currentGVelz, lastGVelz;
         //accel velocity
-        public float currentAVelx;
-        public float lastAVelx;
-        public float currentAVely;
-        public float lastAVely;
-        public float currentAVelz;
-        public float lastAVelz;
+        public float currentAVelx, lastAVelx;
+        public float currentAVely, lastAVely;
+        public float currentAVelz, lastAVelz;
         //controller
-        public float[] channels = new float[16]; //all game channels
-        public ushort[] RCchannels = new ushort[16]; //all RC channels
+        public float[] channels = new float[16];
+        public ushort[] APchannels = new ushort[16];
         public float rssi;
 
-        //serial stuff
-        public bool serial = false;
     }
     public class ApStore
     {

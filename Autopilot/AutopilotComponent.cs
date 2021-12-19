@@ -241,9 +241,9 @@ namespace Autopilot
             {
                 vehicle.Autotrim.DisableAT();
             }
-            mode = (int)(data.channels[9] * 6.125);
+            mode = (int)(data.channels[7] * 6.125);
 
-            Autopilot.Log($"{mode}");
+            //Autopilot.Log($"{mode}");
             /*
             fbwModule.pitchEnabled = false;
             fbwModule.rollEnabled = false;
