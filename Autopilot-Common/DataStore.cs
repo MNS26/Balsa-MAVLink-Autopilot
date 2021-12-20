@@ -15,6 +15,7 @@
         public float dth;
         public int latitude;
         public int longitude;
+        public ushort load;
         public string name;
         //IMU
         public float gyrox, gyroy, gyroz;

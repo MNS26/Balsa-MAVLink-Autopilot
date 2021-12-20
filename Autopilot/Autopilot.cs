@@ -2,6 +2,7 @@
 using FSControl;
 using Modules;
 using UnityEngine;
+using System;
 namespace Autopilot
 {
     public class Autopilot : MonoBehaviour
@@ -177,7 +178,7 @@ namespace Autopilot
             var engine = v.GetModules<Engine>();
             if (engine.Count != 0 && engine[0].running)
             {
-                ap.mode = MAVLink.MAV_MODE_FLAG.SAFETY_ARMED;
+                ap.mode = MAVLink.MAV_MODE_FLAG.AUTO_ENABLED;
             }
             else
             {
@@ -196,7 +197,7 @@ namespace Autopilot
         {
             // Unity didn't like this
             // Debug.Log($"{Time.realtimeSinceStartup} [Autopilot] {text}");
-            Debug.Log($"[Autopilot] {text}");
+            UnityEngine.Debug.Log($"[Autopilot] {text}");
         }
     }
 }

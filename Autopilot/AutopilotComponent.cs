@@ -1,6 +1,7 @@
 ﻿using AutopilotCommon;
 using FSControl;
 using UnityEngine;
+using System;
 
 namespace Autopilot
 {
@@ -49,7 +50,7 @@ namespace Autopilot
             switch (mode)
             {
                 case -6:
-                    return (FSControlUtil.GetVehicleRoll(vehicle) * Mathf.Rad2Deg) + (data.channels[0] * 20);
+                    return (FSControlUtil.GetVehicleRoll(vehicle) * Mathf.Rad2Deg) + (data.channels[0] * 40);
                 case -3:
                     return (data.channels[0] * 60);
                 case -1:
@@ -70,7 +71,7 @@ namespace Autopilot
             switch (mode)
             {
                 case -6:
-                    return (FSControlUtil.GetVehiclePitch(vehicle) * Mathf.Rad2Deg) + (data.channels[1] * 20);
+                    return (FSControlUtil.GetVehiclePitch(vehicle) * Mathf.Rad2Deg) + (data.channels[1] * 40);
                 case -3:
                     return (data.channels[1] * 60);
                 case -1:
@@ -90,7 +91,7 @@ namespace Autopilot
             switch (mode)
             {
                 case -6:
-                    return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + (data.channels[3] * 25);
+                    return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + (data.channels[3] * 50);
                 case -3:
                     return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + (data.channels[3] * 60);
                 case -1:
@@ -188,7 +189,8 @@ namespace Autopilot
                 input = GetVehiclePitch,
                 setpoint = GetPitch,//verticalSpeedPid.Output,
                 clockSource = () => { return Time.time; },
-                outputCallback = (double output) => { fbwModule.pitch = (float)output; },
+                outputCallback = (double output) => {fbwModule.pitch = (float)output;}
+
             };
 
             //Horizontal
@@ -208,7 +210,6 @@ namespace Autopilot
             //Clamp control from -1 to 1. Kp = 50 degrees error = full deflection, 0.02. Clamp yaw to 0.5 * roll.
             rollPid = new PID()
             {
-
                 kP = parameters.GetParameter("RLL_RATE_P").value,
                 kI = parameters.GetParameter("RLL_RATE_I").value,
                 kD = parameters.GetParameter("RLL_RATE_D").value,
@@ -243,33 +244,25 @@ namespace Autopilot
             }
             mode = (int)(data.channels[7] * 6.125);
 
-            //Autopilot.Log($"{mode}");
             /*
             fbwModule.pitchEnabled = false;
             fbwModule.rollEnabled = false;
             fbwModule.yawEnabled = false;
             fbwModule.throttleEnabled = false;
             */
-            //Autopilot.Log($"{GetPitch()}");
             //Vertical
             altitudePid.FixedUpdate();
-            //Autopilot.Log($"Alt error: {altitudePid.error}, output: {altitudePid.outputValue}");
             verticalSpeedPid.FixedUpdate();
-            //Autopilot.Log($"VS error: {verticalSpeedPid.error}, output: {verticalSpeedPid.outputValue}");
             pitchPid.FixedUpdate();
-            //Autopilot.Log($"Pitch error: {pitchPid.error}, output: {pitchPid.outputValue}");
             fbwModule.pitchEnabled = true;
 
             headingPid.FixedUpdate();
-            //Autopilot.Log($"Heading error: {headingPid.error}, output: {headingPid.outputValue}");
 
             rollPid.FixedUpdate();
-            //Autopilot.Log($"Roll error: {rollPid.error}, output: {rollPid.outputValue}");
             fbwModule.rollEnabled = true;
             fbwModule.yawEnabled = true;
 
             speedPid.FixedUpdate();
-            //Autopilot.Log($"Speed error: {speedPid.error}, output: {speedPid.outputValue}");
             fbwModule.throttleEnabled = false;
         }
 

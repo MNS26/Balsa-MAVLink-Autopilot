@@ -64,6 +64,7 @@ namespace AutopilotCommon
             AckCommand(client, command, MAVLink.MAV_CMD_ACK.OK);
             Log($"SET_MESSAGE_INTERVAL: {(MAVLink.MAVLINK_MSG_ID)command.param1} = {command.param2}");
             client.requestedRates[(MAVLink.MAVLINK_MSG_ID)command.param1] = command.param1 * 1000000;
+
         }
 
         //a "one shot" version of MessageInterwal
@@ -73,7 +74,7 @@ namespace AutopilotCommon
         {
             AckCommand(client, command, MAVLink.MAV_CMD_ACK.OK);
             Log($"REQUEST_MESSAGE: {(MAVLink.MAVLINK_MSG_ID)command.param1} = {command.param2}");
-            //client.requestedRates[(MAVLink.MAVLINK_MSG_ID)command.param1] = command.param1 * 1000000;
+            client.requestedRates[(MAVLink.MAVLINK_MSG_ID)command.param1] = command.param1 * 1000000;
         }
  /*
        FLIGHTMODES
@@ -210,7 +211,7 @@ namespace AutopilotCommon
             }
         }
         //TODO: add AP control
-        public void ManulaControl(ClientLogic client)
+        public void APControl(ClientLogic client)
         {
             MAVLink.mavlink_manual_control_t control = new MAVLink.mavlink_manual_control_t();
             data.APchannels[0] = (ushort)(control.x / 1000);
@@ -238,7 +239,7 @@ namespace AutopilotCommon
             sysStatus.onboard_control_sensors_enabled = sensors;
             sysStatus.onboard_control_sensors_health = sensors;
             //1%
-            sysStatus.load = 50;
+            sysStatus.load = data.load;
             sysStatus.voltage_battery = 11000;
             sysStatus.current_battery = 1000;
             client.SendMessage(sysStatus);
@@ -408,14 +409,14 @@ namespace AutopilotCommon
         {
             MAVLink.mavlink_rc_channels_scaled_t message = new MAVLink.mavlink_rc_channels_scaled_t();
             message.rssi = 200;
-            message.chan1_scaled = 5000;
-            message.chan2_scaled = 5000;
-            message.chan3_scaled = 5000;
-            message.chan4_scaled = 5000;
-            message.chan5_scaled = 5000;
-            message.chan6_scaled = 5000;
-            message.chan7_scaled = 5000;
-            message.chan8_scaled = 5000;
+            message.chan1_scaled = ((short)(data.channels[0]*1000));
+            message.chan2_scaled = ((short)(data.channels[1]*1000));
+            message.chan3_scaled = ((short)(data.channels[2]*1000));
+            message.chan4_scaled = ((short)(data.channels[3]*1000));
+            message.chan5_scaled = ((short)(data.channels[4]*1000));
+            message.chan6_scaled = ((short)(data.channels[5]*1000));
+            message.chan7_scaled = ((short)(data.channels[6]*1000));
+            message.chan8_scaled = ((short)(data.channels[7]*1000));
             client.SendMessage(message);
         }
 

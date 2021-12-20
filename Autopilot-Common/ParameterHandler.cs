@@ -36,7 +36,7 @@ namespace AutopilotCommon
                     defaultTotal = LoadStream(s);
                 }
                 //DON'T LOAD IN DEBUG MODE, EDIT DEFAULTS INSTEAD
-#if !DEBUG
+//#if !DEBUG
                 if (File.Exists(saveFile))
                 {
                     using (FileStream fs = new FileStream(saveFile, FileMode.Open))
@@ -44,7 +44,7 @@ namespace AutopilotCommon
                         savedTotal = LoadStream(fs);
                     }
                 }
-#endif
+//#endif
                 saveEnabled = true;
                 //Save new/missing parameters.
                 if (defaultTotal != savedTotal)

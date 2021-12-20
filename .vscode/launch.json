@@ -8,14 +8,15 @@
             "name": ".NET Core Launch (console)",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build cosole",
+            "preLaunchTask": "build console",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/Autopilot-Console/bin/Debug/net6.0/Autopilot-Console.exe",
+            "program": "${workspaceFolder}/Autopilot-Console/bin/Debug/net6.0/Autopilot-Console.dll",
             "args": [],
             "cwd": "${workspaceFolder}/Autopilot-Console",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
             "console": "internalConsole",
-            "stopAtEntry": false
+            "stopAtEntry": false,
+            "justMyCode": false
         },
         {
             "name": ".NET Core Attach",
