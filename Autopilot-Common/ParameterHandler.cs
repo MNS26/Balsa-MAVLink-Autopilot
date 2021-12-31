@@ -64,8 +64,16 @@ namespace AutopilotCommon
                 while ((currentLine = sr.ReadLine()) != null)
                 {
                     loadTotal++;
+                    if (currentLine == string.Empty)
+                    {
+                        continue;
+                    }
                     int indexOfColon = currentLine.IndexOf(":", StringComparison.InvariantCulture);
                     int indexOfEquals = currentLine.IndexOf("=", StringComparison.InvariantCulture);
+                    if (indexOfColon == -1 || indexOfEquals == -1)
+                    {
+                        continue;
+                    }
                     string typePart = currentLine.Substring(0, indexOfColon);
                     string idPart = currentLine.Substring(indexOfColon + 1, indexOfEquals - indexOfColon - 1);
                     string valuePart = currentLine.Substring(indexOfEquals + 1);

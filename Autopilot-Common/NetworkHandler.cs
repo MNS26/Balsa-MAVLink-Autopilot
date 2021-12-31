@@ -86,15 +86,17 @@ namespace AutopilotCommon
         {
             listener = new TcpListener(new IPEndPoint(IPAddress.Any, 5760));
             listener.Start();
-            listener.BeginAcceptSocket(HandleConnect, listener);
+            listener.BeginAcceptTcpClient(HandleConnect, null);
             Start();
         }
 
         private void Start()
         {
             receiveThread = new Thread(new ThreadStart(ReceiveMain));
+            receiveThread.Name = "Receive Thread";
             receiveThread.Start();
             sendThread = new Thread(new ThreadStart(SendMain));
+            sendThread.Name = "Receive Thread";
             sendThread.Start();
         }
 
@@ -182,7 +184,7 @@ namespace AutopilotCommon
             }
             if (running)
             {
-                listener.BeginAcceptSocket(HandleConnect, null);
+                listener.BeginAcceptTcpClient(HandleConnect, null);
             }
         }
 
@@ -284,6 +286,7 @@ namespace AutopilotCommon
                         }
                     }
                 }
+                Thread.Sleep(1);
             }
         }
 

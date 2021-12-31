@@ -1,6 +1,7 @@
 ﻿using AutopilotCommon;
 using System;
 using UnityEngine;
+using System.Threading;
 
 namespace AutopilotConsole
 {
@@ -8,6 +9,7 @@ namespace AutopilotConsole
     {
         public static void Main(string[] args)
         {
+            Thread.CurrentThread.Name = "Main";
             DataStore data;
             ApStore ap;
             ParameterHandler parameters;
@@ -15,7 +17,7 @@ namespace AutopilotConsole
             NetworkHandler handler;
             Console.WriteLine("Start!");
             data = new DataStore();
-            ap = new ApStore();
+            ap = new ApStore();            
 
             parameters = new ParameterHandler("", "Parameters.txt", Console.WriteLine);
 
@@ -46,6 +48,7 @@ namespace AutopilotConsole
                 data.gyrox = 1;
                 data.gyroy = 2;
                 data.gyroz = 3;
+                Thread.Sleep(100);
             }
         }
 

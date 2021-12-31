@@ -371,3 +371,4 @@ Autopilot-Common/output/Autopilot.dll
 Autopilot-Common/output/MAVLink.dll
 Autopilot/.vscode/tasks.json
 .vscode/settings.json
+Parameters.txt
