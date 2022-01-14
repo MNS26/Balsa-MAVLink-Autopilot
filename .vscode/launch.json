@@ -19,6 +19,11 @@
             "justMyCode": false
         },
         {
+            "name": "Windows Player",
+            "type": "unity",
+            "request": "launch"
+        },
+        {
             "name": ".NET Core Attach",
             "type": "coreclr",
             "request": "attach"

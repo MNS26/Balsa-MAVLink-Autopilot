@@ -25,7 +25,9 @@ namespace Autopilot
 
         float altitude = 100;
         float heading = 210;
+#pragma warning disable CS0414 // Variable is assigned but its value is never used
         float speed = 80;
+#pragma warning disable CS0414 // Variable is assigned but its value is never used
         int mode;
         public void Start()
         {
@@ -50,13 +52,13 @@ namespace Autopilot
             switch (mode)
             {
                 case -6:
-                    return (FSControlUtil.GetVehicleRoll(vehicle) * Mathf.Rad2Deg) + (data.channels[0] * 40);
+                    return (FSControlUtil.GetVehicleRoll(vehicle) * Mathf.Rad2Deg) + (data.channels[0] * 25);
                 case -3:
-                    return (data.channels[0] * 60);
+                    return (data.channels[0] * 25);
                 case -1:
                     return (FSControlUtil.GetVehicleRoll(vehicle) * Mathf.Rad2Deg) + (data.channels[0] * 25);
                 case 1:
-                    return (FSControlUtil.GetVehicleRoll(vehicle) * Mathf.Rad2Deg) + (data.channels[0] * 90);
+                    return (FSControlUtil.GetVehicleRoll(vehicle) * Mathf.Rad2Deg) + (data.channels[0] * 25);
                 case 3:
                     return (FSControlUtil.GetVehicleRoll(vehicle) * Mathf.Rad2Deg);
                 case 6:
@@ -71,13 +73,13 @@ namespace Autopilot
             switch (mode)
             {
                 case -6:
-                    return (FSControlUtil.GetVehiclePitch(vehicle) * Mathf.Rad2Deg) + (data.channels[1] * 40);
+                    return (FSControlUtil.GetVehiclePitch(vehicle) * Mathf.Rad2Deg) + (data.channels[1] * 45);
                 case -3:
-                    return (data.channels[1] * 60);
+                    return (data.channels[1] * 45);
                 case -1:
-                    return (data.channels[1] * 25) + (verticalSpeedPid.Output());
+                    return (data.channels[1] * 45) + (verticalSpeedPid.Output());
                 case 1:
-                    return (FSControlUtil.GetVehiclePitch(vehicle) * Mathf.Rad2Deg) + (data.channels[1] * 90);
+                    return (FSControlUtil.GetVehiclePitch(vehicle) * Mathf.Rad2Deg) + (data.channels[1] * 45);
                 case 3:
                     return (FSControlUtil.GetVehiclePitch(vehicle) * Mathf.Rad2Deg);
                 case 6:
@@ -91,17 +93,17 @@ namespace Autopilot
             switch (mode)
             {
                 case -6:
-                    return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + (data.channels[3] * 50);
+                    return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + (data.channels[3] * 45);
                 case -3:
-                    return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + (data.channels[3] * 60);
+                    return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + (data.channels[3] * 45);
                 case -1:
-                    return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + (data.channels[3] * 25);
+                    return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + (data.channels[3] * 45);
                 case 1:
-                    return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + (data.channels[3] * 25);
+                    return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + (data.channels[3] * 45);
                 case 3:
-                    return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + (data.channels[3] * 25);
+                    return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + (data.channels[3] * 45);
                 case 6:
-                    return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + (data.channels[3] * 25);
+                    return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg) + (data.channels[3] * 45);
                 default:
                     return (FSControlUtil.GetVehicleYaw(vehicle) * Mathf.Rad2Deg);
             }
@@ -168,9 +170,9 @@ namespace Autopilot
             //verticalSpeedPid = new PID(3, 0.1, 0, -30, 30, () => { return vehicle.Physics.VerticalSpeed; }, () => { return vs; }, () => { return Time.time; }, (double v) => { pitch = (float)v; });
             verticalSpeedPid = new PID()
             {
-                kP = 3,
-                kI = 0.2,
-                kD = 0,
+                kP = 0.5,
+                kI = 0.1,
+                kD = 0.1,
                 rangeMin = -parameters.GetParameter("LIM_PITCH_MIN").value / 100,
                 rangeMax = parameters.GetParameter("LIM_PITCH_MAX").value / 100,
                 input = () => { return vehicle.Physics.VerticalSpeed; },
@@ -186,7 +188,7 @@ namespace Autopilot
                 kD = parameters.GetParameter("PTCH_RATE_D").value,
                 rangeMin = -1,
                 rangeMax = 1,
-                input = GetVehiclePitch,
+                input = () => {return FSControlUtil.GetVehiclePitch(vehicle) * Mathf.Rad2Deg;},//GetVehiclePitch,
                 setpoint = GetPitch,//verticalSpeedPid.Output,
                 clockSource = () => { return Time.time; },
                 outputCallback = (double output) => {fbwModule.pitch = (float)output;}
@@ -215,7 +217,7 @@ namespace Autopilot
                 kD = parameters.GetParameter("RLL_RATE_D").value,
                 rangeMin = -1,
                 rangeMax = 1,
-                input = GetVehicleRoll,
+                input =  () => {return FSControlUtil.GetVehicleRoll(vehicle) * Mathf.Rad2Deg;},//GetVehicleRoll,
                 setpoint = GetRoll,//headingPid.Output,
                 clockSource = () => { return Time.time; },
                 outputCallback = (double output) => { fbwModule.roll = (float)output; fbwModule.yaw = (float)output / 2f; },
@@ -254,15 +256,16 @@ namespace Autopilot
             altitudePid.FixedUpdate();
             verticalSpeedPid.FixedUpdate();
             pitchPid.FixedUpdate();
-            fbwModule.pitchEnabled = true;
+            fbwModule.pitchEnabled = false;
 
             headingPid.FixedUpdate();
 
             rollPid.FixedUpdate();
-            fbwModule.rollEnabled = true;
-            fbwModule.yawEnabled = true;
+            fbwModule.rollEnabled = false;
+            fbwModule.yawEnabled = false;
 
             speedPid.FixedUpdate();
+            //Autopilot.Log($"roll: {rollPid.outputValue} pitch: {pitchPid.outputValue}");
             fbwModule.throttleEnabled = false;
         }
 

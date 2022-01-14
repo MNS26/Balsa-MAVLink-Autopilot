@@ -3,6 +3,8 @@ using FSControl;
 using Modules;
 using UnityEngine;
 using System;
+using System.Threading;
+using System.Reflection;
 namespace Autopilot
 {
     public class Autopilot : MonoBehaviour
@@ -12,12 +14,17 @@ namespace Autopilot
         public static ParameterHandler parameters;
         ProtocolLogic protocol;
         NetworkHandler handler;
-
+#pragma warning disable CS0414 // Variable is assigned but its value is never used
+        private bool telemReady = false; 
+#pragma warning restore CS0414 // Variable is assigned but its value is never used
+        static string Path = PathUtil.Resolve(".");
         public void Start()
         {
+			//InitReflections();
+            Thread.CurrentThread.Name = "Autopilot";
             DontDestroyOnLoad(this);
             Log("Start!");
-            parameters = new ParameterHandler(PathUtil.Resolve(".") + "/Addons/Autopilot/", "Parameters.txt", Log);
+            parameters = new ParameterHandler(Path + "/Addons/Autopilot/", "Parameters.txt", Log);
             protocol = new ProtocolLogic(data, ap, Log, parameters);
             handler = new NetworkHandler(protocol, Log);
             handler.StartServer();
@@ -25,6 +32,40 @@ namespace Autopilot
             GameEvents.Vehicles.OnVehicleSpawned.AddListener(VehicleSpawned);
         }
 
+		public void InitReflections()
+		{
+			object[] sensorArray = null;
+            Type sensorType = null;
+            Type sensorEnumType = null;
+            foreach (Assembly ass in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                if (ass.GetName().Name == "WirelessRX")
+                {
+					object instance = ass.GetType("WirelessRX.WirelessRXMain").GetProperty("Instance").GetGetMethod().Invoke(null, null);
+                    sensorArray = ass.GetType("WirelessRX.WirelessRXMain")?.GetProperty("Sensors")?.GetGetMethod()?.Invoke(instance, null) as object[];
+					if(instance == null){telemReady = false; return;};
+				}
+                if (ass.GetName().Name == "WirelessRXLib")
+                {
+                    sensorType = ass.GetType("WirelessRXLib.Sensor");
+                    sensorEnumType = ass.GetType("WirelessRXLib.SensorType");
+                }
+            }
+            if (sensorType == null || sensorEnumType == null || sensorArray == null)
+            {telemReady = false;return;}
+
+			object sensorCell = sensorEnumType.GetField("CELL").GetValue(null);
+            //This compile warning is incorrect, we actually want to pass the method, not call it and pass its value.
+            //Warning goes away if cast to delegate
+            object newSensor = Activator.CreateInstance(sensorType, new object[] { sensorCell, (Func<int>)GetVoltage });
+            sensorArray[1] = newSensor; 
+			telemReady = true;    
+		}
+        private static int GetVoltage()
+        {
+            return 390;
+        }
+		
 
         private void VehicleSpawned(Vehicle vehicle)
         {
@@ -49,6 +90,8 @@ namespace Autopilot
         //running this as fast as possible
         public void Update()
         {
+			if(telemReady == false)
+			{InitReflections();Log("Telemetry not ready");}
             if (!GameLogic.inGame || !GameLogic.SceneryLoaded || GameLogic.LocalPlayerVehicle == null || !GameLogic.LocalPlayerVehicle.InitComplete)
             {
                 data.channels[0] = data.channels[1] = data.channels[2] = data.channels[3] = data.channels[4] = data.channels[5] = data.channels[6] = data.channels[7] = 1500;
@@ -175,15 +218,15 @@ namespace Autopilot
                 data.avrrpm /= props.Count;
                 data.avrrpm *= 1.66667f;
             }
-            var engine = v.GetModules<Engine>();
-            if (engine.Count != 0 && engine[0].running)
-            {
-                ap.mode = MAVLink.MAV_MODE_FLAG.AUTO_ENABLED;
-            }
-            else
-            {
-                ap.mode = MAVLink.MAV_MODE_FLAG.MANUAL_INPUT_ENABLED;
-            }
+            //var engine = v.GetModules<Engine>();
+            //if (engine.Count != 0 && engine[0].running)
+            //{
+            //    ap.mode = MAVLink.MAV_MODE_FLAG.AUTO_ENABLED;
+            //}
+            //else
+            //{
+            //    ap.mode = MAVLink.MAV_MODE_FLAG.MANUAL_INPUT_ENABLED;
+            //}
 
         }
 

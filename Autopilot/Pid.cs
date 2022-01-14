@@ -67,7 +67,7 @@ namespace Autopilot
             //PID calculation
             p = error * kP;
             i += error * kI * deltaTime;
-            d = (deltaInput * kD) / deltaTime;
+            d = ((deltaInput * kD) / deltaTime)*0.9;
             //Clamp I
             if (i < rangeMin)
             {
