@@ -14,8 +14,23 @@
             "args": [],
             "cwd": "${workspaceFolder}/Autopilot-Console",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
-            "console": "internalConsole",
+            "console": "externalTerminal",
             "stopAtEntry": false,
+            "enableStepFiltering": false,
+            "justMyCode": false
+        },
+        {
+            "name": ".NET Core Launch (console with HID)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build console",
+            // If you have changed target frameworks, make sure to update the program path.
+            "program": "${workspaceFolder}/Autopilot-Console/bin/Debug/net6.0/Autopilot-Console.dll",
+            "args": ["HID"],
+            "cwd": "${workspaceFolder}/Autopilot-Console",
+            "console": "externalTerminal",
+            "stopAtEntry": false,
+            "enableStepFiltering": false,
             "justMyCode": false
         },
         {

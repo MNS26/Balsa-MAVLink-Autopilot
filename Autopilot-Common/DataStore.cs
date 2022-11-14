@@ -17,6 +17,10 @@
         public int longitude;
         public ushort load;
         public string name;
+        public int mode_flag;
+        public byte mode;
+        public int state;
+
         //IMU
         public float gyrox, gyroy, gyroz;
         public float accx, accy, accz;
@@ -37,7 +41,8 @@
     }
     public class ApStore
     {
-        public MAVLink.MAV_MODE_FLAG mode;
+        public MAVLink.MAV_MODE_FLAG mode_flag;
+        public MAVLink.MAV_MODE mode;
         public MAVLink.MAV_STATE state;
         public float P;
         public float I;

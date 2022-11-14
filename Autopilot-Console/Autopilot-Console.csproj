@@ -12,5 +12,8 @@
     <Reference Include="UnityEngine">
       <HintPath>../External/Managed/UnityEngine.dll</HintPath>
     </Reference>
+    <Reference Include="HidSharp">
+      <HintPath>../External/HidSharp/net35/HidSharp.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>

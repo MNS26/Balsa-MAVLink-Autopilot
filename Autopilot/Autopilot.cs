@@ -64,7 +64,7 @@ namespace Autopilot
                 data.accy = 0;
                 data.accz = 0;
                 data.rssi = 0;
-                ap.mode = MAVLink.MAV_MODE_FLAG.SAFETY_ARMED;
+                ap.mode_flag = MAVLink.MAV_MODE_FLAG.SAFETY_ARMED;
                 data.avrrpm = 0;
                 data.latitude = 0;
                 data.longitude = 0;
@@ -178,11 +178,11 @@ namespace Autopilot
             var engine = v.GetModules<Engine>();
             if (engine.Count != 0 && engine[0].running)
             {
-                ap.mode = MAVLink.MAV_MODE_FLAG.AUTO_ENABLED;
+                ap.mode_flag = MAVLink.MAV_MODE_FLAG.AUTO_ENABLED;
             }
             else
             {
-                ap.mode = MAVLink.MAV_MODE_FLAG.MANUAL_INPUT_ENABLED;
+                ap.mode_flag = MAVLink.MAV_MODE_FLAG.MANUAL_INPUT_ENABLED;
             }
 
         }

@@ -81,7 +81,7 @@ namespace AutopilotCommon
                 }
             }
         }
-
+//start server thread
         public void StartServer()
         {
             listener = new TcpListener(new IPEndPoint(IPAddress.Any, 5760));
@@ -293,7 +293,7 @@ namespace AutopilotCommon
         private void ProcessMessage(ClientObject client, MAVLink.MAVLinkMessage message)
         {
             bool processed = false;
-            Log($"RX: {message.data}");
+            Log($"RX: {message.data} {message.msgid}");
             if (message.msgid == (uint)MAVLink.MAVLINK_MSG_ID.COMMAND_LONG)
             {
                 processed = true;

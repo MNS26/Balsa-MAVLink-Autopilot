@@ -1,7 +1,10 @@
-﻿using AutopilotCommon;
-using System;
-using UnityEngine;
+﻿using System;
 using System.Threading;
+using UnityEngine;
+using HID;
+using AutopilotCommon;
+
+
 
 namespace AutopilotConsole
 {
@@ -15,27 +18,38 @@ namespace AutopilotConsole
             ParameterHandler parameters;
             ProtocolLogic protocol;
             NetworkHandler handler;
+            if(args.Length > 0){
+                if(args[0] == "HID"){
+                    Interface HIDinterface;
+                    HIDinterface = new Interface(Console.WriteLine);
+                    HIDinterface.StartServer();
+                }
+            }
             Console.WriteLine("Start!");
             data = new DataStore();
-            ap = new ApStore();            
-
-            parameters = new ParameterHandler("", "Parameters.txt", Console.WriteLine);
-
-            protocol = new ProtocolLogic(data, ap, Console.WriteLine, parameters);
-            handler = new NetworkHandler(protocol, Console.WriteLine);
-            handler.RegisterUnprocessedCommand(UnprocessedCommand);
-            handler.RegisterUnprocessedMessage(UnprocessedMessage);
+            ap = new ApStore();           
+            data.mode=0;         
+            parameters = new ParameterHandler("", "Parameters.txt", nothing);
+            protocol = new ProtocolLogic(data, ap, nothing, parameters);
+            handler = new NetworkHandler(protocol, nothing);
+            //handler.RegisterUnprocessedCommand(UnprocessedCommand);
+            //handler.RegisterUnprocessedMessage(UnprocessedMessage);
             handler.StartServer();
             bool running = true;
             int count = 0;
+            long last_loop = 0;
             while (running)
             {
-                try{
-                count++;
-                }
-                catch
+                while((DateTime.UtcNow.Ticks - last_loop)/TimeSpan.TicksPerMillisecond >100)
                 {
-                    count = 0;
+                    last_loop = DateTime.UtcNow.Ticks;
+                    try{
+                    count++;
+                    }
+                    catch
+                    {
+                        count = 0;
+                    }
                 }
                 data.heading = count % 360;
                 data.radyaw = (float)((count % 360 / 360d) * 2 * Math.PI);
@@ -48,9 +62,10 @@ namespace AutopilotConsole
                 data.gyrox = 1;
                 data.gyroy = 2;
                 data.gyroz = 3;
-                Thread.Sleep(100);
             }
         }
+        public static void nothing(string text)
+        {}
 
         static void UnprocessedMessage(ClientObject client, MAVLink.MAVLinkMessage message)
         {
@@ -60,6 +75,5 @@ namespace AutopilotConsole
         {
             Console.WriteLine($"Unprocessed command: {command.command} , {command.confirmation}");
         }
-
     }
 }
