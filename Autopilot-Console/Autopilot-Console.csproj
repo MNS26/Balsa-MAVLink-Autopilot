@@ -5,15 +5,17 @@
     <RootNamespace>AutopilotConsole</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Autopilot-Common\Autopilot-Common.csproj" />
-    <Reference Include="UnityEngine.CoreModule">
-      <HintPath>../External/Managed/UnityEngine.CoreModule.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEngine">
       <HintPath>../External/Managed/UnityEngine.dll</HintPath>
     </Reference>
-    <Reference Include="HidSharp">
-      <HintPath>../External/HidSharp/net35/HidSharp.dll</HintPath>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>../External/Managed/UnityEngine.CoreModule.dll</HintPath>
     </Reference>
+    <ProjectReference Include="..\Autopilot-Common\Autopilot-Common.csproj"/>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="HIDDevices" Version="3.0.1"/>
+    <PackageReference Include="HidSharp" Version="2.1.0"/>
   </ItemGroup>
 </Project>

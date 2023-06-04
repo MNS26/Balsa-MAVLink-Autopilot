@@ -28,7 +28,7 @@ namespace AutopilotCommon
         {
             lock (parameters)
             {
-                Assembly ass = Assembly.GetExecutingAssembly();
+                Assembly ass = Assembly.GetExecutingAssembly(); // haha ass (yes im a child at time too ;P)
                 int defaultTotal = 0;
                 int savedTotal = 0;
                 using (Stream s = ass.GetManifestResourceStream("AutopilotCommon.Defaults.txt"))
@@ -36,7 +36,7 @@ namespace AutopilotCommon
                     defaultTotal = LoadStream(s);
                 }
                 //DON'T LOAD IN DEBUG MODE, EDIT DEFAULTS INSTEAD
-//#if !DEBUG
+            #if !DEBUG
                 if (File.Exists(saveFile))
                 {
                     using (FileStream fs = new FileStream(saveFile, FileMode.Open))
@@ -44,9 +44,9 @@ namespace AutopilotCommon
                         savedTotal = LoadStream(fs);
                     }
                 }
-//#endif
+            #endif
                 saveEnabled = true;
-                //Save new/missing parameters.
+                //Save changed/new/missing/removed parameters.
                 if (defaultTotal != savedTotal)
                 {
                     Save(saveFile);
@@ -54,7 +54,7 @@ namespace AutopilotCommon
             }
         }
 
-        private int LoadStream(Stream s)
+        public int LoadStream(Stream s)
         {
             int loadTotal = 0;
             using (StreamReader sr = new StreamReader(s))
@@ -133,7 +133,6 @@ namespace AutopilotCommon
                 return parameters.IndexOf(p);
             }
         }
-
         public int GetCount()
         {
             return freeID;

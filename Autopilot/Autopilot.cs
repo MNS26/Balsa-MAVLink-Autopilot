@@ -7,19 +7,27 @@ namespace Autopilot
 {
     public class Autopilot : MonoBehaviour
     {
-        public static DataStore data = new DataStore();
-        public static ApStore ap = new ApStore();
+        public static Data data = new Data();
+        public static Ap ap = new Ap();
         public static ParameterHandler parameters;
-        ProtocolLogic protocol;
+        Commands commands;
+        MessagesSend messagesSend;
+        MessagesReceived messagesReceived;
         NetworkHandler handler;
 
         public void Start()
         {
+            for( var index = 0; index<data.ChannelsServo.Length;index++)
+            {
+                data.ChannelsServo[index] = ushort.MaxValue;
+            }
             DontDestroyOnLoad(this);
             Log("Start!");
             parameters = new ParameterHandler(PathUtil.Resolve(".") + "/Addons/Autopilot/", "Parameters.txt", Log);
-            protocol = new ProtocolLogic(data, ap, Log, parameters);
-            handler = new NetworkHandler(protocol, Log);
+            commands = new Commands(data, ap, Log, parameters);
+            messagesSend = new MessagesSend(data, ap, Log, parameters);
+            messagesReceived = new MessagesReceived(data, ap, Log, parameters);
+            handler = new NetworkHandler(commands, messagesReceived, messagesSend, Log);
             handler.StartServer();
             //If you want to stick around
             GameEvents.Vehicles.OnVehicleSpawned.AddListener(VehicleSpawned);
@@ -51,7 +59,10 @@ namespace Autopilot
         {
             if (!GameLogic.inGame || !GameLogic.SceneryLoaded || GameLogic.LocalPlayerVehicle == null || !GameLogic.LocalPlayerVehicle.InitComplete)
             {
-                data.channels[0] = data.channels[1] = data.channels[2] = data.channels[3] = data.channels[4] = data.channels[5] = data.channels[6] = data.channels[7] = 1500;
+                for (int channel = 0; channel < data.ChannelsRC.Length; channel++)
+                {
+                   data.ChannelsRC[channel]=1500; 
+                }
                 data.radpitch = 0;
                 data.radroll = 0;
                 data.radyaw = 0;
@@ -144,16 +155,16 @@ namespace Autopilot
 
 
             //controller stuff
-            data.rssi = map(v.SignalStrength.SignalDegradation, 0, 1, 255, 0);
+            data.rssi = map(v.SignalStrength.SignalDegradation, 0, 1, 254, 0);
 
-            data.channels[0] = InputSettings.Axis_Roll.axis;
-            data.channels[1] = InputSettings.Axis_Pitch.axis;
-            data.channels[2] = InputSettings.Axis_Throttle.axis;
-            data.channels[3] = InputSettings.Axis_Yaw.axis;
-            data.channels[4] = InputSettings.Axis_A.axis;
-            data.channels[5] = InputSettings.Axis_B.axis;
-            data.channels[6] = InputSettings.Axis_C.axis;
-            data.channels[7] = InputSettings.Axis_D.axis;
+            data.ChannelsRC[0] = InputSettings.Axis_Roll.axis;
+            data.ChannelsRC[1] = InputSettings.Axis_Pitch.axis;
+            data.ChannelsRC[2] = InputSettings.Axis_Throttle.axis;
+            data.ChannelsRC[3] = InputSettings.Axis_Yaw.axis;
+            data.ChannelsRC[4] = InputSettings.Axis_A.axis;
+            data.ChannelsRC[5] = InputSettings.Axis_B.axis;
+            data.ChannelsRC[6] = InputSettings.Axis_C.axis;
+            data.ChannelsRC[7] = InputSettings.Axis_D.axis;
         }
 
         public void FixedUpdate()
@@ -187,9 +198,9 @@ namespace Autopilot
 
         }
 
-        public static float map(float value, float fromLow, float fromHigh, float toLow, float toHigh)
+        private static T map<T>(T value, T fromLow, T fromHigh, T toLow, T toHigh) //where T : IComparable<T>
         {
-            return (value - fromLow) * (toHigh - toLow) / (fromHigh - fromLow) + toLow;
+            return (T)(((dynamic)value - (dynamic)fromLow) * ((dynamic)toHigh - (dynamic)toLow) / ((dynamic)fromHigh - (dynamic)fromLow) + (dynamic)toLow);
         }
 
         //It's nice to identify in the log where things came from

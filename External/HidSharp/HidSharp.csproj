@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0,net472</TargetFramework>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <OutputType>Library</OutputType>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>HidSharp</AssemblyName>
+    <RootNamespace>HidSharp</RootNamespace>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+</Project>

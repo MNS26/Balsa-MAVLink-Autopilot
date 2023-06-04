@@ -37,12 +37,12 @@
     <None Update="modexport.cfg" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Autopilot.modcfg" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="preview.jpg"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
-    
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Autopilot-Common\Autopilot-Common.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />
   </ItemGroup>
 </Project>

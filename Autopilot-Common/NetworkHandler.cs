@@ -11,7 +11,9 @@ namespace AutopilotCommon
     public class NetworkHandler
     {
         private Action<string> Log;
-        private ProtocolLogic protocol;
+        private Commands commands;
+        private MessagesReceived messagesReceived;
+        private MessagesSend messagesSend;
 
         //Mavlink
         private MAVLink.MavlinkParse parser = new MAVLink.MavlinkParse();
@@ -38,44 +40,59 @@ namespace AutopilotCommon
         private Dictionary<Type, MAVLink.MAVLINK_MSG_ID> typeMapping = new Dictionary<Type, MAVLink.MAVLINK_MSG_ID>();
 
         private bool running = true;
-
-
-
-
-        public NetworkHandler(ProtocolLogic protocol, Action<string> Log)
+        public NetworkHandler(Commands commands, MessagesReceived messagesReceived, MessagesSend messagesSend, Action<string> Log)
         {
-            this.protocol = protocol;
+            this.commands = commands;
+            this.messagesReceived = messagesReceived;
+            this.messagesSend = messagesSend;
             this.Log = Log;
-
-            RegisterConnect(protocol.ConnectEvent);
-            RegisterDisconnect(protocol.DisconnectEvent);
+            RegisterConnect(commands.ConnectEvent);
+            RegisterConnect(messagesReceived.ConnectEvent);
+            RegisterDisconnect(commands.DisconnectEvent);
+            RegisterDisconnect(messagesReceived.DisconnectEvent);
             AutoRegister();
         }
 
         private void AutoRegister()
         {
-            Type t = typeof(ProtocolLogic);
-            MethodInfo[] mis = t.GetMethods();
-            foreach (MethodInfo mi in mis)
+            Type TCommands = typeof(Commands);
+            Type TMessagesReceived = typeof(MessagesReceived);
+            Type TMessagesSend = typeof(MessagesSend);
+            MethodInfo[] MethodInfoCommands = TCommands.GetMethods();
+            MethodInfo[] MethodInfoMessageReceive = TMessagesReceived.GetMethods();
+            MethodInfo[] MethodInfoMessageSend = TMessagesSend.GetMethods();
+            foreach (MethodInfo mi in MethodInfoMessageReceive)
             {
                 foreach (Attribute att in mi.GetCustomAttributes())
                 {
                     if (att is ReceiveMessage)
                     {
                         ReceiveMessage rm = (ReceiveMessage)att;
-                        Action<ClientObject, MAVLink.MAVLinkMessage> callMethod = (Action<ClientObject, MAVLink.MAVLinkMessage>)mi.CreateDelegate(typeof(Action<ClientObject, MAVLink.MAVLinkMessage>), protocol);
+                        Action<ClientObject, MAVLink.MAVLinkMessage> callMethod = (Action<ClientObject, MAVLink.MAVLinkMessage>)mi.CreateDelegate(typeof(Action<ClientObject, MAVLink.MAVLinkMessage>), messagesReceived);
                         RegisterReceive(rm.id, callMethod);
                     }
+                }
+            }
+            foreach (MethodInfo mi in MethodInfoMessageSend)
+            {
+                foreach (Attribute att in mi.GetCustomAttributes())
+                {
                     if (att is SendMessage)
                     {
                         SendMessage sm = (SendMessage)att;
-                        Action<ClientObject> callMethod = (Action<ClientObject>)mi.CreateDelegate(typeof(Action<ClientObject>), protocol);
+                        Action<ClientObject> callMethod = (Action<ClientObject>)mi.CreateDelegate(typeof(Action<ClientObject>), messagesSend);
                         RegisterSend(sm.id, callMethod);
                     }
+                }
+            }
+            foreach (MethodInfo mi in MethodInfoCommands)
+            {
+                foreach (Attribute att in mi.GetCustomAttributes())
+                {
                     if (att is ReceiveCommand)
                     {
                         ReceiveCommand rc = (ReceiveCommand)att;
-                        Action<ClientObject, MAVLink.mavlink_command_long_t> callMethod = (Action<ClientObject, MAVLink.mavlink_command_long_t>)mi.CreateDelegate(typeof(Action<ClientObject, MAVLink.mavlink_command_long_t>), protocol);
+                        Action<ClientObject, MAVLink.mavlink_command_long_t> callMethod = (Action<ClientObject, MAVLink.mavlink_command_long_t>)mi.CreateDelegate(typeof(Action<ClientObject, MAVLink.mavlink_command_long_t>), commands);
                         RegisterReceiveCommand(rc.id, callMethod);
                     }
                 }
@@ -293,7 +310,7 @@ namespace AutopilotCommon
         private void ProcessMessage(ClientObject client, MAVLink.MAVLinkMessage message)
         {
             bool processed = false;
-            Log($"RX: {message.data} {message.msgid}");
+            //Log($"RX: {message.data} {message.msgid}");
             if (message.msgid == (uint)MAVLink.MAVLINK_MSG_ID.COMMAND_LONG)
             {
                 processed = true;
