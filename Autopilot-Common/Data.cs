@@ -47,8 +47,8 @@
     }
     public class Ap
     {
-        public MAVLink.MAV_MODE_FLAG mode_flag;
-        public MAVLink.MAV_MODE mode;
+        public MAVLink.MAV_MODE_FLAG mode_flag = 0;
+        public MAVLink.MAV_MODE mode = MAVLink.MAV_MODE.PREFLIGHT;
         public MAVLink.MAV_STATE state = MAVLink.MAV_STATE.STANDBY;
         public float P;
         public float I;

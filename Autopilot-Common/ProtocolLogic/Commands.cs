@@ -34,7 +34,27 @@ namespace AutopilotCommon
             Log("Client disconnected");
         }
 
-        //Commands
+        [ReceiveCommand(MAVLink.MAV_CMD.DO_SET_MODE)]
+        public void SetMode(ClientObject client, MAVLink.mavlink_command_long_t command)
+        {
+            Log($"SET MODE: {command.param1}, {command.param2}");
+            AckCommand(client, command, MAVLink.MAV_CMD_ACK.OK);
+        }
+
+        [ReceiveCommand(MAVLink.MAV_CMD.DO_SET_HOME)]
+        public void SetHome(ClientObject client, MAVLink.mavlink_command_long_t command)
+        {
+            Log($"SET HOME: {command.param1}, {command.param2}, {command.param3}, {command.param4}, {command.param5}, {command.param6}, {command.param7}");
+            AckCommand(client, command, MAVLink.MAV_CMD_ACK.OK);
+        }
+
+        [ReceiveCommand(MAVLink.MAV_CMD.DO_SET_PARAMETER)]
+        public void SetParameter(ClientObject client, MAVLink.mavlink_command_long_t command)
+        {
+            Log($"SET PARAMETER: {command.param1}, {command.param2}");
+            AckCommand(client, command, MAVLink.MAV_CMD_ACK.OK);
+        }
+
         [ReceiveCommand(MAVLink.MAV_CMD.DO_SET_SERVO)]
         public void RequestSetServo(ClientObject client, MAVLink.mavlink_command_long_t command)
         {
@@ -118,11 +138,11 @@ namespace AutopilotCommon
             MAVLink.mavlink_autopilot_version_t autopilot2 = new MAVLink.mavlink_autopilot_version_t(){
                 capabilities = 
                               (ulong)MAVLink.MAV_PROTOCOL_CAPABILITY.MAVLINK2
-                            | (ulong)MAVLink.MAV_PROTOCOL_CAPABILITY.MISSION_FLOAT
+                            //| (ulong)MAVLink.MAV_PROTOCOL_CAPABILITY.MISSION_FLOAT
                             | (ulong)MAVLink.MAV_PROTOCOL_CAPABILITY.PARAM_FLOAT
                             //| (ulong)MAVLink.MAV_PROTOCOL_CAPABILITY.MISSION_INT
-                            //| (ulong)MAVLink.MAV_PROTOCOL_CAPABILITY.COMMAND_INT
-                            //| (ulong)MAVLink.MAV_PROTOCOL_CAPABILITY.PARAM_UNION
+                            | (ulong)MAVLink.MAV_PROTOCOL_CAPABILITY.COMMAND_INT
+                            | (ulong)MAVLink.MAV_PROTOCOL_CAPABILITY.PARAM_UNION
                             | (ulong)MAVLink.MAV_PROTOCOL_CAPABILITY.FLIGHT_INFORMATION
                             | (ulong)MAVLink.MAV_PROTOCOL_CAPABILITY.FLIGHT_TERMINATION
                             | (ulong)MAVLink.MAV_PROTOCOL_CAPABILITY.SET_ACTUATOR_TARGET
@@ -165,14 +185,21 @@ namespace AutopilotCommon
         public void RequestArmDisarm(ClientObject client, MAVLink.mavlink_command_long_t command)
         {
             AckCommand(client, command, MAVLink.MAV_CMD_ACK.OK);
-            Log($"REQUEST ARM DISARM: STATE {command.param1}, {command.param2}");
-            if((int)ap.state==3)
-            ap.state = MAVLink.MAV_STATE.ACTIVE;
-            if((int)ap.state==4)
-            ap.state = MAVLink.MAV_STATE.STANDBY;
+            Log($"REQUEST ARM DISARM: {command} STATE {command.param1}, {command.param2}, {command.param3}, {command.param4}, {command.param5}, {command.param6}, {command.param7}");
+
+            if((int)command.param1==1)
+            {
+                ap.mode_flag = MAVLink.MAV_MODE_FLAG.AUTO_ENABLED|MAVLink.MAV_MODE_FLAG.GUIDED_ENABLED;
+                ap.state = MAVLink.MAV_STATE.ACTIVE;
+            }
+            else
+            {
+                ap.mode_flag = 0;
+                ap.state = MAVLink.MAV_STATE.STANDBY;
+            }
             client.SendMessage(command);
         }
-        public void AckCommand(ClientObject client, MAVLink.mavlink_command_long_t command, MAVLink.MAV_CMD_ACK ackType)
+        static public void AckCommand(ClientObject client, MAVLink.mavlink_command_long_t command, MAVLink.MAV_CMD_ACK ackType)
         {
             MAVLink.mavlink_command_ack_t ack = new MAVLink.mavlink_command_ack_t(){
                 command = command.command,

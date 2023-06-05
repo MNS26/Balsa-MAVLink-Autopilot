@@ -95,8 +95,8 @@ namespace AutopilotCommon
         [ReceiveMessage(MAVLink.MAVLINK_MSG_ID.MISSION_REQUEST_LIST)]
         public void SendMissionList(ClientObject client, MAVLink.MAVLinkMessage messageRaw)
         {
-            Log($"MISSION_REQUEST_LIST: {messageRaw}");
-            //MAVLink.mavlink_mission_request_list_t missionList = (MAVLink.mavlink_mission_request_list_t)messageRaw.data;
+            MAVLink.mavlink_mission_request_list_t missionList = (MAVLink.mavlink_mission_request_list_t)messageRaw.data;
+            Log($"MISSION_REQUEST_LIST: {missionList.mission_type}, {missionList.target_component}, {missionList.target_system}");
             MAVLink.mavlink_mission_count_t missionCount = new MAVLink.mavlink_mission_count_t(){
                 target_system = systemID,
                 target_component = componentID,

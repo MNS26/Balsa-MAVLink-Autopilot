@@ -26,12 +26,12 @@ namespace AutopilotCommon
         public void SendHeartbeat(ClientObject client)
         {
             MAVLink.mavlink_heartbeat_t message = new MAVLink.mavlink_heartbeat_t(){
-                custom_mode = (uint)MAVLink.MAV_MODE.AUTO_ARMED,
+                custom_mode = (uint)0,
                 type = (byte)MAVLink.MAV_TYPE.FIXED_WING,
-                autopilot = (byte)MAVLink.MAV_AUTOPILOT.ARDUPILOTMEGA, 
+                autopilot = (byte)MAVLink.MAV_AUTOPILOT.ARDUPILOTMEGA,
                             //|(byte)MAVLink.MAV_AUTOPILOT.GENERIC_WAYPOINTS_AND_SIMPLE_NAVIGATION_ONLY,
                             //|(byte)MAVLink.MAV_AUTOPILOT.GENERIC_MISSION_FULL,
-                base_mode = (byte)MAVLink.MAV_MODE.AUTO_ARMED,
+                base_mode = (byte)ap.mode_flag,
                 system_status = (byte)ap.state,
                 mavlink_version = (byte)MAVLink.MAVLINK_VERSION,
             };
@@ -215,7 +215,7 @@ namespace AutopilotCommon
             };
             client.SendMessage(message);
         }
-        
+
         [SendMessage(MAVLink.MAVLINK_MSG_ID.RC_CHANNELS_SCALED)]
         [SendCategory(MAVLink.MAV_DATA_STREAM.RC_CHANNELS)]
         public void SendRadioChannelsScaled(ClientObject client)
@@ -223,14 +223,14 @@ namespace AutopilotCommon
             MAVLink.mavlink_rc_channels_scaled_t message = new MAVLink.mavlink_rc_channels_scaled_t()
             {
                 rssi = (byte)data.rssi,
-                chan1_scaled = ((short)(data.ChannelsRC[0] * 1000)),
-                chan2_scaled = ((short)(data.ChannelsRC[1] * 1000)),
-                chan3_scaled = ((short)(data.ChannelsRC[2] * 1000)),
-                chan4_scaled = ((short)(data.ChannelsRC[3] * 1000)),
-                chan5_scaled = ((short)(data.ChannelsRC[4] * 1000)),
-                chan6_scaled = ((short)(data.ChannelsRC[5] * 1000)),
-                chan7_scaled = ((short)(data.ChannelsRC[6] * 1000)),
-                chan8_scaled = ((short)(data.ChannelsRC[7] * 1000))
+                chan1_scaled = (short)(data.ChannelsRC[0] * 1000),
+                chan2_scaled = (short)(data.ChannelsRC[1] * 1000),
+                chan3_scaled = (short)(data.ChannelsRC[2] * 1000),
+                chan4_scaled = (short)(data.ChannelsRC[3] * 1000),
+                chan5_scaled = (short)(data.ChannelsRC[4] * 1000),
+                chan6_scaled = (short)(data.ChannelsRC[5] * 1000),
+                chan7_scaled = (short)(data.ChannelsRC[6] * 1000),
+                chan8_scaled = (short)(data.ChannelsRC[7] * 1000)
             };
             client.SendMessage(message);
         }

@@ -14,7 +14,7 @@
     <ProjectReference Include="..\Autopilot-Common\Autopilot-Common.csproj"/>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+      <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="HIDDevices" Version="3.0.1"/>
     <PackageReference Include="HidSharp" Version="2.1.0"/>
   </ItemGroup>

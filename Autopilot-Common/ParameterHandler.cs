@@ -20,7 +20,7 @@ namespace AutopilotCommon
         {
             this.Log = Log;
             this.saveFile = dir + saveFile;
-            Console.WriteLine(dir+saveFile);
+            Log(dir+saveFile);
             Load();
         }
 

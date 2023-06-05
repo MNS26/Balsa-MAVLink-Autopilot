@@ -22,18 +22,19 @@ namespace AutopilotConsole
             Console.WriteLine("Start!");
             data = new Data();
             ap = new Ap();
-            data.mode=0;
-            
             //Interface hid = new Interface(Console.WriteLine);
-            parameters = new ParameterHandler("", "Parameters.txt", nothing);
-            commands = new Commands(data, ap, Console.WriteLine, parameters);
-            messagesSend = new MessagesSend(data, ap, Console.WriteLine, parameters);
+            parameters       = new ParameterHandler("", "Parameters.txt", nothing);
+            commands         = new Commands(data, ap, Console.WriteLine, parameters);
+            messagesSend     = new MessagesSend(data, ap, Console.WriteLine, parameters);
             messagesReceived = new MessagesReceived(data, ap, Console.WriteLine, parameters);
-            handler = new NetworkHandler(commands, messagesReceived, messagesSend, Console.WriteLine);
+            handler          = new NetworkHandler(commands, messagesReceived, messagesSend, Console.WriteLine);
+            
             handler.RegisterUnprocessedCommand(UnprocessedCommand);
             handler.RegisterUnprocessedMessage(UnprocessedMessage);
+            
             //hid.StartServer();
             handler.StartServer();
+            
             bool running = true;
             int count = 0;
             long last_loop = 0;
@@ -56,7 +57,7 @@ namespace AutopilotConsole
                     //    Console.Write(data.ChannelsRC[index]+ " ");
                     //}
                     //Console.WriteLine();
-                    
+
                     try{
                     count++;
                     }
@@ -79,12 +80,14 @@ namespace AutopilotConsole
 
             }
         }
+
+        //keep this so we can replace the Console.WriteLine with this
         public static void nothing(string text)
         {}
 
         static void UnprocessedMessage(ClientObject client, MAVLink.MAVLinkMessage message)
         {
-            Console.WriteLine($"Unprocessed message: {message.msgid} ({message.data})");
+            Console.WriteLine($"Unprocessed message: #{message.msgid} ({message.data})");
         }
         static void UnprocessedCommand(ClientObject client, MAVLink.mavlink_command_long_t command)
         {
