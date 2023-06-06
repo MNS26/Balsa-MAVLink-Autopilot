@@ -29,12 +29,12 @@ namespace AutopilotCommon
             Log("Client connected");
         }
 
-        public void DisconnectEvent(ClientObject client)
+        public void DisconnectEvent()
         {
             Log("Client disconnected");
         }
 
-        [ReceiveCommand(MAVLink.MAV_CMD.DO_SET_MODE)]
+        //[ReceiveCommand(MAVLink.MAV_CMD.DO_SET_MODE)]
         public void SetMode(ClientObject client, MAVLink.mavlink_command_long_t command)
         {
             Log($"SET MODE: {command.param1}, {command.param2}");
@@ -48,7 +48,7 @@ namespace AutopilotCommon
             AckCommand(client, command, MAVLink.MAV_CMD_ACK.OK);
         }
 
-        [ReceiveCommand(MAVLink.MAV_CMD.DO_SET_PARAMETER)]
+        //[ReceiveCommand(MAVLink.MAV_CMD.DO_SET_PARAMETER)]
         public void SetParameter(ClientObject client, MAVLink.mavlink_command_long_t command)
         {
             Log($"SET PARAMETER: {command.param1}, {command.param2}");
@@ -106,18 +106,20 @@ namespace AutopilotCommon
  /*
        FLIGHTMODES
 
-       0 = MANUAL
-       1 = CIRCLE
-       2 = STABILIZE
-       3 = TRAINING
-       4 = ACRO
-       5 = FBWA
-       6 = FBWB
-       7 = CRUISE
-       8 = AUTOTUNE
+       0 =  MANUAL
+       1 =  CIRCLE
+       2 =  STABILIZE
+       3 =  TRAINING
+       4 =  ACRO
+       5 =  FBWA
+       6 =  FBWB
+       7 =  CRUISE
+       8 =  AUTOTUNE
+       9 =  
        10 = AUTO
        11 = RTL
        12 = LOITER
+       13 = 
        14 = AVOID_ADSB
        15 = GUIDED
        17 = QSTABILIZE
@@ -136,7 +138,7 @@ namespace AutopilotCommon
             Log("REQUEST AUTOPILOT");
             AckCommand(client, command, MAVLink.MAV_CMD_ACK.OK);
             MAVLink.mavlink_autopilot_version_t autopilot2 = new MAVLink.mavlink_autopilot_version_t(){
-                capabilities = 
+                capabilities =
                               (ulong)MAVLink.MAV_PROTOCOL_CAPABILITY.MAVLINK2
                             //| (ulong)MAVLink.MAV_PROTOCOL_CAPABILITY.MISSION_FLOAT
                             | (ulong)MAVLink.MAV_PROTOCOL_CAPABILITY.PARAM_FLOAT

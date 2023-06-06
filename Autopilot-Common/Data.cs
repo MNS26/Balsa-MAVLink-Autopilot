@@ -54,4 +54,32 @@
         public float I;
         public float D;
     }
+    public enum FLIGHTMODES
+    {
+        MANUAL,
+        CIRCLE,
+        STABILIZE,
+        TRAINING,
+        ACRO,
+        FBWA,
+        FBWB,
+        CRUISE,
+        AUTOTUNE,
+        RESERVED_9,
+        AUTO,
+        RTL,
+        LOITER,
+        RESERVED_13,
+        AVOID_ADSB,
+        GUIDED,
+        RESERVED_16,
+        QSTABILIZE,
+        QHOVER,
+        QLOITER,
+        QLAND,
+        QRTL,
+        QAUTOTUNE,
+        QACRO,
+        THERMAL
+    }
 }
