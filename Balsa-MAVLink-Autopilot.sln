@@ -9,9 +9,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Autopilot-Common", "Autopil
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Autopilot-Console", "Autopilot-Console\Autopilot-Console.csproj", "{CC29CB0B-AF67-401B-9C7B-84B165761A9B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "External", "External", "{DF6C506B-C56F-4F59-BCDA-FC7CA1969619}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "External", "..\External", "{DF6C506B-C56F-4F59-BCDA-FC7CA1969619}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MAVLink", "External\Mavlink\MAVLink.csproj", "{FAB67A15-6D5A-4ED7-A012-94EEA8519636}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MAVLink", "..\External\Mavlink\MAVLink.csproj", "{FAB67A15-6D5A-4ED7-A012-94EEA8519636}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

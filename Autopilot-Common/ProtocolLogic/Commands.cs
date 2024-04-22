@@ -29,12 +29,12 @@ namespace AutopilotCommon
             Log("Client connected");
         }
 
-        public void DisconnectEvent()
+        public void DisconnectEvent(ClientObject client)
         {
             Log("Client disconnected");
         }
 
-        //[ReceiveCommand(MAVLink.MAV_CMD.DO_SET_MODE)]
+            //[ReceiveCommand(MAVLink.MAV_CMD.DO_SET_MODE)]
         public void SetMode(ClientObject client, MAVLink.mavlink_command_long_t command)
         {
             Log($"SET MODE: {command.param1}, {command.param2}");
@@ -140,9 +140,9 @@ namespace AutopilotCommon
             MAVLink.mavlink_autopilot_version_t autopilot2 = new MAVLink.mavlink_autopilot_version_t(){
                 capabilities =
                               (ulong)MAVLink.MAV_PROTOCOL_CAPABILITY.MAVLINK2
-                            //| (ulong)MAVLink.MAV_PROTOCOL_CAPABILITY.MISSION_FLOAT
+                            | (ulong)MAVLink.MAV_PROTOCOL_CAPABILITY.MISSION_FLOAT
                             | (ulong)MAVLink.MAV_PROTOCOL_CAPABILITY.PARAM_FLOAT
-                            //| (ulong)MAVLink.MAV_PROTOCOL_CAPABILITY.MISSION_INT
+                            | (ulong)MAVLink.MAV_PROTOCOL_CAPABILITY.MISSION_INT
                             | (ulong)MAVLink.MAV_PROTOCOL_CAPABILITY.COMMAND_INT
                             | (ulong)MAVLink.MAV_PROTOCOL_CAPABILITY.PARAM_UNION
                             | (ulong)MAVLink.MAV_PROTOCOL_CAPABILITY.FLIGHT_INFORMATION
@@ -201,6 +201,7 @@ namespace AutopilotCommon
             }
             client.SendMessage(command);
         }
+
         static public void AckCommand(ClientObject client, MAVLink.mavlink_command_long_t command, MAVLink.MAV_CMD_ACK ackType)
         {
             MAVLink.mavlink_command_ack_t ack = new MAVLink.mavlink_command_ack_t(){

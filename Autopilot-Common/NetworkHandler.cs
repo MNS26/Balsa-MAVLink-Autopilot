@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Threading;
+using MatchUp;
 
 namespace AutopilotCommon
 {
@@ -12,8 +13,7 @@ namespace AutopilotCommon
     {
         private Action<string> Log;
         private Commands commands;
-        private MessagesReceived messagesReceived;
-        private MessagesSend messagesSend;
+        private Messages messages;
 
         //Mavlink
         private MAVLink.MavlinkParse parser = new MAVLink.MavlinkParse();
@@ -24,7 +24,6 @@ namespace AutopilotCommon
         private Thread receiveThread;
         private AutoResetEvent sendEvent = new AutoResetEvent(false);
         private TcpListener listener;
-
         //Callbacks
         private Action<ClientObject> connectCallback;
         private Dictionary<MAVLink.MAVLINK_MSG_ID, Action<ClientObject, MAVLink.MAVLinkMessage>> receiveCallbacks = new Dictionary<MAVLink.MAVLINK_MSG_ID, Action<ClientObject, MAVLink.MAVLinkMessage>>();
@@ -40,48 +39,39 @@ namespace AutopilotCommon
         private Dictionary<Type, MAVLink.MAVLINK_MSG_ID> typeMapping = new Dictionary<Type, MAVLink.MAVLINK_MSG_ID>();
 
         private bool running = true;
-        public NetworkHandler(Commands commands, MessagesReceived messagesReceived, MessagesSend messagesSend, Action<string> Log)
+        public NetworkHandler(Commands commands, Messages messages, Action<string> Log)
         {
             this.commands = commands;
-            this.messagesReceived = messagesReceived;
-            this.messagesSend = messagesSend;
+            this.messages = messages;
             this.Log = Log;
             RegisterConnect(commands.ConnectEvent);
-            RegisterConnect(messagesReceived.ConnectEvent);
+            RegisterConnect(messages.ConnectEvent);
             RegisterDisconnect(commands.DisconnectEvent);
-            RegisterDisconnect(messagesReceived.DisconnectEvent);
+            RegisterDisconnect(messages.DisconnectEvent);
             AutoRegister();
         }
 
         private void AutoRegister()
         {
             Type TCommands = typeof(Commands);
-            Type TMessagesReceived = typeof(MessagesReceived);
-            Type TMessagesSend = typeof(MessagesSend);
+            Type TMessages = typeof(Messages);
             MethodInfo[] MethodInfoCommands = TCommands.GetMethods();
-            MethodInfo[] MethodInfoMessageReceive = TMessagesReceived.GetMethods();
-            MethodInfo[] MethodInfoMessageSend = TMessagesSend.GetMethods();
-            foreach (MethodInfo mi in MethodInfoMessageReceive)
-            {
-                foreach (Attribute att in mi.GetCustomAttributes())
-                {
-                    if (att is ReceiveMessage)
-                    {
-                        ReceiveMessage rm = (ReceiveMessage)att;
-                        Action<ClientObject, MAVLink.MAVLinkMessage> callMethod = (Action<ClientObject, MAVLink.MAVLinkMessage>)mi.CreateDelegate(typeof(Action<ClientObject, MAVLink.MAVLinkMessage>), messagesReceived);
-                        RegisterReceive(rm.id, callMethod);
-                    }
-                }
-            }
-            foreach (MethodInfo mi in MethodInfoMessageSend)
+            MethodInfo[] MethodInfoMessage = TMessages.GetMethods();
+            foreach (MethodInfo mi in MethodInfoMessage)
             {
                 foreach (Attribute att in mi.GetCustomAttributes())
                 {
                     if (att is SendMessage)
                     {
                         SendMessage sm = (SendMessage)att;
-                        Action<ClientObject> callMethod = (Action<ClientObject>)mi.CreateDelegate(typeof(Action<ClientObject>), messagesSend);
+                        Action<ClientObject> callMethod = (Action<ClientObject>)mi.CreateDelegate(typeof(Action<ClientObject>), messages);
                         RegisterSend(sm.id, callMethod);
+                    }
+                    if (att is ReceiveMessage)
+                    {
+                        ReceiveMessage rm = (ReceiveMessage)att;
+                        Action<ClientObject, MAVLink.MAVLinkMessage> callMethod = (Action<ClientObject, MAVLink.MAVLinkMessage>)mi.CreateDelegate(typeof(Action<ClientObject, MAVLink.MAVLinkMessage>), messages);
+                        RegisterReceive(rm.id, callMethod);
                     }
                 }
             }
@@ -103,18 +93,22 @@ namespace AutopilotCommon
         {
             listener = new TcpListener(new IPEndPoint(IPAddress.Any, 5760));
             listener.Start();
-            listener.BeginAcceptTcpClient(HandleConnect, null);
+            listener.BeginAcceptTcpClient(HandleTcpConnect, null);
             Start();
         }
 
         private void Start()
         {
             receiveThread = new Thread(new ThreadStart(ReceiveMain));
+            receiveThread.IsBackground = true;
             receiveThread.Name = "Receive Thread";
             receiveThread.Start();
+
             sendThread = new Thread(new ThreadStart(SendMain));
+            sendThread.IsBackground = true;
             sendThread.Name = "Receive Thread";
             sendThread.Start();
+
         }
 
         public void Stop()
@@ -132,38 +126,30 @@ namespace AutopilotCommon
         {
             connectCallback = callback;
         }
-
         public void RegisterDisconnect(Action<ClientObject> callback)
         {
             disconnectCallback = callback;
         }
-
         public void RegisterUnprocessedMessage(Action<ClientObject, MAVLink.MAVLinkMessage> callback)
         {
             unprocessedMessageCallback = callback;
         }
-
         public void RegisterUnprocessedCommand(Action<ClientObject, MAVLink.mavlink_command_long_t> callback)
         {
             unprocessedCommandCallback = callback;
         }
-
         public void RegisterReceive(MAVLink.MAVLINK_MSG_ID messageType, Action<ClientObject, MAVLink.MAVLinkMessage> callback)
         {
             receiveCallbacks[messageType] = callback;
         }
-
         public void RegisterReceiveCommand(MAVLink.MAV_CMD commandType, Action<ClientObject, MAVLink.mavlink_command_long_t> callback)
         {
             receiveCommandCallbacks[commandType] = callback;
         }
-
         public void RegisterSend(MAVLink.MAVLINK_MSG_ID messageType, Action<ClientObject> callback)
         {
             sendCallbacks[messageType] = callback;
         }
-
-
         private void RequestMessage(ClientObject client, MAVLink.MAVLINK_MSG_ID messageType)
         {
             if (sendCallbacks.ContainsKey(messageType))
@@ -171,8 +157,7 @@ namespace AutopilotCommon
                 sendCallbacks[messageType](client);
             }
         }
-
-        private void HandleConnect(IAsyncResult ar)
+        private void HandleTcpConnect(IAsyncResult ar)
         {
             try
             {
@@ -201,7 +186,7 @@ namespace AutopilotCommon
             }
             if (running)
             {
-                listener.BeginAcceptTcpClient(HandleConnect, null);
+                listener.BeginAcceptTcpClient(HandleTcpConnect, null);
             }
         }
 
@@ -222,6 +207,7 @@ namespace AutopilotCommon
 
         private void ReceiveMain()
         {
+            IPEndPoint remoteEP = new IPEndPoint(IPAddress.Any, 0);
             while (running)
             {
                 foreach (ClientObject client in clients)
@@ -303,14 +289,46 @@ namespace AutopilotCommon
                         }
                     }
                 }
+
                 Thread.Sleep(1);
             }
         }
 
+        private void SendMain()
+        {
+            while (running)
+            {
+                sendEvent.WaitOne(50);
+                foreach (ClientObject client in clients)
+                {
+                    if (!client.client.Connected)
+                    {
+                        HandleDisconnect(client);
+                        RebuildClients();
+                    }
+                    else
+                    {
+                        while (client.outgoingMessages.TryDequeue(out byte[] sendMessage))
+                        {
+                            try
+                            {
+                                client.client.GetStream().Write(sendMessage, 0, sendMessage.Length);
+                            }
+                            catch
+                            {
+                                HandleDisconnect(client);
+                                RebuildClients();
+                            }
+                        }
+                    }
+                    client.Update();
+                }
+            }
+        }
         private void ProcessMessage(ClientObject client, MAVLink.MAVLinkMessage message)
         {
             bool processed = false;
-            //Log($"RX: {message.data} {message.msgid}");
+            Log($"RX: {message.data} {message.msgid}");
             if (message.msgid == (uint)MAVLink.MAVLINK_MSG_ID.COMMAND_LONG)
             {
                 processed = true;
@@ -355,38 +373,6 @@ namespace AutopilotCommon
                 }
             }
             clients = newClients;
-        }
-
-        private void SendMain()
-        {
-            while (running)
-            {
-                sendEvent.WaitOne(50);
-                foreach (ClientObject client in clients)
-                {
-                    if (!client.client.Connected)
-                    {
-                        HandleDisconnect(client);
-                        RebuildClients();
-                    }
-                    else
-                    {
-                        while (client.outgoingMessages.TryDequeue(out byte[] sendMessage))
-                        {
-                            try
-                            {
-                                client.client.GetStream().Write(sendMessage, 0, sendMessage.Length);
-                            }
-                            catch
-                            {
-                                HandleDisconnect(client);
-                                RebuildClients();
-                            }
-                        }
-                    }
-                    client.Update();
-                }
-            }
         }
     }
 }

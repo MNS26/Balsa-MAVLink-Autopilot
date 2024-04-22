@@ -1,43 +1,43 @@
 ModCFG
 {
-    title = Autopilot
+    title = KitBash-Autopilot
     author = MS26
     modVersion = 0.1.1
-    imgPath = preveiw.jpg
+    imgPath = preview.jpg
 	requiresGameVersion = 0.101.2
     Plugin
     {
         name = System.Runtime.CompilerServices.Unsafe
         description = System.Runtime.CompilerServices.Unsafe
-        asmpath = Addons\Autopilot\System.Runtime.CompilerServices.Unsafe.dll
+        asmpath = Mods\KitBash-Autopilot\System.Runtime.CompilerServices.Unsafe.dll
         order = 1
     }
     Plugin
     {
         name = Newtonsoft.Json
         description = Newtonsoft.Json
-        asmpath = Addons\Autopilot\Newtonsoft.Json.dll
+        asmpath = Mods\KitBash-Autopilot\Newtonsoft.Json.dll
         order = 2
     }
     Plugin
     {
         name = MAVLink
         description = Autopilot for Balsa meant for external softare that uses MAVLink protocol
-        asmpath = Addons\Autopilot\MAVLink.dll
+        asmpath = Mods\KitBash-Autopilot\MAVLink.dll
         order = 3
     }
     Plugin
     {
         name = Autopilot-Common
         description = Autopilot for Balsa meant for external softare that uses MAVLink protocol
-        asmpath = Addons\Autopilot\Autopilot-Common.dll
+        asmpath = Mods\KitBash-Autopilot\Autopilot-Common.dll
         order = 4
     }
     Plugin
     {
         name = Autopilot
         description = Autopilot for Balsa meant for external softare that uses MAVLink protocol
-        asmpath = Addons\Autopilot\Autopilot.dll
+        asmpath = Mods\KitBash-Autopilot\Autopilot.dll
         order = 5
     }
 }

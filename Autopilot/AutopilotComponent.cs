@@ -3,14 +3,14 @@ using FSControl;
 using UnityEngine;
 using System;
 
-namespace Autopilot
+namespace KitBash_Autopilot
 {
     public class AutopilotComponent : MonoBehaviour, IVehicleComponent
     {
         //
-        Data data = Autopilot.data;
-        Ap ap = Autopilot.ap;
-        ParameterHandler parameters = Autopilot.parameters;
+        Data data = KitBash_Autopilot.data;
+        Ap ap = KitBash_Autopilot.ap;
+        ParameterHandler parameters = KitBash_Autopilot.parameters;
 
         Vehicle vehicle;
         public FBWModule fbwModule;
@@ -144,7 +144,7 @@ namespace Autopilot
 
         public void OnVehicleSpawn(Vehicle vehicle)
         {
-            Autopilot.Log("OVS Component");
+            KitBash_Autopilot.Log("OVS Component");
             this.vehicle = vehicle;
             fbwModule = new FBWModule(APUpdate);
             vehicle.Autotrim.host.RegisterFBWModule(fbwModule);

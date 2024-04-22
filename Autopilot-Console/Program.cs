@@ -16,19 +16,18 @@ namespace AutopilotConsole
             NetworkHandler handler;
 
             Commands commands;
-            MessagesSend messagesSend;
-            MessagesReceived messagesReceived;
+            Messages messages;
 
             Console.WriteLine("Start!");
             data = new Data();
             ap = new Ap();
-            //Interface hid = new Interface(Console.WriteLine);
-            parameters       = new ParameterHandler("", "Parameters.txt", nothing);
-            commands         = new Commands(data, ap, Console.WriteLine, parameters);
-            messagesSend     = new MessagesSend(data, ap, Console.WriteLine, parameters);
-            messagesReceived = new MessagesReceived(data, ap, Console.WriteLine, parameters);
-            handler          = new NetworkHandler(commands, messagesReceived, messagesSend, Console.WriteLine);
-            
+            parameters  = new ParameterHandler("", "Parameters.txt", nothing);
+
+            commands    = new Commands(data, ap, Console.WriteLine, parameters);
+            messages    = new Messages(data, ap, Console.WriteLine, parameters);
+
+            handler     = new NetworkHandler(commands, messages, Console.WriteLine);
+
             handler.RegisterUnprocessedCommand(UnprocessedCommand);
             handler.RegisterUnprocessedMessage(UnprocessedMessage);
             
@@ -58,14 +57,15 @@ namespace AutopilotConsole
                     //}
                     //Console.WriteLine();
 
-                    try{
-                    count++;
-                    }
-                    catch
-                    {
-                        count = 0;
-                    }
-                    data.heading = count % 360;
+                    //try{
+                    //count++;
+                    //}
+                    //catch
+                    //{
+                    //    count = 0;
+                    //}
+
+                    data.heading = count++ % 360;
                     data.radyaw = (float)((count % 360 / 360d) * 2 * Math.PI);
                     data.magx = Vector3.Dot(new Vector3(0, 0, 1), new Vector3(0, 0, 1)) * 500;
                     data.magy = Vector3.Dot(new Vector3(0, 0, 1), new Vector3(1, 0, 0)) * 500;
@@ -76,6 +76,7 @@ namespace AutopilotConsole
                     data.gyrox = 1;
                     data.gyroy = 2;
                     data.gyroz = 3;
+                    Thread.Sleep(100);
                 }
 
             }

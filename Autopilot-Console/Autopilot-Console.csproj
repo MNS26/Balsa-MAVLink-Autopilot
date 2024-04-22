@@ -1,15 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
+    <!-- <LangVersion>9.0</LangVersion> -->
     <TargetFramework>net6.0</TargetFramework>
     <RootNamespace>AutopilotConsole</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
-      <HintPath>../External/Managed/UnityEngine.dll</HintPath>
+      <HintPath>../../External/Managed/UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>../External/Managed/UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>../../External/Managed/UnityEngine.CoreModule.dll</HintPath>
     </Reference>
     <ProjectReference Include="..\Autopilot-Common\Autopilot-Common.csproj"/>
   </ItemGroup>

@@ -1,20 +1,22 @@
-﻿using AutopilotCommon;
+﻿using System.Collections.Concurrent;
+using AutopilotCommon;
 using FSControl;
 using Modules;
 using UnityEngine;
-using System;
-namespace Autopilot
+
+namespace KitBash_Autopilot
 {
-    public class Autopilot : MonoBehaviour
+    public class KitBash_Autopilot : MonoBehaviour
     {
         public static Data data = new Data();
         public static Ap ap = new Ap();
+        ConcurrentQueue<string> messageQueue = new ConcurrentQueue<string>();
         public static ParameterHandler parameters;
         Commands commands;
-        MessagesSend messagesSend;
-        MessagesReceived messagesReceived;
+        Messages messages;
         NetworkHandler handler;
-
+        
+        
         public void Start()
         {
             for( var index = 0; index<data.ChannelsServo.Length;index++)
@@ -23,23 +25,22 @@ namespace Autopilot
             }
             DontDestroyOnLoad(this);
             Log("Start!");
-            parameters = new ParameterHandler(PathUtil.Resolve(".") + "/Addons/Autopilot/", "Parameters.txt", Log);
+            parameters = new ParameterHandler(PathUtil.Resolve(".") + "/Mods/KitBash-Autopilot/", "Parameters.txt", Log);
             commands = new Commands(data, ap, Log, parameters);
-            messagesSend = new MessagesSend(data, ap, Log, parameters);
-            messagesReceived = new MessagesReceived(data, ap, Log, parameters);
-            handler = new NetworkHandler(commands, messagesReceived, messagesSend, Log);
+            messages = new Messages(data, ap, Log, parameters);
+            handler = new NetworkHandler(commands, messages, Log);
             handler.StartServer();
             //If you want to stick around
-            GameEvents.Vehicles.OnVehicleSpawned.AddListener(VehicleSpawned);
+            //GameEvents.Vehicles.OnVehicleSpawned.AddListener(VehicleSpawned);
         }
 
 
         private void VehicleSpawned(Vehicle vehicle)
         {
-            Autopilot.Log("OVS Main");
+            Log("OVS Main");
             if (vehicle == GameLogic.LocalPlayerVehicle)
             {
-                Autopilot.Log("Local player");
+                Log("Local player");
                 if (!vehicle.gameObject.TryGetComponent(out AutopilotComponent _))
                 {
                     Log("Adding autopilot controller to " + vehicle.name);
@@ -54,9 +55,14 @@ namespace Autopilot
             }
         }
 
-        //running this as fast as possible
-        public void Update()
+
+        public void Update() {
+
+        }
+
+        public void FixedUpdate()
         {
+
             if (!GameLogic.inGame || !GameLogic.SceneryLoaded || GameLogic.LocalPlayerVehicle == null || !GameLogic.LocalPlayerVehicle.InitComplete)
             {
                 for (int channel = 0; channel < data.ChannelsRC.Length; channel++)
@@ -155,7 +161,7 @@ namespace Autopilot
 
 
             //controller stuff
-            data.rssi = map(v.SignalStrength.SignalDegradation, 0, 1, 254, 0);
+            data.rssi = (int)map(v.SignalStrength.SignalDegradation, 0.0f, 1.0f, 254f, 0f);
 
             data.ChannelsRC[0] = InputSettings.Axis_Roll.axis;
             data.ChannelsRC[1] = InputSettings.Axis_Pitch.axis;
@@ -165,15 +171,7 @@ namespace Autopilot
             data.ChannelsRC[5] = InputSettings.Axis_B.axis;
             data.ChannelsRC[6] = InputSettings.Axis_C.axis;
             data.ChannelsRC[7] = InputSettings.Axis_D.axis;
-        }
 
-        public void FixedUpdate()
-        {
-            if (!GameLogic.inGame || !GameLogic.SceneryLoaded || GameLogic.LocalPlayerVehicle == null || !GameLogic.LocalPlayerVehicle.InitComplete)
-            {
-                return;
-            }
-            Vehicle v = GameLogic.LocalPlayerVehicle;
 
             var props = v.GetModules<Propeller>();
             if (props.Count != 0)
@@ -187,20 +185,25 @@ namespace Autopilot
                 data.avrrpm *= 1.66667f;
             }
             var engine = v.GetModules<Engine>();
-            if (engine.Count != 0 && engine[0].running)
-            {
-                ap.mode_flag = MAVLink.MAV_MODE_FLAG.AUTO_ENABLED;
-            }
+            if (InputSettings.EngineAutoStart.tDown != 0 && InputSettings.ThrottleCutoff.tDown == 0)
+                {ap.mode_flag = MAVLink.MAV_MODE_FLAG.AUTO_ENABLED;}
             else
-            {
-                ap.mode_flag = MAVLink.MAV_MODE_FLAG.MANUAL_INPUT_ENABLED;
-            }
+                {ap.mode_flag = MAVLink.MAV_MODE_FLAG.SAFETY_ARMED;}
+
+            //if (engine.Count != 0 && engine[0].running)
+            //{
+            //    ap.mode_flag = MAVLink.MAV_MODE_FLAG.AUTO_ENABLED;
+            //}
+            //else
+            //{
+            //    ap.mode_flag = MAVLink.MAV_MODE_FLAG.MANUAL_INPUT_ENABLED;
+            //}
 
         }
 
-        private static T map<T>(T value, T fromLow, T fromHigh, T toLow, T toHigh) //where T : IComparable<T>
+        private static float map(float value, float fromLow, float fromHigh, float toLow, float toHigh)
         {
-            return (T)(((dynamic)value - (dynamic)fromLow) * ((dynamic)toHigh - (dynamic)toLow) / ((dynamic)fromHigh - (dynamic)fromLow) + (dynamic)toLow);
+            return (value - fromLow) * (toHigh - toLow) / (fromHigh - fromLow) + toLow;
         }
 
         //It's nice to identify in the log where things came from
@@ -208,7 +211,8 @@ namespace Autopilot
         {
             // Unity didn't like this
             // Debug.Log($"{Time.realtimeSinceStartup} [Autopilot] {text}");
-            UnityEngine.Debug.Log($"[Autopilot] {text}");
+            Debug.Log($"[Autopilot] {text}");
+            //DarkModLog.Log($"[Autopilot] {text}");
         }
     }
 }

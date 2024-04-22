@@ -1,7 +1,7 @@
 ﻿using FSControl;
 using System;
 
-namespace Autopilot
+namespace KitBash_Autopilot
 {
     public class FBWModule : IFlyByWire
     {
@@ -22,12 +22,12 @@ namespace Autopilot
 
         public void OnRegistered(FBWHostBase host)
         {
-            Autopilot.Log("OPCS Register");
+            KitBash_Autopilot.Log("OPCS Register");
         }
 
         public void OnUnregistered(FBWHostBase host)
         {
-            Autopilot.Log("OPCS Unregister");
+            KitBash_Autopilot.Log("OPCS Unregister");
         }
 
         public void OnProcessCtrlState(ref FSInputState data, Vehicle vehicle)

@@ -1,7 +1,7 @@
 ﻿using BalsaCore;
 using UnityEngine;
 
-namespace Autopilot
+namespace KitBash_Autopilot
 {
     [BalsaAddon]
     public class Loader
@@ -9,7 +9,7 @@ namespace Autopilot
         private static bool loaded = false;
         private static GameObject go;
         private static MonoBehaviour mod;
-        [BalsaAddonInit(invokeTime = AddonInvokeTime.OnLoaded)]
+        [BalsaAddonInit(invokeTime = AddonInvokeTime.MainMenu)]
         public static void BalsaInit()
         {
             if (!loaded)
@@ -17,7 +17,7 @@ namespace Autopilot
                 loaded = true;
                 go = new GameObject();
             }
-            mod = go.AddComponent<Autopilot>();
+            mod = go.AddComponent<KitBash_Autopilot>();
         }
 
         [BalsaAddonInit(invokeTime = AddonInvokeTime.Flight)]

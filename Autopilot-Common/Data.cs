@@ -45,6 +45,18 @@
         public float rssi;
 
     }
+
+    public class telemRates
+    {
+        public int RAW_SENSORS = 2;
+        public int EXTENDED_STATUS = 2;
+        public int RC_CHANNELS = 50;
+        public int POSITIONS = 3;
+        public int EXTRA1 = 5;
+        public int EXTRA2 = 5;
+        public int EXTRA3 = 5;
+    }
+    
     public class Ap
     {
         public MAVLink.MAV_MODE_FLAG mode_flag = 0;

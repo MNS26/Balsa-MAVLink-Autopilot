@@ -66,7 +66,7 @@ namespace AutopilotCommon
 
         public void SendMessage(object message)
         {
-            //Log($"TX: {message}");
+            Log($"TX: {message}");
             SendMessageBytes(parser.GenerateMAVLinkPacket20(GetTypeMapping(message), message, false, 1, 1, sendSequence++));
         }
 

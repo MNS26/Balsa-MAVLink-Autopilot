@@ -2,36 +2,67 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
+    <!-- <LangVersion>9.0</LangVersion> -->
+    <OutputPath>../../External/Mods/KitBash-Autopilot</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
+
+  <!-- SYSTEM DLL's-->
+  <ItemGroup>
+
+  </ItemGroup>
+
+  <!-- UNITY DLL's -->
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
-      <HintPath>../External/Managed/Assembly-CSharp.dll</HintPath>
+      <HintPath>../../External/Managed/Assembly-CSharp.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass">
-      <HintPath>../External/Managed/Assembly-CSharp-firstpass.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="Balsa.Core">
-      <HintPath>../External/Managed/Balsa.Core.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="com.unity.multiplayer-hlapi.Runtime">
-      <HintPath>../External/Managed/com.unity.multiplayer-hlapi.Runtime.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="FloatingUtil">
-      <HintPath>../External/Managed/FloatingUtil.dll</HintPath>
+      <HintPath>../../External/Managed/Assembly-CSharp-firstpass.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>../External/Managed/UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>../../External/Managed/UnityEngine.CoreModule.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>../External/Managed/UnityEngine.dll</HintPath>
+      <HintPath>../../External/Managed/UnityEngine.dll</HintPath>
       <Private>false</Private>
     </Reference>
+  </ItemGroup>
+
+  <!-- KITBASH DLL's -->
+  <ItemGroup>
+    <Reference Include="NaughtyAttributes.Core">
+      <HintPath>../../External/Managed/NaughtyAttributes.Core.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="ModLog">
+      <HintPath>../../External/ModLog/ModLog.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="FloatingUtil">
+      <HintPath>../../External/Managed/FloatingUtil.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Balsa.Core">
+      <HintPath>../../External/Managed/Balsa.Core.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Mirror">
+      <HintPath>../../External/Managed/Mirror.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <!--Reference Include="com.unity.multiplayer-hlapi.Runtime">
+      <HintPath>../External/Managed/com.unity.multiplayer-hlapi.Runtime.dll</HintPath>
+      <Private>false</Private>
+    </Reference!-->
+    <Reference Include="DOTween">
+      <HintPath>../../External/Managed/DOTween.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+
   </ItemGroup>
   <ItemGroup>
     <None Update="modexport.cfg" CopyToOutputDirectory="PreserveNewest" />
@@ -39,7 +70,7 @@
     <Content Include="preview.jpg"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Autopilot-Common\Autopilot-Common.csproj" />
+    <ProjectReference Include="../Autopilot-Common/Autopilot-Common.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />

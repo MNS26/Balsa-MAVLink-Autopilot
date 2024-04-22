@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Autopilot
+namespace KitBash_Autopilot
 {
     public class PID
     {
